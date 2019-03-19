@@ -1,7 +1,7 @@
+import agents.VehicleAgent;
 import sim.engine.*;
-import ec.util.*;
-import sim.field.continuous.Continuous2D;
 import sim.field.network.Network;
+import system.utility.NetworkFactory;
 
 /**
  * EvacSim is the core simulation. It extends SimState which provides fundamental simulation architecture
@@ -15,10 +15,11 @@ public class EvacSim extends SimState {
     // System Architecture fields
     private static final long serialNumber = 1;
     public NetworkFactory networkFactory = new NetworkFactory();
+
     public Network network;
 
     // Simulation parameter fields
-    public int populationSize = 200;
+    public int populationSize = 10;
     public int throttleThreshold;
     public int agentGreedinessCoefficient;
     public boolean throttlingEnabled;
@@ -36,24 +37,31 @@ public class EvacSim extends SimState {
     }
 
     /**
-     * Runs the simulation
+     * Initialises the simulation
      */
     public void start(){
         super.start();      // Cleans threads and resets the scheduler
 
-        // Instantiate fields
-//        network = networkFactory.buildGridNetwork(10,10,200);
-        network = networkFactory.buildTinyGridNetwork();
+        network = networkFactory.buildGridNetwork(3,3,220);
 
-        // Generate spatial features in fields as necessary
         // Create agents
-        // Schedule agents
+        for (int i = 0; i < populationSize; i++) {
+            VehicleAgent vehicleAgent = new VehicleAgent();
+
+            // Get list of all junctions
+            // Load vehicleAgent into random non-exit junction
+
+            // Get list of exit junctions
+            // Set random exit junction as goal
+
+            // Use A* to find a route for the agent from start to goal
+
+        }
 
     }
 
     public static void main(String[] args) {
         doLoop(EvacSim.class,args);
-
         System.exit(0);
     }
 }

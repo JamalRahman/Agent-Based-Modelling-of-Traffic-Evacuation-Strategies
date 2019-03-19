@@ -1,12 +1,14 @@
+package system;
+
 /**
  * MASON uses Network and Edge objects. Edge objects are exclusively topological, and are wrappers of what MASON
  * refers to as an 'info object' which holds context-relevant data about the edge's simulation representation.
  *
  * For this project, Edges are representing roads, which have properties such as speed limits, and lengths, etc
- * An Edge in the Network will hence wrap around a Road object which is what stores the contextual information.
+ * An Edge in the Network will hence wrap around a system.Road object which is what stores the contextual information.
  */
 
-public class Road {
+public class Road  implements java.io.Serializable{
     private final double length;
     private double speedLimit;
     public boolean throttled = false;
