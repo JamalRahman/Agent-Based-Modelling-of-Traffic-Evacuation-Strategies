@@ -1,9 +1,13 @@
 package evacuation;
 
+import ec.util.MersenneTwisterFast;
 import evacuation.agents.Car;
+import evacuation.system.Junction;
 import evacuation.system.utility.NetworkFactory;
 import sim.engine.*;
+import sim.field.continuous.Continuous2D;
 import sim.field.network.Network;
+import sim.util.Bag;
 
 /**
  * evacuation.EvacSim is the core simulation. It extends SimState which provides fundamental simulation architecture
@@ -19,9 +23,10 @@ public class EvacSim extends SimState {
     public NetworkFactory networkFactory = new NetworkFactory();
 
     public Network network;
+    public Continuous2D environment;
 
     // Simulation parameter fields
-    public int populationSize = 10;
+    public int populationSize = 1;
     public int throttleThreshold;
     public int agentGreedinessCoefficient;
     public boolean throttlingEnabled;
@@ -46,7 +51,7 @@ public class EvacSim extends SimState {
 
         network = networkFactory.buildGridNetwork(3,3,220);
 
-        // Create evacuation.agents
+        // Create agents
         for (int i = 0; i < populationSize; i++) {
 
             Car car = new Car();
@@ -54,11 +59,40 @@ public class EvacSim extends SimState {
             // Get list of all junctions
             // Load vehicle into random non-exit junction
 
+            Bag allJunctions = network.getAllNodes();
+
+            Junction startJunction;
+            do {
+                startJunction = (Junction) allJunctions.get(random.nextInt(allJunctions.size()));
+            }
+            while(startJunction.isExit());
+
+            Junction goalJunction = selectGoalJunction(allJunctions);
+
+            car.setStartJunc(startJunction);
+            car.setGoalJunc(goalJunction);
+            goalJunction.setFlag(true);
+            startJunction.setFlag(true);
+
+
             // Get list of exit junctions
             // Set random exit junction as goal
 
             // Use A* to find a route for the agent from start to goal
         }
+    }
+
+    private Junction selectGoalJunction(Bag allJunctions) {
+        Bag goalJunctions = new Bag();
+        Junction temp;
+        for (Object junction:
+             allJunctions){
+            temp = (Junction)junction;
+            if(temp.isExit()){
+                goalJunctions.add(temp);
+            }
+        }
+        return (Junction) goalJunctions.get(random.nextInt(goalJunctions.size()));
     }
 
     public static void main(String[] args) {

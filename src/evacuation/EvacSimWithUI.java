@@ -1,0 +1,58 @@
+package evacuation;
+
+import sim.display.Controller;
+import sim.display.Display2D;
+import sim.display.GUIState;
+import sim.engine.SimState;
+import sim.portrayal.continuous.ContinuousPortrayal2D;
+import sim.portrayal.network.NetworkPortrayal2D;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class EvacSimWithUI extends GUIState {
+
+    public Display2D display;
+    public JFrame displayFrame;
+
+    NetworkPortrayal2D roadPortrayal = new NetworkPortrayal2D();
+    ContinuousPortrayal2D junctionPortrayal = new ContinuousPortrayal2D();
+
+    public static void main(String[] args) {
+        new EvacSimWithUI().createController();
+    }
+
+    public EvacSimWithUI(){
+        super(new EvacSim(System.currentTimeMillis()));
+    }
+
+    public void start(){
+        super.start();
+        setupPortrayals();
+    }
+    public void load(SimState state){
+        super.load(state);
+        setupPortrayals();
+    }
+
+    private void setupPortrayals() {
+        junctionPortrayal.setField(((EvacSim)state).environment);
+
+        display.reset();
+        display.setBackdrop(Color.white);
+
+        display.repaint();
+    }
+
+    public void init(final Controller controller) {
+        super.init(controller);
+
+        display = new Display2D(800, 600, this);
+
+        displayFrame = display.createFrame();
+        displayFrame.setTitle("EvacSim display");
+        controller.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
+        displayFrame.setVisible(true);
+        display.attach(junctionPortrayal, "Junctions");
+    }
+}
