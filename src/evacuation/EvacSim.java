@@ -1,10 +1,12 @@
-import agents.VehicleAgent;
+package evacuation;
+
+import evacuation.agents.Car;
+import evacuation.system.utility.NetworkFactory;
 import sim.engine.*;
 import sim.field.network.Network;
-import system.utility.NetworkFactory;
 
 /**
- * EvacSim is the core simulation. It extends SimState which provides fundamental simulation architecture
+ * evacuation.EvacSim is the core simulation. It extends SimState which provides fundamental simulation architecture
  * in the Mason framework - such as threading, scheduling, and executing events, as well as simulation serialisation.
  *
  * This class sets up the environment and simulation parameters, and runs the simulation itself
@@ -44,20 +46,19 @@ public class EvacSim extends SimState {
 
         network = networkFactory.buildGridNetwork(3,3,220);
 
-        // Create agents
+        // Create evacuation.agents
         for (int i = 0; i < populationSize; i++) {
-            VehicleAgent vehicleAgent = new VehicleAgent();
+
+            Car car = new Car();
 
             // Get list of all junctions
-            // Load vehicleAgent into random non-exit junction
+            // Load vehicle into random non-exit junction
 
             // Get list of exit junctions
             // Set random exit junction as goal
 
             // Use A* to find a route for the agent from start to goal
-
         }
-
     }
 
     public static void main(String[] args) {

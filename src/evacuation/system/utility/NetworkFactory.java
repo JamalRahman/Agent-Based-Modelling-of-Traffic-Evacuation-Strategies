@@ -1,8 +1,7 @@
-package system.utility;
+package evacuation.system.utility;
 
 import sim.field.network.*;
-import system.Junction;
-import system.Road;
+import evacuation.system.*;
 
 /**
  * Builds test-road-networks for use in simulations

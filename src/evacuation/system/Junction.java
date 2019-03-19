@@ -1,4 +1,4 @@
-package system;
+package evacuation.system;
 
 import sim.portrayal.SimplePortrayal2D;
 

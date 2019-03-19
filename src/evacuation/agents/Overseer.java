@@ -1,4 +1,4 @@
-package agents;
+package evacuation.agents;
 
 import sim.engine.*;
 
