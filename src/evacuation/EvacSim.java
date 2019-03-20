@@ -3,11 +3,13 @@ package evacuation;
 import ec.util.MersenneTwisterFast;
 import evacuation.agents.Car;
 import evacuation.system.Junction;
+import evacuation.system.Road;
 import evacuation.system.utility.NetworkFactory;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.field.network.Network;
 import sim.util.Bag;
+import sim.util.Double2D;
 
 /**
  * evacuation.EvacSim is the core simulation. It extends SimState which provides fundamental simulation architecture
@@ -34,7 +36,7 @@ public class EvacSim extends SimState {
 
     private static final int GRIDHEIGHT = 5;
     private static final int GRIDWIDTH = 5;
-    private static final int ROADLENGTH = 22;
+    private static final int ROADLENGTH = 10;
 
 
     /**
@@ -54,8 +56,9 @@ public class EvacSim extends SimState {
         super.start();      // Cleans threads and resets the scheduler
 
         //TODO: Re-read how the Continuous field works
-        environment = new Continuous2D(5.0,GRIDHEIGHT*ROADLENGTH,GRIDWIDTH*ROADLENGTH);
+        environment = new Continuous2D(8.0,GRIDWIDTH*ROADLENGTH,GRIDHEIGHT*ROADLENGTH);
         network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
+
         // Create agents
         for (int i = 0; i < populationSize; i++) {
 
@@ -74,6 +77,7 @@ public class EvacSim extends SimState {
             car.setGoalJunc(goalJunction);
 
             // Used for debugging (painting nodes)
+
             goalJunction.setGoalFlag(true);
             startJunction.setStartFlag(true);
 

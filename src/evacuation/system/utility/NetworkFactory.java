@@ -25,11 +25,12 @@ public class NetworkFactory {
         for(int i=0;i<gridWidth;i++){
             for (int j = 0; j < gridHeight; j++) {
                 Junction newJunc = new Junction();
-                state.environment.setObjectLocation(newJunc,new Double2D(i*roadLength,j*roadLength));
                 if(i==gridWidth-1 || j==gridHeight-1 || i==0 || j==0){
                     newJunc.setExit(true);
                 }
                 junctions[i][j] = newJunc;
+                state.environment.setObjectLocation(newJunc,new Double2D(i*roadLength,j*roadLength));
+
                 network.addNode(newJunc);
             }
         }

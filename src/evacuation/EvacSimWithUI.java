@@ -40,8 +40,9 @@ public class EvacSimWithUI extends GUIState {
     private void setupPortrayals() {
 
         //TODO: Learn what is going on with portrayals and these fields
-        roadPortrayal.setField(new SpatialNetwork2D(((EvacSim)state).environment,((EvacSim)state).network));
-        SimpleEdgePortrayal2D p = new SimpleEdgePortrayal2D(Color.lightGray, Color.lightGray, Color.black);
+
+        roadPortrayal.setField(new SpatialNetwork2D( ((EvacSim)state).environment,((EvacSim)state).network));
+        SimpleEdgePortrayal2D p = new SimpleEdgePortrayal2D(Color.lightGray, null);
         p.setShape(SimpleEdgePortrayal2D.SHAPE_THIN_LINE);
         roadPortrayal.setPortrayalForAll(p);
 
@@ -62,6 +63,7 @@ public class EvacSimWithUI extends GUIState {
         displayFrame.setTitle("EvacSim display");
         controller.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
         displayFrame.setVisible(true);
+        display.attach(roadPortrayal,"Roads");
         display.attach(junctionPortrayal, "Junctions");
     }
 }
