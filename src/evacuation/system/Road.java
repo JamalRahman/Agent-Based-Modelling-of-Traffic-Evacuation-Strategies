@@ -42,4 +42,9 @@ public class Road  implements java.io.Serializable{
     public void setThrottled(boolean throttled) {
         this.throttled = throttled;
     }
+
+    @Override
+    public String toString() {
+        return "test";
+    }
 }

@@ -6,6 +6,8 @@ import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.network.NetworkPortrayal2D;
+import sim.portrayal.network.SimpleEdgePortrayal2D;
+import sim.portrayal.network.SpatialNetwork2D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,6 +38,13 @@ public class EvacSimWithUI extends GUIState {
     }
 
     private void setupPortrayals() {
+
+        //TODO: Learn what is going on with portrayals and these fields
+        roadPortrayal.setField(new SpatialNetwork2D(((EvacSim)state).environment,((EvacSim)state).network));
+        SimpleEdgePortrayal2D p = new SimpleEdgePortrayal2D(Color.lightGray, Color.lightGray, Color.black);
+        p.setShape(SimpleEdgePortrayal2D.SHAPE_THIN_LINE);
+        roadPortrayal.setPortrayalForAll(p);
+
         junctionPortrayal.setField(((EvacSim)state).environment);
 
         display.reset();

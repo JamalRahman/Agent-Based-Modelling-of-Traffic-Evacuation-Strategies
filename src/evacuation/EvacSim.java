@@ -32,6 +32,10 @@ public class EvacSim extends SimState {
     public boolean throttlingEnabled;
     public boolean schedulingEnabled;
 
+    private static final int GRIDHEIGHT = 5;
+    private static final int GRIDWIDTH = 5;
+    private static final int ROADLENGTH = 22;
+
 
     /**
      * Creates the new evacuation simulation, initialises the random number generator and creates a time schedule for
@@ -49,34 +53,29 @@ public class EvacSim extends SimState {
     public void start(){
         super.start();      // Cleans threads and resets the scheduler
 
-        network = networkFactory.buildGridNetwork(3,3,220);
-
+        //TODO: Re-read how the Continuous field works
+        environment = new Continuous2D(5.0,GRIDHEIGHT*ROADLENGTH,GRIDWIDTH*ROADLENGTH);
+        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
         // Create agents
         for (int i = 0; i < populationSize; i++) {
 
             Car car = new Car();
-
-            // Get list of all junctions
-            // Load vehicle into random non-exit junction
 
             Bag allJunctions = network.getAllNodes();
 
             Junction startJunction;
             do {
                 startJunction = (Junction) allJunctions.get(random.nextInt(allJunctions.size()));
-            }
-            while(startJunction.isExit());
+            } while(startJunction.isExit());
 
             Junction goalJunction = selectGoalJunction(allJunctions);
 
             car.setStartJunc(startJunction);
             car.setGoalJunc(goalJunction);
-            goalJunction.setFlag(true);
-            startJunction.setFlag(true);
 
-
-            // Get list of exit junctions
-            // Set random exit junction as goal
+            // Used for debugging (painting nodes)
+            goalJunction.setGoalFlag(true);
+            startJunction.setStartFlag(true);
 
             // Use A* to find a route for the agent from start to goal
         }

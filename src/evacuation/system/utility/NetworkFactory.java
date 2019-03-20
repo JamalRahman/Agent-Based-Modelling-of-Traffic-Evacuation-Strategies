@@ -1,7 +1,9 @@
 package evacuation.system.utility;
 
+import evacuation.EvacSim;
 import sim.field.network.*;
 import evacuation.system.*;
+import sim.util.Double2D;
 
 /**
  * Builds test-road-networks for use in simulations
@@ -16,14 +18,15 @@ public class NetworkFactory {
      * @param gridWidth Number of vertical roads
      * @param roadLength Length of each road section
      */
-    public Network buildGridNetwork(int gridHeight, int gridWidth, int roadLength) {
+    public Network buildGridNetwork(EvacSim state, int gridHeight, int gridWidth, int roadLength) {
         Junction[][] junctions = new Junction[gridWidth][gridHeight];
         Network network = new Network();
 
         for(int i=0;i<gridWidth;i++){
             for (int j = 0; j < gridHeight; j++) {
                 Junction newJunc = new Junction();
-                if(i==gridWidth-1 || j==gridHeight-1){
+                state.environment.setObjectLocation(newJunc,new Double2D(i*roadLength,j*roadLength));
+                if(i==gridWidth-1 || j==gridHeight-1 || i==0 || j==0){
                     newJunc.setExit(true);
                 }
                 junctions[i][j] = newJunc;
