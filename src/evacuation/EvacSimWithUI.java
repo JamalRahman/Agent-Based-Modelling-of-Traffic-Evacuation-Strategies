@@ -57,7 +57,7 @@ public class EvacSimWithUI extends GUIState {
     public void init(final Controller controller) {
         super.init(controller);
 
-        display = new Display2D(800, 600, this);
+        display = new Display2D(800, 800, this);
 
         displayFrame = display.createFrame();
         displayFrame.setTitle("EvacSim display");

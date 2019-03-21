@@ -14,8 +14,8 @@ public class NetworkFactory {
     /**
      * Generates a grid-like road network with a specified number of intersecting horizontal and vertical roads
      *
-     * @param gridHeight Number of horizontal roads
-     * @param gridWidth Number of vertical roads
+     * @param gridHeight Number of horizontal junctions
+     * @param gridWidth Number of vertical junctions
      * @param roadLength Length of each road section
      */
     public Network buildGridNetwork(EvacSim state, int gridHeight, int gridWidth, int roadLength) {

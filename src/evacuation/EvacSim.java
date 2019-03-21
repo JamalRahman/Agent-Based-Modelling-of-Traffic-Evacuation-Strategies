@@ -56,7 +56,9 @@ public class EvacSim extends SimState {
         super.start();      // Cleans threads and resets the scheduler
 
         //TODO: Re-read how the Continuous field works
-        environment = new Continuous2D(8.0,GRIDWIDTH*ROADLENGTH,GRIDHEIGHT*ROADLENGTH);
+        //TODO: Center road-network in middle of display with whitespace border by tinkering with node locations and 'environment' total size.
+
+        environment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
         network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
 
         // Create agents
