@@ -2,6 +2,7 @@ package evacuation.system;
 
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.SimplePortrayal2D;
+import sim.util.Double2D;
 
 import java.awt.*;
 
@@ -10,7 +11,8 @@ public class Junction extends SimplePortrayal2D{
 
     private boolean startFlag = false;
     private boolean goalFlag = false;
-
+    private Double2D location;
+    //TODO: Make Junction.location final?
 
 
     public boolean isExit() {
@@ -59,5 +61,13 @@ public class Junction extends SimplePortrayal2D{
 
     public void setGoalFlag(boolean goalFlag) {
         this.goalFlag = goalFlag;
+    }
+
+    public Double2D getLocation() {
+        return location;
+    }
+
+    public void setLocation(Double2D location) {
+        this.location = location;
     }
 }

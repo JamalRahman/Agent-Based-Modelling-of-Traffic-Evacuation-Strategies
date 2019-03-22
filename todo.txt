@@ -1,18 +1,17 @@
 Instantiate Cars
-    Get list of non-exit junctions
-        Set Car's location to random node
-    Get list of exit junctions
-        Set Car's goal to random node
     Give Car a route via A* search
 
-Constrain physical world to network locations
+Constrain physical movement to network locations
+    Research how GeoMason handles such constraints
 
 Implement driving algorithm
 
-Implement greediness
-
 Implement throttling
+
+Implement greediness
 
 Implement scheduling & routing
 
+Attempt to use GeoMason to read GIS data
+    Handwrite a class which can convert GeoMason networks into plain MASON networks of junctions/roads
 run some experimizzles

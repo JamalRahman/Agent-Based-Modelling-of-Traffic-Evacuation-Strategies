@@ -29,8 +29,11 @@ public class NetworkFactory {
                     newJunc.setExit(true);
                 }
                 junctions[i][j] = newJunc;
-                state.environment.setObjectLocation(newJunc,new Double2D(i*roadLength,j*roadLength));
 
+                Double2D location = new Double2D(i*roadLength,j*roadLength);
+                newJunc.setLocation(location);
+
+                state.roadEnvironment.setObjectLocation(newJunc,location);
                 network.addNode(newJunc);
             }
         }

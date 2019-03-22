@@ -1,21 +1,18 @@
 package evacuation;
 
-import ec.util.MersenneTwisterFast;
 import evacuation.agents.Car;
 import evacuation.system.Junction;
-import evacuation.system.Road;
 import evacuation.system.utility.NetworkFactory;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.field.network.Network;
 import sim.util.Bag;
-import sim.util.Double2D;
 
 /**
  * evacuation.EvacSim is the core simulation. It extends SimState which provides fundamental simulation architecture
  * in the Mason framework - such as threading, scheduling, and executing events, as well as simulation serialisation.
  *
- * This class sets up the environment and simulation parameters, and runs the simulation itself
+ * This class sets up the roadEnvironment and simulation parameters, and runs the simulation itself
  *
  */
 public class EvacSim extends SimState {
@@ -25,7 +22,8 @@ public class EvacSim extends SimState {
     public NetworkFactory networkFactory = new NetworkFactory();
 
     public Network network;
-    public Continuous2D environment;
+    public Continuous2D roadEnvironment;
+    public Continuous2D cars;
 
     // Simulation parameter fields
     public int populationSize = 1;
@@ -56,9 +54,10 @@ public class EvacSim extends SimState {
         super.start();      // Cleans threads and resets the scheduler
 
         //TODO: Re-read how the Continuous field works
-        //TODO: Center road-network in middle of display with whitespace border by tinkering with node locations and 'environment' total size.
+        //TODO: Center road-network in middle of display with whitespace border by tinkering with node locations and 'roadEnvironment' total size.
 
-        environment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
+        roadEnvironment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
+        cars = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
         network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
 
         // Create agents
@@ -84,6 +83,8 @@ public class EvacSim extends SimState {
             startJunction.setStartFlag(true);
 
             // Use A* to find a route for the agent from start to goal
+
+            car.calculateRoute();
         }
     }
 
