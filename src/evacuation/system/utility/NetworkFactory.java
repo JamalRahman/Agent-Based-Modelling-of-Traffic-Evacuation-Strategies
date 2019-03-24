@@ -24,15 +24,16 @@ public class NetworkFactory {
 
         for(int i=0;i<gridWidth;i++){
             for (int j = 0; j < gridHeight; j++) {
-                Junction newJunc = new Junction();
-                if(i==gridWidth-1 || j==gridHeight-1 || i==0 || j==0){
-                    newJunc.setExit(true);
-                }
-                junctions[i][j] = newJunc;
-
                 Double2D location = new Double2D(i*roadLength,j*roadLength);
-                newJunc.setLocation(location);
+                boolean isExit = false;
 
+                if(i==gridWidth-1 || j==gridHeight-1 || i==0 || j==0){
+                    isExit = true;
+                }
+
+                Junction newJunc = new Junction(location,isExit);
+
+                junctions[i][j] = newJunc;
                 state.roadEnvironment.setObjectLocation(newJunc,location);
                 network.addNode(newJunc);
             }

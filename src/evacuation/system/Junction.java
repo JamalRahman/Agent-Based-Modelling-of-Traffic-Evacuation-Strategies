@@ -11,7 +11,7 @@ public class Junction extends SimplePortrayal2D{
 
     private boolean startFlag = false;
     private boolean goalFlag = false;
-    private Double2D location;
+    private final Double2D location;
     //TODO: Make Junction.location final?
 
 
@@ -23,11 +23,12 @@ public class Junction extends SimplePortrayal2D{
         isExit = exit;
     }
 
-    public Junction(){
-        isExit = false;
+    public Junction(Double2D location){
+        this(location,false);
     }
 
-    public Junction(boolean isExit){
+    public Junction(Double2D location, boolean isExit){
+        this.location = location;
         this.isExit = isExit;
     }
 
