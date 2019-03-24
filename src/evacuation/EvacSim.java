@@ -77,13 +77,7 @@ public class EvacSim extends SimState {
             car.setStartJunc(startJunction);
             car.setGoalJunc(goalJunction);
 
-            // Used for debugging (painting nodes)
-
-            goalJunction.setGoalFlag(true);
-            startJunction.setStartFlag(true);
-
             // Use A* to find a route for the agent from start to goal
-
             car.calculateRoute();
         }
     }

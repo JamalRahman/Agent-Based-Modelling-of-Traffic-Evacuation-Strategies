@@ -4,6 +4,7 @@ import evacuation.system.Junction;
 import sim.field.network.Network;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 

@@ -2,6 +2,7 @@ package evacuation.agents;
 
 import evacuation.EvacSim;
 import evacuation.system.*;
+import evacuation.system.utility.AStarSearch;
 import sim.engine.*;
 import sim.util.Double2D;
 
@@ -61,5 +62,6 @@ public class Car implements Steppable {
     }
 
     public void calculateRoute() {
+
     }
 }
