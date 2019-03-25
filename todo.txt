@@ -4,6 +4,11 @@ Instantiate Cars
 Constrain physical movement to network locations
     Research how GeoMason handles such constraints
 
+
+
+
+
+
 Implement driving algorithm
 
 Implement throttling
