@@ -7,7 +7,7 @@ import sim.util.Double2D;
 import java.awt.*;
 
 public class Junction extends SimplePortrayal2D{
-    private boolean isExit;
+    private final boolean isExit;
     private final Double2D location;
 
 
@@ -28,10 +28,6 @@ public class Junction extends SimplePortrayal2D{
     public boolean isExit() {
         return isExit;
     }
-    public void setExit(boolean exit) {
-        isExit = exit;
-    }
-
 
     public Double2D getLocation() {
         return location;
