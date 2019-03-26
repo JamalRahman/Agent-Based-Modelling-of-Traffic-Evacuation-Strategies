@@ -2,11 +2,14 @@ package evacuation;
 
 import evacuation.agents.Car;
 import evacuation.system.Junction;
+import evacuation.system.utility.AStarSearch;
 import evacuation.system.utility.NetworkFactory;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.field.network.Network;
 import sim.util.Bag;
+
+import java.util.ArrayList;
 
 /**
  * evacuation.EvacSim is the core simulation. It extends SimState which provides fundamental simulation architecture
@@ -20,10 +23,12 @@ public class EvacSim extends SimState {
     // System Architecture fields
     private static final long serialNumber = 1;
     public NetworkFactory networkFactory = new NetworkFactory();
+    public AStarSearch aStarSearch;
 
     public Network network;
     public Continuous2D roadEnvironment;
     public Continuous2D cars;
+
 
     // Simulation parameter fields
     public int populationSize = 1;
@@ -59,6 +64,7 @@ public class EvacSim extends SimState {
         roadEnvironment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
         cars = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
         network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
+        aStarSearch = new AStarSearch(network);
 
         // Create agents
         for (int i = 0; i < populationSize; i++) {
@@ -78,7 +84,12 @@ public class EvacSim extends SimState {
             car.setGoalJunc(goalJunction);
 
             // Use A* to find a route for the agent from start to goal
-            car.calculateRoute();
+            ArrayList<Junction> route = aStarSearch.getRoute(startJunction,goalJunction);
+            for(Junction junc : route){
+                junc.setFlag(true);
+            }
+            startJunction.setStart(true);
+            goalJunction.setGoal(true);
         }
     }
 

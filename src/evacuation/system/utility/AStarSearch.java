@@ -26,34 +26,45 @@ public class AStarSearch {
     public ArrayList<Junction> getRoute(Junction startJunction, Junction goalJunction){
 
         HashSet<AStarNode> closedSet = new HashSet<>();
-        PriorityQueue<AStarNode> openList = new PriorityQueue<>();
+        PriorityQueue<AStarNode> openList = new PriorityQueue<>(11, new Comparator<AStarNode>() {
+            @Override
+            public int compare(AStarNode node1, AStarNode node2) {
+                if(node1.getF()>node2.getF()){
+                    return 1;
+                }
+                else if(node1.getF()<node2.getF()){
+                    return -1;
+                }
+
+                else{
+                    return 0;
+                }
+
+            }
+        });
 
         AStarNode startNode = nodes.get(startJunction);
         AStarNode goalNode = nodes.get(goalJunction);
         AStarNode currentNode;
 
         openList.add(startNode);
-
         while(!openList.isEmpty()){
+//            System.out.println("Next main loop. Openlist size: "+openList.size());
             currentNode = openList.remove();
 
             if(currentNode.equals(goalNode)){
+                // Goal is found, return the list by traversing the list backwards via each node's parent node
                 ArrayList<Junction> route = new ArrayList<>();
                 while(!currentNode.equals(startNode)){
                     route.add(currentNode.getJunction());
                     currentNode = currentNode.getRouteParent();
                 }
-                
+                return route;
             }
             
             closedSet.add(currentNode);
-            
-            //TODO: extract list of children out of the list of edges that the Network class can return
-            //TODO: easy way to extract distance from two adjacent nodes via their connecting road
-            //TODO: Improve programming standards here. DRY principles. "nodes.get()" spam. This algorithm is disgusting lol
 
             Set<AStarNode> children = getChildren(currentNode);
-
             for(AStarNode child : children){
                 if(closedSet.contains(child)){
                     continue;
@@ -61,7 +72,7 @@ public class AStarSearch {
 
                 if(!openList.contains(child)){
                     openList.add(child);
-                    double g = currentNode.getG() + trueDistance(currentNode, child);
+                    double g = currentNode.getG() + cost(currentNode, child);
                     double h = manhattanDistance(child,goalNode);
                     double f = g+h;
 
@@ -70,7 +81,7 @@ public class AStarSearch {
                     child.setF(f);
                 }
                 else{
-                    double tempG = currentNode.getG()+trueDistance(currentNode,child);
+                    double tempG = currentNode.getG()+ cost(currentNode,child);
 
                     if(tempG < child.getG()){
                         double h = manhattanDistance(child,goalNode);
@@ -101,15 +112,15 @@ public class AStarSearch {
             Edge tempEdge = (Edge)edge;
             children.add(nodes.get(tempEdge.getTo()));
         }
+        children.remove(node);
         return children;
     }
 
     private double manhattanDistance(AStarNode first, AStarNode second){
-
         return (Math.abs(first.getJunction().getLocation().getX()-second.getJunction().getLocation().getX())+Math.abs(first.getJunction().getLocation().getY()-second.getJunction().getLocation().getY()));
     }
 
-    private double trueDistance(AStarNode first, AStarNode second){
+    private double cost(AStarNode first, AStarNode second){
 
         Road road = (Road) network.getEdge(first.getJunction(),second.getJunction()).getInfo();
         return road.getLength();
