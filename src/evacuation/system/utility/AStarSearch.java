@@ -1,12 +1,15 @@
 package evacuation.system.utility;
 
 import evacuation.system.Junction;
+import evacuation.system.Road;
+import sim.field.network.Edge;
 import sim.field.network.Network;
+import sim.util.Bag;
 
 import java.util.*;
 
 public class AStarSearch {
-    private HashMap<Junction,AStarNode> nodes;
+    private HashMap<Junction,AStarNode> nodes = new HashMap<>();
     private Network network;
 
     public AStarSearch(Network network){
@@ -14,7 +17,7 @@ public class AStarSearch {
 
         for ( Object junction:
                 network.getAllNodes()) {
-            nodes.put((Junction) junction,new AStarNode());
+            nodes.put((Junction) junction,new AStarNode((Junction)junction));
         }
 
     }
@@ -22,57 +25,56 @@ public class AStarSearch {
     //TODO: Refactor the algorithm to work within a AStarNode context rather than using half Junctions and half AStarNode objects. gross
     public ArrayList<Junction> getRoute(Junction startJunction, Junction goalJunction){
 
-        HashSet<Junction> closedSet = new HashSet<>();
-        PriorityQueue<Junction> openList = new PriorityQueue<>();
+        HashSet<AStarNode> closedSet = new HashSet<>();
+        PriorityQueue<AStarNode> openList = new PriorityQueue<>();
 
-        Junction current;
+        AStarNode startNode = nodes.get(startJunction);
+        AStarNode goalNode = nodes.get(goalJunction);
+        AStarNode currentNode;
 
-        openList.add(startJunction);
+        openList.add(startNode);
 
         while(!openList.isEmpty()){
-            current = openList.remove();
-            AStarNode currentNode = nodes.get(current);
-            
-            if(current.equals(goalJunction)){
+            currentNode = openList.remove();
+
+            if(currentNode.equals(goalNode)){
                 // We did it
                 // Return path by following parent pointers starting with goal
 
             }
             
-            closedSet.add(current);
+            closedSet.add(currentNode);
             
             //TODO: extract list of children out of the list of edges that the Network class can return
             //TODO: easy way to extract distance from two adjacent nodes via their connecting road
             //TODO: Improve programming standards here. DRY principles. "nodes.get()" spam. This algorithm is disgusting lol
 
-            List<Junction> children;
+            Set<AStarNode> children = getChildren(currentNode);
 
-            for(Junction child : children){
+            for(AStarNode child : children){
                 if(closedSet.contains(child)){
                     continue;
                 }
 
-                AStarNode childNode = nodes.get(child);
-
                 if(!openList.contains(child)){
                     openList.add(child);
-                    double g = currentNode.getG() + edgeDistanceBetweenCurrentAndChild;
-                    double h = manhattanDistance(child,goalJunction);
+                    double g = currentNode.getG() + trueDistance(currentNode, child);
+                    double h = manhattanDistance(child,goalNode);
                     double f = g+h;
 
-                    childNode.setParent(currentNode);
-                    childNode.setG(g);
-                    childNode.setF(f);
+                    child.setRouteParent(currentNode);
+                    child.setG(g);
+                    child.setF(f);
                 }
                 else{
-                    double tempG = nodes.get(current).getG()+edgeDistanceBetweenCurrentAndChild;
+                    double tempG = currentNode.getG()+trueDistance(currentNode,child);
 
-                    if(tempG < childNode.getG()){
-                        double h = manhattanDistance(child,goalJunction);
+                    if(tempG < child.getG()){
+                        double h = manhattanDistance(child,goalNode);
 
-                        childNode.setParent(currentNode);
-                        childNode.setG(tempG);
-                        childNode.setF(tempG+h);
+                        child.setRouteParent(currentNode);
+                        child.setG(tempG);
+                        child.setF(tempG+h);
                     }
                 }
                 // If child is in closed, continue
@@ -88,8 +90,26 @@ public class AStarSearch {
         return null;
     }
 
-    private double manhattanDistance(Junction first, Junction second){
-        return (Math.abs(first.getLocation().getX()-second.getLocation().getX())+Math.abs(first.getLocation().getY()-second.getLocation().getY()));
+    private Set<AStarNode> getChildren(AStarNode node) {
+        Junction tempJunc = node.getJunction();
+        Bag edges = network.getEdges(tempJunc,null);
+        HashSet<AStarNode> children = new HashSet<>();
+        for(Object edge: edges){
+            Edge tempEdge = (Edge)edge;
+            children.add(nodes.get(tempEdge.getTo()));
+        }
+        return children;
+    }
+
+    private double manhattanDistance(AStarNode first, AStarNode second){
+
+        return (Math.abs(first.getJunction().getLocation().getX()-second.getJunction().getLocation().getX())+Math.abs(first.getJunction().getLocation().getY()-second.getJunction().getLocation().getY()));
+    }
+
+    private double trueDistance(AStarNode first, AStarNode second){
+
+        Road road = (Road) network.getEdge(first.getJunction(),second.getJunction()).getInfo();
+        return road.getLength();
     }
 
 }

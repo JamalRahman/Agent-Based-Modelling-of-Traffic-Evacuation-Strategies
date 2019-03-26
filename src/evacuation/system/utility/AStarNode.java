@@ -3,9 +3,14 @@ package evacuation.system.utility;
 import evacuation.system.Junction;
 
 public class AStarNode {
-    private AStarNode parent;
+    private AStarNode routeParent;
     private double f;
     private double g;
+    private final Junction junction;
+
+    public AStarNode(Junction junction) {
+        this.junction = junction;
+    }
 
 
     public double getG() {
@@ -24,11 +29,15 @@ public class AStarNode {
         this.f = f;
     }
 
-    public AStarNode getParent() {
-        return parent;
+    public AStarNode getRouteParent() {
+        return routeParent;
     }
 
-    public void setParent(AStarNode parent) {
-        this.parent = parent;
+    public void setRouteParent(AStarNode routeParent) {
+        this.routeParent = routeParent;
+    }
+
+    public Junction getJunction() {
+        return junction;
     }
 }
