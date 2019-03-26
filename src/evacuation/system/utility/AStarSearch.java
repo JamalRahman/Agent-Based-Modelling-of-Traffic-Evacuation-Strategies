@@ -48,12 +48,12 @@ public class AStarSearch {
         AStarNode currentNode;
 
         openList.add(startNode);
+        startNode.setG(0);
         while(!openList.isEmpty()){
-//            System.out.println("Next main loop. Openlist size: "+openList.size());
             currentNode = openList.remove();
 
             if(currentNode.equals(goalNode)){
-                // Goal is found, return the list by traversing the list backwards via each node's parent node
+                // Goal is found, return the route by traversing the list backwards via each node's parent node
                 ArrayList<Junction> route = new ArrayList<>();
                 while(!currentNode.equals(startNode)){
                     route.add(currentNode.getJunction());
@@ -66,38 +66,29 @@ public class AStarSearch {
 
             Set<AStarNode> children = getChildren(currentNode);
             for(AStarNode child : children){
+
                 if(closedSet.contains(child)){
                     continue;
                 }
 
+                double temporaryG = currentNode.getG() + cost(currentNode, child);
+
                 if(!openList.contains(child)){
-                    openList.add(child);
-                    double g = currentNode.getG() + cost(currentNode, child);
-                    double h = manhattanDistance(child,goalNode);
-                    double f = g+h;
-
+                    double f = temporaryG+heuristic(child,goalNode);
                     child.setRouteParent(currentNode);
-                    child.setG(g);
+                    child.setG(temporaryG);
                     child.setF(f);
+                    openList.add(child);
                 }
-                else{
-                    double tempG = currentNode.getG()+ cost(currentNode,child);
+                else if (temporaryG < child.getG()) {
+                    child.setRouteParent(currentNode);
+                    child.setG(temporaryG);
+                    child.setF(temporaryG + heuristic(child, goalNode));
+                    // PriorityQueue will not resort, remove and re-add the child with altered "f" value
 
-                    if(tempG < child.getG()){
-                        double h = manhattanDistance(child,goalNode);
-
-                        child.setRouteParent(currentNode);
-                        child.setG(tempG);
-                        child.setF(tempG+h);
-                    }
+                    openList.remove(child);
+                    openList.add(child);
                 }
-                // If child is in closed, continue
-                // If it isn't in the open, add to open. make the current square be the child's  parent
-                        // Record the child's g, h and f values (its g will be current.g plus distance(child, current)
-                // If the child is already open, we want to see if the path via current is shorter than the path it already has stored via its current parent
-                    // if  current.g plus distance(child, g) is less than child.g then the 'current' node is a shortcut to child
-                        // Hence, change child's parent to be current. recalculate the child's g (which is current.g plus distance(child, g)
-                        // recalculate child's f using the new child's g which is via current
             }
 
         }
@@ -116,8 +107,11 @@ public class AStarSearch {
         return children;
     }
 
-    private double manhattanDistance(AStarNode first, AStarNode second){
-        return (Math.abs(first.getJunction().getLocation().getX()-second.getJunction().getLocation().getX())+Math.abs(first.getJunction().getLocation().getY()-second.getJunction().getLocation().getY()));
+    private double heuristic(AStarNode first, AStarNode second){
+        double dx = first.getJunction().getLocation().getX() - second.getJunction().getLocation().getX();
+        double dy = first.getJunction().getLocation().getY() - second.getJunction().getLocation().getY();
+        double distance = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+        return distance;
     }
 
     private double cost(AStarNode first, AStarNode second){
