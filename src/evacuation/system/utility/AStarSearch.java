@@ -38,9 +38,12 @@ public class AStarSearch {
             currentNode = openList.remove();
 
             if(currentNode.equals(goalNode)){
-                // We did it
-                // Return path by following parent pointers starting with goal
-
+                ArrayList<Junction> route = new ArrayList<>();
+                while(!currentNode.equals(startNode)){
+                    route.add(currentNode.getJunction());
+                    currentNode = currentNode.getRouteParent();
+                }
+                
             }
             
             closedSet.add(currentNode);
