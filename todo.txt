@@ -1,13 +1,5 @@
-Instantiate Cars
-    Give Car a route via A* search
-
 Constrain physical movement to network locations
     Research how GeoMason handles such constraints
-
-
-
-
-
 
 Implement driving algorithm
 

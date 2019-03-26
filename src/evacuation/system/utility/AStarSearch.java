@@ -31,16 +31,19 @@ public class AStarSearch {
 
         while(!openList.isEmpty()){
             current = openList.remove();
-
+            AStarNode currentNode = nodes.get(current);
+            
             if(current.equals(goalJunction)){
                 // We did it
                 // Return path by following parent pointers starting with goal
-            }
-            closedSet.add(current);
 
+            }
+            
+            closedSet.add(current);
+            
             //TODO: extract list of children out of the list of edges that the Network class can return
             //TODO: easy way to extract distance from two adjacent nodes via their connecting road
-            //TODO: Improve programming standards here. DRY principles. "nodes.get()" spam.
+            //TODO: Improve programming standards here. DRY principles. "nodes.get()" spam. This algorithm is disgusting lol
 
             List<Junction> children;
 
@@ -48,24 +51,28 @@ public class AStarSearch {
                 if(closedSet.contains(child)){
                     continue;
                 }
+
+                AStarNode childNode = nodes.get(child);
+
                 if(!openList.contains(child)){
                     openList.add(child);
-                    double g = nodes.get(current).getG() + edgeDistanceBetweenCurrentAndChild;
+                    double g = currentNode.getG() + edgeDistanceBetweenCurrentAndChild;
                     double h = manhattanDistance(child,goalJunction);
                     double f = g+h;
 
-                    nodes.get(child).setParent(nodes.get(current));
-                    nodes.get(child).setG(g);
-                    nodes.get(child).setF(f);
+                    childNode.setParent(currentNode);
+                    childNode.setG(g);
+                    childNode.setF(f);
                 }
                 else{
                     double tempG = nodes.get(current).getG()+edgeDistanceBetweenCurrentAndChild;
-                    if(tempG < nodes.get(child).getG()){
+
+                    if(tempG < childNode.getG()){
                         double h = manhattanDistance(child,goalJunction);
 
-                        nodes.get(child).setParent(nodes.get(current));
-                        nodes.get(child).setG(tempG);
-                        nodes.get(child).setF(tempG+h);
+                        childNode.setParent(currentNode);
+                        childNode.setG(tempG);
+                        childNode.setF(tempG+h);
                     }
                 }
                 // If child is in closed, continue
