@@ -31,15 +31,16 @@ public class EvacSim extends SimState {
 
 
     // Simulation parameter fields
-    public int populationSize = 1;
+    public int populationSize = 100;
+
     public int throttleThreshold;
     public int agentGreedinessCoefficient;
     public boolean throttlingEnabled;
     public boolean schedulingEnabled;
 
-    private static final int GRIDHEIGHT = 5;
-    private static final int GRIDWIDTH = 5;
-    private static final int ROADLENGTH = 10;
+    private static final int GRIDHEIGHT = 20;
+    private static final int GRIDWIDTH = 20;
+    private static final int ROADLENGTH = 200;
 
 
     /**
@@ -62,8 +63,8 @@ public class EvacSim extends SimState {
         //TODO: Center road-network in middle of display with whitespace border by tinkering with node locations and 'roadEnvironment' total size.
 
         roadEnvironment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        cars = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
         network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
+        cars = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
         aStarSearch = new AStarSearch(network);
 
         // Create agents
@@ -80,16 +81,16 @@ public class EvacSim extends SimState {
 
             Junction goalJunction = selectGoalJunction(allJunctions);
 
-            car.setStartJunc(startJunction);
-            car.setGoalJunc(goalJunction);
+            car.setSpawnJunction(startJunction);
+            car.setGoalJunction(goalJunction);
+            car.setLocation(roadEnvironment.getObjectLocationAsDouble2D(startJunction));
+            cars.setObjectLocation(car,roadEnvironment.getObjectLocationAsDouble2D(startJunction));
 
             // Use A* to find a route for the agent from start to goal
             ArrayList<Junction> route = aStarSearch.getRoute(startJunction,goalJunction);
-            for(Junction junc : route){
-                junc.setFlag(true);
-            }
-            startJunction.setStart(true);
-            goalJunction.setGoal(true);
+
+            schedule.scheduleRepeating(car);
+
         }
     }
 

@@ -22,7 +22,6 @@ public class AStarSearch {
 
     }
 
-    //TODO: Refactor the algorithm to work within a AStarNode context rather than using half Junctions and half AStarNode objects. gross
     public ArrayList<Junction> getRoute(Junction startJunction, Junction goalJunction){
 
         HashSet<AStarNode> closedSet = new HashSet<>();

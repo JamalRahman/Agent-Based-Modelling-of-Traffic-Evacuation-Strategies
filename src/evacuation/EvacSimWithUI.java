@@ -19,6 +19,7 @@ public class EvacSimWithUI extends GUIState {
 
     NetworkPortrayal2D roadPortrayal = new NetworkPortrayal2D();
     ContinuousPortrayal2D junctionPortrayal = new ContinuousPortrayal2D();
+    ContinuousPortrayal2D carPortrayal = new ContinuousPortrayal2D();
 
     public static void main(String[] args) {
         new EvacSimWithUI().createController();
@@ -39,13 +40,12 @@ public class EvacSimWithUI extends GUIState {
 
     private void setupPortrayals() {
 
-        //TODO: Learn what is going on with portrayals and these fields
-
         roadPortrayal.setField(new SpatialNetwork2D( ((EvacSim)state).roadEnvironment,((EvacSim)state).network));
         SimpleEdgePortrayal2D p = new SimpleEdgePortrayal2D(Color.lightGray, null);
         p.setShape(SimpleEdgePortrayal2D.SHAPE_THIN_LINE);
         roadPortrayal.setPortrayalForAll(p);
 
+        carPortrayal.setField(((EvacSim)state).cars);
         junctionPortrayal.setField(((EvacSim)state).roadEnvironment);
 
         display.reset();
@@ -65,5 +65,6 @@ public class EvacSimWithUI extends GUIState {
         displayFrame.setVisible(true);
         display.attach(roadPortrayal,"Roads");
         display.attach(junctionPortrayal, "Junctions");
+        display.attach(carPortrayal,"Cars");
     }
 }

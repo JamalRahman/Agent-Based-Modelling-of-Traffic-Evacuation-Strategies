@@ -1,6 +1,15 @@
 Constrain physical movement to network locations
     Research how GeoMason handles such constraints
 
+Refactor agent setup to a method in Car.java
+    Goal assignment(?)
+    A* Search
+
+Refactor A* to return list of edges?
+
+
+
+
 Implement driving algorithm
 
 Implement throttling
