@@ -61,10 +61,10 @@ public class EvacSimWithUI extends GUIState {
 
         displayFrame = display.createFrame();
         displayFrame.setTitle("EvacSim display");
-        controller.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
+        controller.registerFrame(displayFrame);
         displayFrame.setVisible(true);
         display.attach(roadPortrayal,"Roads");
-        display.attach(junctionPortrayal, "Junctions");
+        //display.attach(junctionPortrayal, "Junctions");
         display.attach(carPortrayal,"Cars");
     }
 }

@@ -6,6 +6,7 @@ import evacuation.system.utility.AStarSearch;
 import evacuation.system.utility.NetworkFactory;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
+import sim.field.network.Edge;
 import sim.field.network.Network;
 import sim.util.Bag;
 
@@ -25,22 +26,18 @@ public class EvacSim extends SimState {
     public NetworkFactory networkFactory = new NetworkFactory();
     public AStarSearch aStarSearch;
 
-    public Network network;
-    public Continuous2D roadEnvironment;
-    public Continuous2D cars;
+    public Network network;                 // Field to store networked aspects of the roads. e.g - which junctions
+                                                // connect to which via which roads
+    public Continuous2D roadEnvironment;    // Field to store spatial aspects of the roads. e.g - where junctions are
+    public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
 
 
     // Simulation parameter fields
     public int populationSize = 100;
 
-    public int throttleThreshold;
-    public int agentGreedinessCoefficient;
-    public boolean throttlingEnabled;
-    public boolean schedulingEnabled;
-
-    private static final int GRIDHEIGHT = 20;
-    private static final int GRIDWIDTH = 20;
-    private static final int ROADLENGTH = 200;
+    private static final int GRIDHEIGHT = 10;
+    private static final int GRIDWIDTH = 10;
+    private static final int ROADLENGTH = 100;
 
 
     /**
@@ -58,7 +55,6 @@ public class EvacSim extends SimState {
      */
     public void start(){
         super.start();      // Cleans threads and resets the scheduler
-
         //TODO: Re-read how the Continuous field works
         //TODO: Center road-network in middle of display with whitespace border by tinkering with node locations and 'roadEnvironment' total size.
 
@@ -69,9 +65,6 @@ public class EvacSim extends SimState {
 
         // Create agents
         for (int i = 0; i < populationSize; i++) {
-
-            Car car = new Car();
-
             Bag allJunctions = network.getAllNodes();
 
             Junction startJunction;
@@ -81,14 +74,11 @@ public class EvacSim extends SimState {
 
             Junction goalJunction = selectGoalJunction(allJunctions);
 
-            car.setSpawnJunction(startJunction);
-            car.setGoalJunction(goalJunction);
-            car.setLocation(roadEnvironment.getObjectLocationAsDouble2D(startJunction));
-            cars.setObjectLocation(car,roadEnvironment.getObjectLocationAsDouble2D(startJunction));
+            ArrayList<Edge> edgeRoute = aStarSearch.getEdgeRoute(startJunction,goalJunction);
 
-            // Use A* to find a route for the agent from start to goal
-            ArrayList<Junction> route = aStarSearch.getRoute(startJunction,goalJunction);
-
+            Car car = new Car(this,startJunction,goalJunction);
+            car.updateLocation(roadEnvironment.getObjectLocationAsDouble2D(startJunction));
+            car.init();
             schedule.scheduleRepeating(car);
 
         }

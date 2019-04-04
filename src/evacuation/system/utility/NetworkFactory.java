@@ -41,14 +41,14 @@ public class NetworkFactory {
         for(int i=0;i<gridWidth;i++){
             for (int j = 0; j < gridHeight; j++) {
                 if (i < gridWidth-1) {
-                    Road road = new Road(roadLength, 13);
+                    Road road = new Road(roadLength, 13, toJunction);
                     Edge edge1 = new Edge(junctions[i][j], junctions[i + 1][j], road);
                     Edge edge1Reverse = new Edge(junctions[i + 1][j], junctions[i][j], road);
                     network.addEdge(edge1);
                     network.addEdge(edge1Reverse);
                 }
                 if (j < gridHeight-1) {
-                    Road road = new Road(roadLength, 13);
+                    Road road = new Road(roadLength, 13, toJunction);
                     Edge edge2 = new Edge(junctions[i][j], junctions[i][j + 1], road);
                     Edge edge2Reverse = new Edge(junctions[i][j + 1], junctions[i][j], road);
                     network.addEdge(edge2);

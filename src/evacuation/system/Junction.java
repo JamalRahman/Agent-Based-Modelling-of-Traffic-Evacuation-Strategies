@@ -10,8 +10,6 @@ public class Junction extends SimplePortrayal2D{
     private final boolean isExit;
 
     private final Double2D location;
-    private boolean isGoal;
-
 
     public Junction(Double2D location){
         this(location,false);
@@ -24,12 +22,8 @@ public class Junction extends SimplePortrayal2D{
 
     public final void draw(Object object, Graphics2D graphics, DrawInfo2D info){
         graphics.setColor(Color.BLACK);
-        if(isGoal){
-            //graphics.setColor(Color.green);
-        }
         graphics.fillOval((int)(info.draw.x-6/2),(int)(info.draw.y-6/2),(int)(6),(int)(6));
     }
-
 
     public boolean isExit() {
         return isExit;

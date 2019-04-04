@@ -1,8 +1,11 @@
 Constrain physical movement to network locations
-    Research how GeoMason handles such constraints
+    Get real-world coordinate for a given index along a given road
+    Car's track their edges and roads properly
+    Handle residual movement
+        Also calculating progress dependent on environment status
 
 REFACTOR HACKY CODE:
-    Beautify movement methods, compartmentalise functionality.
+    Beautify movement methods, methodise code.
 
 Refactor agent setup from EvacSim to Car
     Goal assignment(?)
@@ -21,3 +24,5 @@ Implement scheduling & routing
 Attempt to use GeoMason to read GIS data
     Handwrite a class which can convert GeoMason networks into plain MASON networks of junctions/roads
 run some experimizzles
+
+Comment everything you dummy
