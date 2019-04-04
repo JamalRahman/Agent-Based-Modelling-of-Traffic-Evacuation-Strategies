@@ -132,7 +132,8 @@ public class AStarSearch {
                     route.add(edge);
                     currentNode = nextNode;
                 }while(!currentNode.equals(startNode));
-
+                //TODO: Could just A* search from goal to start to avoid reversing list later
+                Collections.reverse(route);
                 return route;
             }
 

@@ -28,6 +28,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private Junction goalJunction;
     private final Junction spawnJunction;
     private ArrayList<Edge> route = new ArrayList<>();
+    private int pathIndex = 0;
 
     private Edge currentEdge;           // Current edge (wrapping the current road)
     private Road currentRoad;           // Current road
@@ -44,10 +45,16 @@ public class Car extends SimplePortrayal2D implements Steppable {
     }
 
     public void init(){
-        route = simulation.aStarSearch.getEdgeRoute(spawnJunction,goalJunction);
-
+        updateLocation(spawnJunction.getLocation());
+        calculatePath();
+        currentEdge = route.get(pathIndex);
+        currentRoad = (Road) currentEdge.getInfo();
     }
 
+    private void calculatePath() {
+        pathIndex = 0;
+        route = simulation.aStarSearch.getEdgeRoute(spawnJunction,goalJunction);
+    }
 
     /**
      * The method that executes a Car's logic and behaviour when called by the simulation's scheduler.
@@ -88,7 +95,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private double calculateMovement() {
         return 3;
     }
-
 
 
     // Setters and getters

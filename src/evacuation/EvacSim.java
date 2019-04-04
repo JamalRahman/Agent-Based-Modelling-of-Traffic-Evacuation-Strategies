@@ -33,11 +33,11 @@ public class EvacSim extends SimState {
 
 
     // Simulation parameter fields
-    public int populationSize = 100;
+    public int populationSize = 10;
 
     private static final int GRIDHEIGHT = 10;
     private static final int GRIDWIDTH = 10;
-    private static final int ROADLENGTH = 100;
+    private static final int ROADLENGTH = 30;
 
 
     /**
@@ -74,10 +74,7 @@ public class EvacSim extends SimState {
 
             Junction goalJunction = selectGoalJunction(allJunctions);
 
-            ArrayList<Edge> edgeRoute = aStarSearch.getEdgeRoute(startJunction,goalJunction);
-
             Car car = new Car(this,startJunction,goalJunction);
-            car.updateLocation(roadEnvironment.getObjectLocationAsDouble2D(startJunction));
             car.init();
             schedule.scheduleRepeating(car);
 
