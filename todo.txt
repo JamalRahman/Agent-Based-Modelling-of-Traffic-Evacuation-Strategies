@@ -5,6 +5,9 @@ In this scenario that buffer would imply the car ACTUALLY DOESNT traverse across
 backspill the agent back to it's current edge.
 Need to implement a look-forward clause in calculateMovement which accounts for this
 
+Deciding to do the above by checking distance to next vehicle at every step and factoring this into necessary
+calculations
+
 Implement Test Network
 
 Implement greediness

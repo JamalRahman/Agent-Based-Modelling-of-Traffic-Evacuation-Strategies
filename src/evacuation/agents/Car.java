@@ -84,7 +84,8 @@ public class Car extends SimplePortrayal2D implements Steppable {
             return;
         }
 
-        // distanceMoved factors the Agent's perception of the world
+        calculateDistanceToNextNeighbour();
+
         distanceToMove = calculateMovement();
         currentIndex +=distanceToMove;
 
@@ -100,6 +101,15 @@ public class Car extends SimplePortrayal2D implements Steppable {
             Double2D newLocation = currentRoad.getCoordinate(currentIndex);
             updateLocation(newLocation);
         }
+    }
+
+    private void calculateDistanceToNextNeighbour() {
+        // Check if next neighbour exists on current edge
+        // Recursively check if next neighbour exists on next edge
+            // Break if we have checked as far as 'speedLimit' as we never will go past that in one step anyway
+            // So we'll check further next time
+
+
     }
 
     private void nextEdge(double residualMovement) {
