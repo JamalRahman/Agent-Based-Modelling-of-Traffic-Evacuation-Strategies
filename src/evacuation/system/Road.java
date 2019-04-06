@@ -1,6 +1,9 @@
 package evacuation.system;
 
+import evacuation.agents.Car;
 import sim.util.Double2D;
+
+import java.util.ArrayList;
 
 /**
  * MASON uses Network and Edge objects. Edge objects are exclusively topological, and are wrappers of what MASON
@@ -21,6 +24,7 @@ public class Road  implements java.io.Serializable{
 
     private final double normalisedVectorX;
     private final double normalisedVectorY;
+    private final ArrayList<Car> traffic = new ArrayList<>();
 
     public Road(double length, Junction fromJunction, Junction toJunction){
         this.length = length;
@@ -52,5 +56,9 @@ public class Road  implements java.io.Serializable{
 
     public double getLength() {
         return length;
+    }
+
+    public ArrayList<Car> getTraffic(){
+        return traffic;
     }
 }

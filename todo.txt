@@ -1,25 +1,20 @@
-Constrain physical movement to network locations
-    Get real-world coordinate for a given index along a given road
-    Car's track their edges and roads properly
-    Handle residual movement
-        Also calculating progress dependent on environment status
+Fix driving algorithm
+If the car calculates movement and traverses across to a new edge, if there is a car immediately on the new edge which
+is only a couple of meters away the agent should leave a buffer between itself and its neighbour.
+In this scenario that buffer would imply the car ACTUALLY DOESNT traverse across to the new edge, as the buffer would
+backspill the agent back to it's current edge.
+Need to implement a look-forward clause in calculateMovement which accounts for this
 
-REFACTOR HACKY CODE:
-    Beautify movement methods, methodise code.
-
-Refactor agent setup from EvacSim to Car
-    Goal assignment(?)
-    A* Search
-
-Refactor A* to return list of edges rather than nodes/junctions?
-
-Implement driving algorithm
-
-Implement throttling
+Implement Test Network
 
 Implement greediness
 
+Implement throttling & Contraflow
+
 Implement scheduling & routing
+
+
+
 
 Attempt to use GeoMason to read GIS data
     Handwrite a class which can convert GeoMason networks into plain MASON networks of junctions/roads

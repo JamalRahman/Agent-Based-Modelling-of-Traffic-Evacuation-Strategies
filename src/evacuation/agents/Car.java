@@ -21,6 +21,11 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private static final long serialVersionUID = 1;
     private EvacSim simulation;
 
+    // Properties of this particular agent
+    private double acceleration = 1;
+    private double speedlimit = 20;
+    private double vehicleBuffer = 2;
+
     private double speed = 0;
     private Double2D location;
     private boolean evacuated = false;
@@ -29,7 +34,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private final Junction spawnJunction;
     private ArrayList<Edge> route = new ArrayList<>();
     private int pathIndex = 0;
-
     private Edge currentEdge;           // Current edge (wrapping the current road)
     private Road currentRoad;           // Current road
     private double currentIndex=0.0;    // Current distance along road
@@ -47,8 +51,20 @@ public class Car extends SimplePortrayal2D implements Steppable {
     public void init(){
         updateLocation(spawnJunction.getLocation());
         calculatePath();
+        getEdgeInformation();
+    }
+
+    private void getEdgeInformation() {
+        if(currentRoad!=null){
+            currentRoad.getTraffic().remove(this);
+        }
         currentEdge = route.get(pathIndex);
         currentRoad = (Road) currentEdge.getInfo();
+        currentRoad.getTraffic().add(this);
+
+        currentIndex = 0.0;
+        endIndex = currentRoad.getLength();
+
     }
 
     private void calculatePath() {
@@ -75,9 +91,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
         // If the current timestep's movement takes the vehicle into a new road segment, carry the residual
         // displacement across to that segment.
         if(currentIndex > endIndex){
-            double residualMovement = currentIndex - endIndex;
-
-
+            nextEdge(currentIndex - endIndex);
+            Double2D newLocation = currentRoad.getCoordinate(currentIndex);
+            updateLocation(newLocation);
         }
         else{   // All movement on this edge
             // Calculate real-world coordinate at the currentIndex along that edge.
@@ -86,20 +102,83 @@ public class Car extends SimplePortrayal2D implements Steppable {
         }
     }
 
+    private void nextEdge(double residualMovement) {
+        if(currentEdge.getTo().equals(goalJunction)){
+            evacuated = true;
+            currentIndex = endIndex;
+            return;
+        }
+        pathIndex++;
+        getEdgeInformation();
+        currentIndex+=calculateMovement(residualMovement);
+
+        if(currentIndex > endIndex){
+            nextEdge(currentIndex - endIndex);
+        }
+
+    }
+
 
     public void updateLocation(Double2D loc) {
         location = loc;
         simulation.cars.setObjectLocation(this,location);
     }
 
-    private double calculateMovement() {
-        return 3;
+    private double calculateMovement(){
+        return calculateMovement(speedlimit);
+    }
+    // TODO: Fix deceleration due to an in-front car when crossing a junction. See todo.txt
+    private double calculateMovement(double maximumMove) {
+        // Accelerate up to the speed limit
+        speed+=acceleration;
+        if(speed>maximumMove){
+            speed = maximumMove;
+        }
+
+        // If there is a car ahead (on this road between now and the 'speed' then reduce the speed accordingly to a buffer distance
+        // Road contains list of cars on it, sorted by their currentIndex
+        // Look if any car is in the range from currentIndex to currentIndex+speed
+            // Set minimum car distance to distance between this and nearest car
+            // add/subtract the buffer
+
+        ArrayList<Car> neighbours = currentRoad.getTraffic();
+        boolean neighbourIsObstacle = false;
+        double closestNeighbourIndex = endIndex;
+
+        for(Car neighbour : neighbours){
+            double neighbourIndex = neighbour.getCurrentIndex();
+            if(neighbourIndex>currentIndex && neighbourIndex<=(currentIndex+speed)){
+                // Neighbour is in the way
+                neighbourIsObstacle = true;
+                // If this neighbour is first en-route store it's distance
+                if(neighbourIndex<closestNeighbourIndex){
+                    closestNeighbourIndex = neighbourIndex;
+                }
+            }
+        }
+
+        if(neighbourIsObstacle){
+            speed=closestNeighbourIndex-vehicleBuffer;
+        }
+
+        // Add random component to account for human discrepancy
+        if(simulation.random.nextBoolean(0.5)){
+            speed-=(acceleration/2);
+        }
+        if(speed<0){
+            speed=0;
+        }
+        return speed;
     }
 
 
     // Setters and getters
     public void setGoalJunction(Junction goalJunction) {
         this.goalJunction = goalJunction;
+    }
+
+    public double getCurrentIndex(){
+        return currentIndex;
     }
 
     // Architectural

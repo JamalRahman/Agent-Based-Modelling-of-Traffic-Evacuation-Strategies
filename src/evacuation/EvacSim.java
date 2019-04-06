@@ -11,6 +11,7 @@ import sim.field.network.Network;
 import sim.util.Bag;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * evacuation.EvacSim is the core simulation. It extends SimState which provides fundamental simulation architecture
@@ -31,13 +32,12 @@ public class EvacSim extends SimState {
     public Continuous2D roadEnvironment;    // Field to store spatial aspects of the roads. e.g - where junctions are
     public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
 
-
     // Simulation parameter fields
-    public int populationSize = 10;
+    public int populationSize = 1000;
 
-    private static final int GRIDHEIGHT = 10;
-    private static final int GRIDWIDTH = 10;
-    private static final int ROADLENGTH = 30;
+    private static final int GRIDHEIGHT = 5;
+    private static final int GRIDWIDTH = 5;
+    private static final int ROADLENGTH = 20;
 
 
     /**
@@ -63,16 +63,18 @@ public class EvacSim extends SimState {
         cars = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
         aStarSearch = new AStarSearch(network);
 
+        Bag allJunctions = network.getAllNodes();
+        Junction goalJunction = selectGoalJunction(allJunctions);
+
         // Create agents
         for (int i = 0; i < populationSize; i++) {
-            Bag allJunctions = network.getAllNodes();
 
             Junction startJunction;
             do {
                 startJunction = (Junction) allJunctions.get(random.nextInt(allJunctions.size()));
             } while(startJunction.isExit());
 
-            Junction goalJunction = selectGoalJunction(allJunctions);
+//            Junction goalJunction = selectGoalJunction(allJunctions);
 
             Car car = new Car(this,startJunction,goalJunction);
             car.init();

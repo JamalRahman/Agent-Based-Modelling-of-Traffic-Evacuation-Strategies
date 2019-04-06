@@ -33,4 +33,19 @@ public class Junction extends SimplePortrayal2D{
         return location;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (o == null)
+            return false;
+
+        if (getClass() != o.getClass())
+            return false;
+
+        Junction junction = (Junction) o;
+
+        return location.equals(junction.location);
+    }
 }
