@@ -79,9 +79,9 @@ public class NetworkFactory {
         HashMap<Junction, ArrayList<Junction>> junctionOutbounds = new HashMap<>();
         //Create nodes
 
-        Junction j1 = new Junction(new Double2D(0,0),false);
-        Junction j2 = new Junction(new Double2D(0,networkDiameter/2),false);
-        Junction j3 = new Junction(new Double2D(0,networkDiameter),false);
+        Junction j1 = new Junction(new Double2D(0,0),false,true);
+        Junction j2 = new Junction(new Double2D(0,networkDiameter/2),false,true);
+        Junction j3 = new Junction(new Double2D(0,networkDiameter),false,true);
         Junction j4 = new Junction(new Double2D(networkDiameter/2,networkDiameter/2),false);
         Junction j5 = new Junction(new Double2D(networkDiameter,0),false);
         Junction j6 = new Junction(new Double2D(networkDiameter,networkDiameter),false);

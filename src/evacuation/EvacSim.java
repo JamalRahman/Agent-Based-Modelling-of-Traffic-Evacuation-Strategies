@@ -33,7 +33,7 @@ public class EvacSim extends SimState {
     public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
 
     // Simulation parameter fields
-    public int populationSize = 1 ;
+    public int populationSize = 1000 ;
 
     private static final int GRIDHEIGHT = 25;
     private static final int GRIDWIDTH = 25;
@@ -59,31 +59,42 @@ public class EvacSim extends SimState {
         //TODO: Center road-network in middle of display with whitespace border by tinkering with node locations and 'roadEnvironment' total size.
 
 //        roadEnvironment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        roadEnvironment = new Continuous2D(8.0,100,100);
+        roadEnvironment = new Continuous2D(1.0,50,50);
 //        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
-        network = networkFactory.buildMadireddyTestNetwork(this,100);
+        network = networkFactory.buildMadireddyTestNetwork(this,50);
 //        cars = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        cars = new Continuous2D(8.0,100,100);
+        cars = new Continuous2D(1.0,50,50);
         aStarSearch = new AStarSearch(network,this);
 
         Bag allJunctions = network.getAllNodes();
+        ArrayList<Junction> sourceJunctions = getSourceJunctions(allJunctions);
         Junction goalJunction = selectGoalJunction(allJunctions);
 
         // Create agents
         for (int i = 0; i < populationSize; i++) {
 
             Junction startJunction;
-            do {
-                startJunction = (Junction) allJunctions.get(random.nextInt(allJunctions.size()));
-            } while(startJunction.isExit());
-
-//            Junction goalJunction = selectGoalJunction(allJunctions);
+            // IllegalArgumentException if therre are NO source nodes
+            startJunction = sourceJunctions.get(random.nextInt(sourceJunctions.size()));
 
             Car car = new Car(this,startJunction,goalJunction);
             car.init();
             schedule.scheduleRepeating(car);
 
         }
+    }
+
+    private ArrayList<Junction> getSourceJunctions(Bag allJunctions) {
+        ArrayList<Junction> sourceJunctions = new ArrayList<>();
+        Junction temp;
+        for(Object junction : allJunctions){
+            temp = (Junction) junction;
+            if(temp.isSource()){
+                sourceJunctions.add(temp);
+            }
+        }
+
+        return sourceJunctions;
     }
 
     private Junction selectGoalJunction(Bag allJunctions) {

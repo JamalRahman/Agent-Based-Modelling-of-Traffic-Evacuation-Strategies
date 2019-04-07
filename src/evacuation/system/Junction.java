@@ -8,16 +8,21 @@ import java.awt.*;
 
 public class Junction extends SimplePortrayal2D{
     private final boolean isExit;
+    private final boolean isSource;
 
     private final Double2D location;
 
     public Junction(Double2D location){
-        this(location,false);
+        this(location,false,false);
     }
 
     public Junction(Double2D location, boolean isExit){
+        this(location,isExit,false);
+    }
+    public Junction(Double2D location, boolean isExit, boolean isSource){
         this.location = location;
         this.isExit = isExit;
+        this.isSource = isSource;
     }
 
     public final void draw(Object object, Graphics2D graphics, DrawInfo2D info){
@@ -28,6 +33,8 @@ public class Junction extends SimplePortrayal2D{
     public boolean isExit() {
         return isExit;
     }
+
+    public boolean isSource(){return isSource;}
 
     public Double2D getLocation() {
         return location;

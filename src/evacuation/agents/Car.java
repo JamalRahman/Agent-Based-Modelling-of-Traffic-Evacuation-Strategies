@@ -24,7 +24,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     // Properties of this particular agent
     private double acceleration = 1;
     private double speedlimit = 20;
-    private double vehicleBuffer = 4;
+    private double vehicleBuffer =10;
 
     private double speed = 0;
     private Double2D location;
