@@ -26,8 +26,7 @@ public class Road  implements java.io.Serializable{
     private final double normalisedVectorY;
     private final ArrayList<Car> traffic = new ArrayList<>();
 
-    public Road(double length, Junction fromJunction, Junction toJunction){
-        this.length = length;
+    public Road(Junction fromJunction, Junction toJunction){
         this.fromJunction = fromJunction;
         this.toJunction = toJunction;
 
@@ -36,9 +35,10 @@ public class Road  implements java.io.Serializable{
         double toJunctionX = toJunction.getLocation().getX();
         double toJunctionY = toJunction.getLocation().getY();
 
+        length = Math.sqrt(Math.pow(toJunctionX-fromJunctionX,2)+Math.pow(toJunctionY-fromJunctionY,2));
+
         normalisedVectorX = (toJunctionX - fromJunctionX)/length;
         normalisedVectorY = (toJunctionY - fromJunctionY)/length;
-
     }
 
     /**

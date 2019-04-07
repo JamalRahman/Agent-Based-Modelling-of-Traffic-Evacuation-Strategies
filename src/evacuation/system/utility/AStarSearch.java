@@ -1,5 +1,6 @@
 package evacuation.system.utility;
 
+import evacuation.EvacSim;
 import evacuation.system.Junction;
 import evacuation.system.Road;
 import sim.field.network.Edge;
@@ -11,10 +12,11 @@ import java.util.*;
 public class AStarSearch {
     private HashMap<Junction,AStarNode> nodes = new HashMap<>();
     private Network network;
+    private EvacSim simulation;
 
-    public AStarSearch(Network network){
+    public AStarSearch(Network network, EvacSim simulation){
         this.network = network;
-
+        this.simulation = simulation;
         for ( Object junction:
                 network.getAllNodes()) {
             nodes.put((Junction) junction,new AStarNode((Junction)junction));
@@ -22,77 +24,77 @@ public class AStarSearch {
 
     }
 
-    public ArrayList<Junction> getRoute(Junction startJunction, Junction goalJunction){
-
-        HashSet<AStarNode> closedSet = new HashSet<>();
-        PriorityQueue<AStarNode> openList = new PriorityQueue<>(11, new Comparator<AStarNode>() {
-            @Override
-            public int compare(AStarNode node1, AStarNode node2) {
-                if(node1.getF()>node2.getF()){
-                    return 1;
-                }
-                else if(node1.getF()<node2.getF()){
-                    return -1;
-                }
-
-                else{
-                    return 0;
-                }
-
-            }
-        });
-
-        AStarNode startNode = nodes.get(startJunction);
-        AStarNode goalNode = nodes.get(goalJunction);
-        AStarNode currentNode;
-
-        openList.add(startNode);
-        startNode.setG(0);
-        while(!openList.isEmpty()){
-            currentNode = openList.remove();
-
-            if(currentNode.equals(goalNode)){
-                // Goal is found, return the route by traversing the list backwards via each node's parent node
-                ArrayList<Junction> route = new ArrayList<>();
-                while(!currentNode.equals(startNode)){
-                    route.add(currentNode.getJunction());
-                    currentNode = currentNode.getRouteParent();
-                }
-                return route;
-            }
-            
-            closedSet.add(currentNode);
-
-            Set<AStarNode> children = getChildren(currentNode);
-            for(AStarNode child : children){
-
-                if(closedSet.contains(child)){
-                    continue;
-                }
-
-                double temporaryG = currentNode.getG() + cost(currentNode, child);
-
-                if(!openList.contains(child)){
-                    double f = temporaryG+heuristic(child,goalNode);
-                    child.setRouteParent(currentNode);
-                    child.setG(temporaryG);
-                    child.setF(f);
-                    openList.add(child);
-                }
-                else if (temporaryG < child.getG()) {
-                    child.setRouteParent(currentNode);
-                    child.setG(temporaryG);
-                    child.setF(temporaryG + heuristic(child, goalNode));
-                    // PriorityQueue will not resort, remove and re-add the child with altered "f" value
-
-                    openList.remove(child);
-                    openList.add(child);
-                }
-            }
-
-        }
-        return null;
-    }
+//    public ArrayList<Junction> getRoute(Junction startJunction, Junction goalJunction){
+//
+//        HashSet<AStarNode> closedSet = new HashSet<>();
+//        PriorityQueue<AStarNode> openList = new PriorityQueue<>(11, new Comparator<AStarNode>() {
+//            @Override
+//            public int compare(AStarNode node1, AStarNode node2) {
+//                if(node1.getF()>node2.getF()){
+//                    return 1;
+//                }
+//                else if(node1.getF()<node2.getF()){
+//                    return -1;
+//                }
+//
+//                else{
+//                    return 0;
+//                }
+//
+//            }
+//        });
+//
+//        AStarNode startNode = nodes.get(startJunction);
+//        AStarNode goalNode = nodes.get(goalJunction);
+//        AStarNode currentNode;
+//
+//        openList.add(startNode);
+//        startNode.setG(0);
+//        while(!openList.isEmpty()){
+//            currentNode = openList.remove();
+//
+//            if(currentNode.equals(goalNode)){
+//                // Goal is found, return the route by traversing the list backwards via each node's parent node
+//                ArrayList<Junction> route = new ArrayList<>();
+//                while(!currentNode.equals(startNode)){
+//                    route.add(currentNode.getJunction());
+//                    currentNode = currentNode.getRouteParent();
+//                }
+//                return route;
+//            }
+//
+//            closedSet.add(currentNode);
+//
+//            Set<AStarNode> children = getChildren(currentNode);
+//            for(AStarNode child : children){
+//
+//                if(closedSet.contains(child)){
+//                    continue;
+//                }
+//
+//                double temporaryG = currentNode.getG() + cost(currentNode, child);
+//
+//                if(!openList.contains(child)){
+//                    double f = temporaryG+heuristic(child,goalNode);
+//                    child.setRouteParent(currentNode);
+//                    child.setG(temporaryG);
+//                    child.setF(f);
+//                    openList.add(child);
+//                }
+//                else if (temporaryG < child.getG()) {
+//                    child.setRouteParent(currentNode);
+//                    child.setG(temporaryG);
+//                    child.setF(temporaryG + heuristic(child, goalNode));
+//                    // PriorityQueue will not resort, remove and re-add the child with altered "f" value
+//
+//                    openList.remove(child);
+//                    openList.add(child);
+//                }
+//            }
+//
+//        }
+//        return null;
+//    }
 
     public ArrayList<Edge> getEdgeRoute(Junction startJunction, Junction goalJunction){
 
@@ -106,7 +108,6 @@ public class AStarSearch {
                 else if(node1.getF()<node2.getF()){
                     return -1;
                 }
-
                 else{
                     return 0;
                 }
@@ -155,7 +156,14 @@ public class AStarSearch {
                     child.setF(f);
                     openList.add(child);
                 }
-                else if (temporaryG < child.getG()) {
+                else if (temporaryG <= child.getG()) {
+                    if(temporaryG==child.getG() && simulation.random.nextBoolean()){
+                        // If the new cost and old cost are equal, give a 50% chance of updating path
+                        // This means equal cost paths are randomly chosen by the agents rather than every agent
+                        // choosing the same path
+
+                        continue;
+                    }
                     child.setRouteParent(currentNode);
                     child.setG(temporaryG);
                     child.setF(temporaryG + heuristic(child, goalNode));

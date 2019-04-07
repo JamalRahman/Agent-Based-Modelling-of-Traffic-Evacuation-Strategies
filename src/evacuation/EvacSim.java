@@ -33,11 +33,11 @@ public class EvacSim extends SimState {
     public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
 
     // Simulation parameter fields
-    public int populationSize = 750 ;
+    public int populationSize = 1 ;
 
-    private static final int GRIDHEIGHT = 7;
-    private static final int GRIDWIDTH = 7;
-    private static final int ROADLENGTH = 50;
+    private static final int GRIDHEIGHT = 25;
+    private static final int GRIDWIDTH = 25;
+    private static final int ROADLENGTH = 35;
 
 
     /**
@@ -58,10 +58,13 @@ public class EvacSim extends SimState {
         //TODO: Re-read how the Continuous field works
         //TODO: Center road-network in middle of display with whitespace border by tinkering with node locations and 'roadEnvironment' total size.
 
-        roadEnvironment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
-        cars = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        aStarSearch = new AStarSearch(network);
+//        roadEnvironment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
+        roadEnvironment = new Continuous2D(8.0,100,100);
+//        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
+        network = networkFactory.buildMadireddyTestNetwork(this,100);
+//        cars = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
+        cars = new Continuous2D(8.0,100,100);
+        aStarSearch = new AStarSearch(network,this);
 
         Bag allJunctions = network.getAllNodes();
         Junction goalJunction = selectGoalJunction(allJunctions);

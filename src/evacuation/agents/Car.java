@@ -22,9 +22,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private EvacSim simulation;
 
     // Properties of this particular agent
-    private double acceleration = 3;
+    private double acceleration = 1;
     private double speedlimit = 20;
-    private double vehicleBuffer = 3;
+    private double vehicleBuffer = 4;
 
     private double speed = 0;
     private Double2D location;
@@ -82,7 +82,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
         EvacSim sim = (EvacSim)state;
 
         if(evacuated){
-            cleanup();
             return;
         }
 
@@ -160,6 +159,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
         if(currentEdge.getTo().equals(goalJunction)){
             evacuated = true;
             currentIndex = endIndex;
+            cleanup();
             return;
         }
         pathIndex++;
@@ -215,6 +215,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
     // Architectural
     public final void draw(Object object, Graphics2D graphics, DrawInfo2D info){
         graphics.setColor(Color.RED);
-        graphics.fillOval((int)(info.draw.x-8/2),(int)(info.draw.y-8/2),(int)(8),(int)(8));
+        graphics.fillOval((int)(info.draw.x-6/2),(int)(info.draw.y-6/2),(int)(6),(int)(6));
     }
 }
