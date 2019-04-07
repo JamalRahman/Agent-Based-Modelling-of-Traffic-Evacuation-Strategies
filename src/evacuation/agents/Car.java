@@ -24,7 +24,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     // Properties of this particular agent
     private double acceleration = 1;
     private double speedlimit = 20;
-    private double vehicleBuffer =10;
+    private double vehicleBuffer =2;
 
     private double speed = 0;
     private Double2D location;
@@ -36,8 +36,8 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private int pathIndex = 0;
     private Edge currentEdge;           // Current edge (wrapping the current road)
     private Road currentRoad;           // Current road
-    private double currentIndex=0.0;    // Current distance along road
-    private double endIndex = 0.0;      // Distance at which road segment ends
+    private double currentIndex=0;    // Current distance along road
+    private double endIndex = 0;      // Distance at which road segment ends
     private double distanceToMove;      // Distance the car will move in the current timestep
     private double distanceToNextNeighbour;
 
@@ -63,7 +63,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
         currentRoad = (Road) currentEdge.getInfo();
         currentRoad.getTraffic().add(this);
 
-        currentIndex = 0.0;
+        currentIndex = 0;
         endIndex = currentRoad.getLength();
 
     }
@@ -129,7 +129,8 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
                     neighbourPresentInSearchRange = true;
                     // If this neighbour is closest en-route store it's distance
-                    if (neighbourIndex <= closestNeighbourIndex) {
+                    if (neighbourIndex < closestNeighbourIndex) {
+                        closestNeighbourIndex = neighbourIndex;
                         distanceToNeighbour = distanceCovered+neighbourIndex-tempCurrentIndex;
                     }
                 }
@@ -164,6 +165,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
         }
         pathIndex++;
         getEdgeInformation();
+        calculateDistanceToNextNeighbour();
         currentIndex+=calculateMovement(residualMovement);
 
         if(currentIndex > endIndex){
@@ -189,7 +191,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
             speed = maximumMove;
         }
 
-        if(distanceToNextNeighbour>=0 && distanceToNextNeighbour<speed){
+        if(distanceToNextNeighbour>=0 && (distanceToNextNeighbour<speed || distanceToNextNeighbour<vehicleBuffer)){
             speed = (distanceToNextNeighbour-vehicleBuffer);
         }
         // Add random component to account for human discrepancy

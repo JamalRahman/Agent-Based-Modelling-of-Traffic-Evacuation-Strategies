@@ -1,7 +1,3 @@
-Make A* randomly choose either path if both paths are equally short
-
-Agents only spawn at flagged source nodes
-
 Agents do not spawn initially?
 
 Customisable options in Mason window
