@@ -16,9 +16,6 @@ Implement throttling & Contraflow
 
 Implement scheduling & routing
 
-
-
-
 Attempt to use GeoMason to read GIS data
     Handwrite a class which can convert GeoMason networks into plain MASON networks of junctions/roads
 run some experimizzles

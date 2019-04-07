@@ -33,11 +33,11 @@ public class EvacSim extends SimState {
     public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
 
     // Simulation parameter fields
-    public int populationSize = 1000;
+    public int populationSize = 750 ;
 
-    private static final int GRIDHEIGHT = 5;
-    private static final int GRIDWIDTH = 5;
-    private static final int ROADLENGTH = 20;
+    private static final int GRIDHEIGHT = 7;
+    private static final int GRIDWIDTH = 7;
+    private static final int ROADLENGTH = 50;
 
 
     /**

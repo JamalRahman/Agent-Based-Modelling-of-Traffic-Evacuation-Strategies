@@ -22,9 +22,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private EvacSim simulation;
 
     // Properties of this particular agent
-    private double acceleration = 1;
+    private double acceleration = 3;
     private double speedlimit = 20;
-    private double vehicleBuffer = 2;
+    private double vehicleBuffer = 3;
 
     private double speed = 0;
     private Double2D location;
@@ -39,6 +39,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private double currentIndex=0.0;    // Current distance along road
     private double endIndex = 0.0;      // Distance at which road segment ends
     private double distanceToMove;      // Distance the car will move in the current timestep
+    private double distanceToNextNeighbour;
 
 
     public Car(EvacSim simulation, Junction spawnJunction, Junction goalJunction){
@@ -81,6 +82,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
         EvacSim sim = (EvacSim)state;
 
         if(evacuated){
+            cleanup();
             return;
         }
 
@@ -103,13 +105,55 @@ public class Car extends SimplePortrayal2D implements Steppable {
         }
     }
 
+    private void cleanup() {
+        currentRoad.getTraffic().remove(this);
+    }
+
     private void calculateDistanceToNextNeighbour() {
-        // Check if next neighbour exists on current edge
-        // Recursively check if next neighbour exists on next edge
-            // Break if we have checked as far as 'speedLimit' as we never will go past that in one step anyway
-            // So we'll check further next time
+        int tempPathIndex = pathIndex;
+        Road tempRoad = currentRoad;
+        Edge tempEdge = currentEdge;
+        double tempCurrentIndex = currentIndex;
+        double tempEndIndex = endIndex;
+        boolean neighbourPresentInSearchRange = false;
+        double distanceToNeighbour = 0;
+        double distanceCovered = 0;
 
+        while(!neighbourPresentInSearchRange && distanceCovered<(2*speedlimit) && tempPathIndex<route.size()){
+            ArrayList<Car> neighbours = tempRoad.getTraffic();
+            double closestNeighbourIndex = tempEndIndex;
 
+            for(Car neighbour : neighbours) {
+                double neighbourIndex = neighbour.getCurrentIndex();
+                if (neighbourIndex > tempCurrentIndex) {
+                    // Neighbour is between the agent and the end of the road, and is hence ahead of the agent
+
+                    neighbourPresentInSearchRange = true;
+                    // If this neighbour is closest en-route store it's distance
+                    if (neighbourIndex <= closestNeighbourIndex) {
+                        distanceToNeighbour = distanceCovered+neighbourIndex-tempCurrentIndex;
+                    }
+                }
+            }
+
+            // Search space covered from searching this edge
+            distanceCovered+=(tempEndIndex-tempCurrentIndex);
+
+            // Set up next (imaginary) edge for searching
+            tempPathIndex++;
+            if(tempPathIndex<route.size()){
+                tempEdge = route.get(tempPathIndex);
+                tempRoad = (Road) tempEdge.getInfo();
+                tempCurrentIndex = 0;
+            }
+        }
+
+        if(neighbourPresentInSearchRange){
+            distanceToNextNeighbour = distanceToNeighbour;
+        }
+        else{
+            distanceToNextNeighbour = -1;
+        }
     }
 
     private void nextEdge(double residualMovement) {
@@ -145,32 +189,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
             speed = maximumMove;
         }
 
-        // If there is a car ahead (on this road between now and the 'speed' then reduce the speed accordingly to a buffer distance
-        // Road contains list of cars on it, sorted by their currentIndex
-        // Look if any car is in the range from currentIndex to currentIndex+speed
-            // Set minimum car distance to distance between this and nearest car
-            // add/subtract the buffer
-
-        ArrayList<Car> neighbours = currentRoad.getTraffic();
-        boolean neighbourIsObstacle = false;
-        double closestNeighbourIndex = endIndex;
-
-        for(Car neighbour : neighbours){
-            double neighbourIndex = neighbour.getCurrentIndex();
-            if(neighbourIndex>currentIndex && neighbourIndex<=(currentIndex+speed)){
-                // Neighbour is in the way
-                neighbourIsObstacle = true;
-                // If this neighbour is first en-route store it's distance
-                if(neighbourIndex<closestNeighbourIndex){
-                    closestNeighbourIndex = neighbourIndex;
-                }
-            }
+        if(distanceToNextNeighbour>=0 && distanceToNextNeighbour<speed){
+            speed = (distanceToNextNeighbour-vehicleBuffer);
         }
-
-        if(neighbourIsObstacle){
-            speed=closestNeighbourIndex-vehicleBuffer;
-        }
-
         // Add random component to account for human discrepancy
         if(simulation.random.nextBoolean(0.5)){
             speed-=(acceleration/2);
