@@ -26,6 +26,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private double acceleration = 1;
     private double speedlimit = 20;
     private double vehicleBuffer =2;
+    private double perceptionRadius = 40;
 
     private double speed = 0;
     private Double2D location;
@@ -121,12 +122,15 @@ public class Car extends SimplePortrayal2D implements Steppable {
         double distanceToNeighbour = 0;
         double distanceCovered = 0;
 
-        while(!neighbourPresentInSearchRange && distanceCovered<(2*speedlimit) && tempPathIndex<route.size()){
+        while(!neighbourPresentInSearchRange && distanceCovered<(perceptionRadius) && tempPathIndex<route.size()){
             ArrayList<Car> neighbours = tempRoad.getTraffic();
             double closestNeighbourIndex = tempEndIndex;
 
             for(Car neighbour : neighbours) {
                 double neighbourIndex = neighbour.getCurrentIndex();
+                if(Math.abs(neighbourIndex-tempCurrentIndex)+distanceCovered > perceptionRadius){
+                    continue;
+                }
                 if (neighbourIndex > tempCurrentIndex) {
                     // Neighbour is between the agent and the end of the road, and is hence ahead of the agent
 

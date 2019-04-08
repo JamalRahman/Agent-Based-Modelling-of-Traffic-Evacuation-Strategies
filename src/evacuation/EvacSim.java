@@ -6,15 +6,13 @@ import evacuation.system.utility.AStarSearch;
 import evacuation.system.utility.NetworkFactory;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
-import sim.field.network.Edge;
 import sim.field.network.Network;
 import sim.util.Bag;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
- * evacuation.EvacSim is the core simulation. It extends SimState which provides fundamental simulation architecture
+ * EvacSim is the core simulation. It extends SimState which provides fundamental simulation architecture
  * in the Mason framework - such as threading, scheduling, and executing events, as well as simulation serialisation.
  *
  * This class sets up the roadEnvironment and simulation parameters, and runs the simulation itself
@@ -33,11 +31,12 @@ public class EvacSim extends SimState {
     public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
 
     // Simulation parameter fields
-    public int populationSize = 1000 ;
+    public int populationSize = 10000 ;
+    private double timeFactor = 1; // Seconds per step
 
     private static final int GRIDHEIGHT = 25;
     private static final int GRIDWIDTH = 25;
-    private static final int ROADLENGTH = 35;
+    private static final int ROADLENGTH = 200;
 
 
     /**
@@ -50,13 +49,14 @@ public class EvacSim extends SimState {
         super(seed);
     }
 
+
+    //TODO: Center road-network in middle of display with whitespace border by tinkering with node locations and 'roadEnvironment' total size.
     /**
      * Initialises the simulation
      */
     public void start(){
         super.start();      // Cleans threads and resets the scheduler
-        //TODO: Re-read how the Continuous field works
-        //TODO: Center road-network in middle of display with whitespace border by tinkering with node locations and 'roadEnvironment' total size.
+        configureSimulation();  // Sets parameters, environments, etc according to simulation configuration
 
         roadEnvironment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
 //        roadEnvironment = new Continuous2D(1.0,100,100);
@@ -74,14 +74,30 @@ public class EvacSim extends SimState {
         for (int i = 0; i < populationSize; i++) {
 
             Junction startJunction;
-            // IllegalArgumentException if therre are NO source nodes
-            startJunction = sourceJunctions.get(random.nextInt(sourceJunctions.size()));
-
-            Car car = new Car(this,startJunction,goalJunction);
-            car.init();
-            car.setStoppable(schedule.scheduleRepeating(car));
+            // TODO: Better handling of the IllegalArgumentException if there are no source nodes
+            try{
+                startJunction = sourceJunctions.get(random.nextInt(sourceJunctions.size()));
+                Car car = new Car(this,startJunction,goalJunction);
+                car.init();
+                car.setStoppable(schedule.scheduleRepeating(car));
+            }
+            catch(IllegalArgumentException e){
+                System.out.println("Error - Road network has no source nodes from which to spawn Agents");
+            }
         }
     }
+
+    /**
+     * Called once the scheduler is exhausted
+     * Outputs clearance time to System.out
+     */
+    public  void finish(){
+        System.out.println("Steps: "+schedule.getSteps());
+        super.finish();
+    }
+    private void configureSimulation() {
+    }
+
 
     private ArrayList<Junction> getSourceJunctions(Bag allJunctions) {
         ArrayList<Junction> sourceJunctions = new ArrayList<>();

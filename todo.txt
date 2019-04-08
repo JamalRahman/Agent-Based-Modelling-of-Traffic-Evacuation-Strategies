@@ -1,9 +1,9 @@
-How to properly clean up 'completed' agents to stop scheduling repeated
-    So a simulation finishes properly doesn't run ad infinitum
-
 Allow parameters to be tweaked in MASON panel
 
 Allow 1-click choice of preset scenarios
+
+Batch simulation
+Data collection / analysis tools
 
 Parmeterize all speeds/accelerations by a time factor (seconds)
     The same time factor is an input into the scheduleRepeating so we can step over other time intervals
@@ -20,7 +20,6 @@ Implement throttling & Contraflow
 Implement method of reading network topology from file
 
 Implement scheduling & routing
-
 
 
 

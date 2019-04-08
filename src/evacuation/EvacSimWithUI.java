@@ -26,7 +26,9 @@ public class EvacSimWithUI extends GUIState {
     }
 
     public EvacSimWithUI(){
+
         super(new EvacSim(System.currentTimeMillis()));
+
     }
 
     public void start(){
@@ -56,7 +58,6 @@ public class EvacSimWithUI extends GUIState {
 
     public void init(final Controller controller) {
         super.init(controller);
-
         display = new Display2D(800, 800, this);
 
         displayFrame = display.createFrame();
