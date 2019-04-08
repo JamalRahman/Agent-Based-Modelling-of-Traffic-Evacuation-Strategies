@@ -1,6 +1,6 @@
 package evacuation.system.utility;
 
-import evacuation.EvacSim;
+import evacuation.CoreSimulation;
 import evacuation.system.Junction;
 import evacuation.system.Road;
 import sim.field.network.Edge;
@@ -12,9 +12,9 @@ import java.util.*;
 public class AStarSearch {
     private HashMap<Junction,AStarNode> nodes = new HashMap<>();
     private Network network;
-    private EvacSim simulation;
+    private CoreSimulation simulation;
 
-    public AStarSearch(Network network, EvacSim simulation){
+    public AStarSearch(Network network, CoreSimulation simulation){
         this.network = network;
         this.simulation = simulation;
         for ( Object junction:

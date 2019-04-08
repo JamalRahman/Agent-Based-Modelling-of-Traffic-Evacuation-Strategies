@@ -12,7 +12,7 @@ import sim.portrayal.network.SpatialNetwork2D;
 import javax.swing.*;
 import java.awt.*;
 
-public class EvacSimWithUI extends GUIState {
+public class EvacWithUI extends GUIState {
 
     public Display2D display;
     public JFrame displayFrame;
@@ -22,12 +22,12 @@ public class EvacSimWithUI extends GUIState {
     ContinuousPortrayal2D carPortrayal = new ContinuousPortrayal2D();
 
     public static void main(String[] args) {
-        new EvacSimWithUI().createController();
+        new EvacWithUI().createController();
     }
 
-    public EvacSimWithUI(){
+    public EvacWithUI(){
 
-        super(new EvacSim(System.currentTimeMillis()));
+        super(new CoreSimulation(System.currentTimeMillis()));
 
     }
 
@@ -42,13 +42,13 @@ public class EvacSimWithUI extends GUIState {
 
     private void setupPortrayals() {
 
-        roadPortrayal.setField(new SpatialNetwork2D( ((EvacSim)state).roadEnvironment,((EvacSim)state).network));
+        roadPortrayal.setField(new SpatialNetwork2D( ((CoreSimulation)state).roadEnvironment,((CoreSimulation)state).network));
         SimpleEdgePortrayal2D p = new SimpleEdgePortrayal2D(Color.lightGray, null);
         p.setShape(SimpleEdgePortrayal2D.SHAPE_THIN_LINE);
         roadPortrayal.setPortrayalForAll(p);
 
-        carPortrayal.setField(((EvacSim)state).cars);
-        junctionPortrayal.setField(((EvacSim)state).roadEnvironment);
+        carPortrayal.setField(((CoreSimulation)state).cars);
+        junctionPortrayal.setField(((CoreSimulation)state).roadEnvironment);
 
         display.reset();
         display.setBackdrop(Color.white);
@@ -61,7 +61,7 @@ public class EvacSimWithUI extends GUIState {
         display = new Display2D(800, 800, this);
 
         displayFrame = display.createFrame();
-        displayFrame.setTitle("EvacSim display");
+        displayFrame.setTitle("CoreSimulation display");
         controller.registerFrame(displayFrame);
         displayFrame.setVisible(true);
         display.attach(roadPortrayal,"Roads");

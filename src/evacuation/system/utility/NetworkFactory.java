@@ -1,6 +1,6 @@
 package evacuation.system.utility;
 
-import evacuation.EvacSim;
+import evacuation.CoreSimulation;
 import sim.field.network.*;
 import evacuation.system.*;
 import sim.util.Double2D;
@@ -22,7 +22,7 @@ public class NetworkFactory {
      * @param gridWidth Number of vertical junctions
      * @param roadLength Length of each road section
      */
-    public Network buildGridNetwork(EvacSim state, int gridHeight, int gridWidth, int roadLength) {
+    public Network buildGridNetwork(CoreSimulation state, int gridHeight, int gridWidth, int roadLength) {
         Junction[][] junctions = new Junction[gridWidth][gridHeight];
         Network network = new Network();
 
@@ -74,7 +74,7 @@ public class NetworkFactory {
     }
 
 
-    public Network buildMadireddyTestNetwork(EvacSim state, double networkDiameter){
+    public Network buildMadireddyTestNetwork(CoreSimulation state, double networkDiameter){
         Network network = new Network();
         HashMap<Junction, ArrayList<Junction>> junctionOutbounds = new HashMap<>();
         //Create nodes

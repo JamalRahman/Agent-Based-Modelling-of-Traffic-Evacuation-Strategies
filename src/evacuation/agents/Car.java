@@ -1,6 +1,6 @@
 package evacuation.agents;
 
-import evacuation.EvacSim;
+import evacuation.CoreSimulation;
 import evacuation.system.*;
 import sim.engine.*;
 import sim.field.network.Edge;
@@ -18,22 +18,95 @@ import java.util.ArrayList;
  */
 public class Car extends SimplePortrayal2D implements Steppable {
 
+    public static class CarBuilder {
+        private CoreSimulation simulation;
+        private Junction spawnJunction;
+        private Junction goalJunction;
+        private double timeFactor = 1;
+        private double agentAcceleration;
+        private double agentSpeedLimit;
+        private double agentBuffer;
+        private double agentPerceptionRadius;
+        private double agentGreedthreshold;
+        private boolean isGreedy;
+
+        public CarBuilder setSimulation(CoreSimulation simulation) {
+            this.simulation = simulation;
+            return this;
+        }
+
+        public CarBuilder setSpawnJunction(Junction spawnJunction) {
+            this.spawnJunction = spawnJunction;
+            return this;
+        }
+
+        public CarBuilder setGoalJunction(Junction goalJunction) {
+            this.goalJunction = goalJunction;
+            return this;
+        }
+
+        public CarBuilder setTimeFactor(double timeFactor) {
+            this.timeFactor = timeFactor;
+            return this;
+        }
+
+        public CarBuilder setAgentAcceleration(double agentAcceleration) {
+            this.agentAcceleration = agentAcceleration;
+            return this;
+        }
+
+        public CarBuilder setAgentSpeedLimit(double agentSpeedLimit) {
+            this.agentSpeedLimit = agentSpeedLimit;
+            return this;
+        }
+
+        public CarBuilder setAgentBuffer(double agentBuffer) {
+            this.agentBuffer = agentBuffer;
+            return this;
+        }
+
+        public CarBuilder setAgentPerceptionRadius(double agentPerceptionRadius) {
+            this.agentPerceptionRadius = agentPerceptionRadius;
+            return this;
+        }
+
+        public CarBuilder setAgentGreedthreshold(double agentGreedthreshold) {
+            this.agentGreedthreshold = agentGreedthreshold;
+            return this;
+        }
+
+        public CarBuilder setIsGreedy(boolean isGreedy) {
+            this.isGreedy = isGreedy;
+            return this;
+        }
+
+        public Car createCar() {
+            return new Car(this);
+        }
+
+    }
+
     private static final long serialVersionUID = 1;
-    private EvacSim simulation;
+    private CoreSimulation simulation;
     private Stoppable stoppable;
 
-    // Properties of this particular agent
-    private double acceleration = 1;
-    private double speedlimit = 20;
-    private double vehicleBuffer =2;
-    private double perceptionRadius = 40;
+    // Parameters
+    private double acceleration;
+    private double speedlimit;
+    private double vehicleBuffer;
+    private double perceptionRadius;
+    private double timeFactor;
+    private boolean isGreedy;
+    private double greedthreshold;
+
+
+    private Junction goalJunction;
+    private Junction spawnJunction;
 
     private double speed = 0;
     private Double2D location;
     private boolean evacuated = false;
 
-    private Junction goalJunction;
-    private final Junction spawnJunction;
     private ArrayList<Edge> route = new ArrayList<>();
     private int pathIndex = 0;
     private Edge currentEdge;           // Current edge (wrapping the current road)
@@ -41,14 +114,20 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private double currentIndex=0;    // Current distance along road
     private double endIndex = 0;      // Distance at which road segment ends
     private double distanceToMove;      // Distance the car will move in the current timestep
-    private double distanceToNextNeighbour;
+    private double distanceToNextNeighbour;     // Distance the next neighbour is ahead of this
 
 
-    public Car(EvacSim simulation, Junction spawnJunction, Junction goalJunction){
-        this.simulation = simulation;
-        this.spawnJunction = spawnJunction;
-        this.goalJunction = goalJunction;
-
+    private Car(CarBuilder builder){
+        simulation = builder.simulation;
+        spawnJunction = builder.spawnJunction;
+        goalJunction = builder.goalJunction;
+        acceleration = builder.agentAcceleration;
+        speedlimit = builder.agentSpeedLimit;
+        vehicleBuffer = builder.agentBuffer;
+        perceptionRadius = builder.agentPerceptionRadius;
+        timeFactor = builder.timeFactor;
+        greedthreshold = builder.agentGreedthreshold;
+        isGreedy = builder.isGreedy;
     }
 
     public void init(){
@@ -81,7 +160,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
      * @param state The simulation in which the agent is being stepped
      */
     public void step(SimState state) {
-        EvacSim sim = (EvacSim)state;
+        CoreSimulation sim = (CoreSimulation)state;
 
         if(evacuated){
             return;

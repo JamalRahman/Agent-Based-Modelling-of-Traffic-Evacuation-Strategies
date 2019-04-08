@@ -1,23 +1,15 @@
-Allow parameters to be tweaked in MASON panel
+Refactor messy code
 
-Allow 1-click choice of preset scenarios
+Implement Greediness
+
+Parmeterize all speeds/accelerations by a time factor (seconds)
 
 Batch simulation
 Data collection / analysis tools
 
-Parmeterize all speeds/accelerations by a time factor (seconds)
-    The same time factor is an input into the scheduleRepeating so we can step over other time intervals
-    not just per second
-
-Implement Greediness
-
-Implement batch simulation
-
-Tidy code
-
 Implement throttling & Contraflow
 
-Implement method of reading network topology from file
+Implement user friendly parameter-input
 
 Implement scheduling & routing
 
