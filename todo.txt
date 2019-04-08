@@ -1,5 +1,3 @@
-Refactor messy code
-
 Implement Greediness
 
 Parmeterize all speeds/accelerations by a time factor (seconds)
@@ -10,6 +8,8 @@ Data collection / analysis tools
 Implement throttling & Contraflow
 
 Implement user friendly parameter-input
+
+Comment
 
 Implement scheduling & routing
 

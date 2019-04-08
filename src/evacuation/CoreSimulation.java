@@ -45,8 +45,8 @@ public class CoreSimulation extends SimState {
     private double agentPerceptionRadius = 40;  // m
     private double agentGreedthreshold = 0.5;
 
-    private static final int GRIDHEIGHT = 25;
-    private static final int GRIDWIDTH = 25;
+    private static final int GRIDHEIGHT = 10;
+    private static final int GRIDWIDTH = 10;
     private static final int ROADLENGTH = 50;
 
 

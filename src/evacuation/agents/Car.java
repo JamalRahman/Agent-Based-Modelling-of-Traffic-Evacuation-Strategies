@@ -18,6 +18,7 @@ import java.util.ArrayList;
  */
 public class Car extends SimplePortrayal2D implements Steppable {
 
+
     public static class CarBuilder {
         private CoreSimulation simulation;
         private Junction spawnJunction;
@@ -107,6 +108,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private double speed = 0;
     private Double2D location;
     private boolean evacuated = false;
+    private boolean neighbourPresentInPerception = false;
 
     // Pathfinding & Movement mechanism
     private ArrayList<Edge> route = new ArrayList<>();
@@ -141,14 +143,8 @@ public class Car extends SimplePortrayal2D implements Steppable {
     public void step(SimState state) {
         CoreSimulation sim = (CoreSimulation)state;
 
-        if(evacuated){
-            return;
-        }
-
-        calculateDistanceToNextNeighbour();
-
-        distanceToMove = calculateMovement();
-        currentIndex +=distanceToMove;
+        updateDistanceToNextNeighbour();
+        currentIndex += calculateMovement();
 
         // If the current timestep's movement takes the vehicle into a new road segment, carry the residual
         // displacement across to that segment.
@@ -188,9 +184,10 @@ public class Car extends SimplePortrayal2D implements Steppable {
             speed = maximumMove;
         }
 
-        if(distanceToNextNeighbour>=0 && (distanceToNextNeighbour<speed || distanceToNextNeighbour<vehicleBuffer)){
+        if(neighbourPresentInPerception && (distanceToNextNeighbour<speed || distanceToNextNeighbour<vehicleBuffer)){
             speed = (distanceToNextNeighbour-vehicleBuffer);
         }
+
         // Add random component to account for human discrepancy
         if(simulation.random.nextBoolean(0.5)){
             speed-=(acceleration/2);
@@ -204,20 +201,22 @@ public class Car extends SimplePortrayal2D implements Steppable {
     /**
      * Detects the distance to the first other car ahead of this agent
      * The agent can only search within its perception radius
-     * Sets the distance to -1 if no agent is found within the search radius
+     * Returns the distance as -1 if no agent is found within the search radius
      *
+     * @return The distance to the next closest neighbour
      */
-    private void calculateDistanceToNextNeighbour() {
+    private void updateDistanceToNextNeighbour() {
         int tempPathIndex = pathIndex;
         Road tempRoad = currentRoad;
         Edge tempEdge;
         double tempCurrentIndex = currentIndex;
         double tempEndIndex = endIndex;
-        boolean neighbourPresentInSearchRange = false;
         double distanceToNeighbour = 0;
         double distanceCovered = 0;
 
-        while(!neighbourPresentInSearchRange && distanceCovered<(perceptionRadius) && tempPathIndex<route.size()){
+        neighbourPresentInPerception = false;
+
+        while(!neighbourPresentInPerception && distanceCovered<(perceptionRadius) && tempPathIndex<route.size()){
             ArrayList<Car> neighbours = tempRoad.getTraffic();
             double closestNeighbourIndex = tempEndIndex;
 
@@ -229,7 +228,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
                 if (neighbourIndex > tempCurrentIndex) {
                     // Neighbour is between the agent and the end of the road, and is hence ahead of the agent
 
-                    neighbourPresentInSearchRange = true;
+                    neighbourPresentInPerception = true;
                     // If this neighbour is closest en-route store it's distance
                     if (neighbourIndex < closestNeighbourIndex) {
                         closestNeighbourIndex = neighbourIndex;
@@ -250,7 +249,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
             }
         }
 
-        if(neighbourPresentInSearchRange){
+        if(neighbourPresentInPerception){
             distanceToNextNeighbour = distanceToNeighbour;
         }
         else{
@@ -274,9 +273,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
             cleanup();
             return;
         }
+
         pathIndex++;
         prepareEdge();
-        calculateDistanceToNextNeighbour();
         currentIndex+=residualMovement;
 
         if(currentIndex > endIndex){
