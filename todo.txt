@@ -1,7 +1,5 @@
 Implement Greediness
 
-Parmeterize all speeds/accelerations by a time factor (seconds)
-
 Batch simulation
 Data collection / analysis tools
 

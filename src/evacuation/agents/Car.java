@@ -19,11 +19,14 @@ import java.util.ArrayList;
 public class Car extends SimplePortrayal2D implements Steppable {
 
 
+    /**
+     * Builder inner class which
+     */
     public static class CarBuilder {
         private CoreSimulation simulation;
         private Junction spawnJunction;
         private Junction goalJunction;
-        private double timeFactor = 1;
+        private double timeFactor;
         private double agentAcceleration;
         private double agentSpeedLimit;
         private double agentBuffer;
@@ -106,6 +109,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private Junction spawnJunction;
 
     private double speed = 0;
+    private double overbreaking = 1;
     private Double2D location;
     private boolean evacuated = false;
     private boolean neighbourPresentInPerception = false;
@@ -118,7 +122,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private Road currentRoad;           // Current road
     private double currentIndex=0;    // Current distance along road
     private double endIndex = 0;      // Distance at which road segment ends
-    private double distanceToMove;      // Distance the car will move in the current timestep
     private double distanceToNextNeighbour;     // Distance the next neighbour is ahead of this
 
 
@@ -167,7 +170,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
      * @return The distance the car would travel this step
      */
     private double calculateMovement(){
-        return calculateMovement(speedlimit);
+        return calculateMovement(speedlimit*timeFactor);
     }
 
     /**
@@ -179,7 +182,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
      * @return The distance the car would travel this step
      */
     private double calculateMovement(double maximumMove) {
-        speed+=acceleration;
+        speed+=acceleration*timeFactor;
         if(speed>maximumMove){
             speed = maximumMove;
         }
@@ -190,7 +193,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
         // Add random component to account for human discrepancy
         if(simulation.random.nextBoolean(0.5)){
-            speed-=(acceleration/2);
+            speed-=(overbreaking*timeFactor);
         }
         if(speed<0){
             speed=0;

@@ -35,7 +35,7 @@ public class CoreSimulation extends SimState {
     private boolean throttlingEnabled = false;
 
     // Simulation parameters
-    private int populationSize = 1000 ;         // Number of cars on the network
+    private int populationSize = 10000 ;         // Number of cars on the network
     private double timeFactor = 1;              // Seconds per step
     private double greedyAgentProportion = 0.5;
 
@@ -45,8 +45,8 @@ public class CoreSimulation extends SimState {
     private double agentPerceptionRadius = 40;  // m
     private double agentGreedthreshold = 0.5;
 
-    private static final int GRIDHEIGHT = 10;
-    private static final int GRIDWIDTH = 10;
+    private static final int GRIDHEIGHT = 50;
+    private static final int GRIDWIDTH = 50;
     private static final int ROADLENGTH = 50;
 
 
@@ -130,10 +130,11 @@ public class CoreSimulation extends SimState {
                         .setIsGreedy(greedyAgentsEnabled)
                         .createCar();
                 car.init();
-                car.setStoppable(schedule.scheduleRepeating(car,timeFactor));
+                car.setStoppable(schedule.scheduleRepeating(schedule.EPOCH,car,timeFactor));
             }
             catch(IllegalArgumentException e){
                 System.out.println("Error - Road network has no source nodes from which to spawn Agents");
+                e.printStackTrace();
                 System.exit(1);
             }
         }
