@@ -35,7 +35,7 @@ public class NetworkFactory {
                     isExit = true;
                 }
 
-                Junction newJunc = new Junction(location,isExit);
+                Junction newJunc = new Junction(location,isExit,!isExit);
 
                 junctions[i][j] = newJunc;
                 state.roadEnvironment.setObjectLocation(newJunc,location);
@@ -95,7 +95,7 @@ public class NetworkFactory {
         junctionOutbounds.put(j6,new ArrayList<>(Arrays.asList(j3,j7)));
         junctionOutbounds.put(j7,new ArrayList<>(Arrays.asList(j4,j5,j6)));
 
-        // For each junction, add it to the simulation Field and create outbound edges.
+        // For each junction, add it to the simulation Fiel2d and create outbound edges.
         for(Junction junction : junctionOutbounds.keySet()){
             state.roadEnvironment.setObjectLocation(junction,junction.getLocation());
             network.addNode(junction);

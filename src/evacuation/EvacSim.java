@@ -58,12 +58,12 @@ public class EvacSim extends SimState {
         //TODO: Re-read how the Continuous field works
         //TODO: Center road-network in middle of display with whitespace border by tinkering with node locations and 'roadEnvironment' total size.
 
-//        roadEnvironment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        roadEnvironment = new Continuous2D(1.0,100,100);
-//        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
-        network = networkFactory.buildMadireddyTestNetwork(this,100);
-//        cars = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        cars = new Continuous2D(1.0,100,100);
+        roadEnvironment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
+//        roadEnvironment = new Continuous2D(1.0,100,100);
+        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
+//        network = networkFactory.buildMadireddyTestNetwork(this,100);
+        cars = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
+//        cars = new Continuous2D(1.0,100,100);
         aStarSearch = new AStarSearch(network,this);
 
         Bag allJunctions = network.getAllNodes();
@@ -79,8 +79,7 @@ public class EvacSim extends SimState {
 
             Car car = new Car(this,startJunction,goalJunction);
             car.init();
-            schedule.scheduleRepeating(car);
-
+            car.setStoppable(schedule.scheduleRepeating(car));
         }
     }
 

@@ -1,4 +1,40 @@
-Agents do not spawn initially?
+How to properly clean up 'completed' agents to stop scheduling repeated
+    So a simulation finishes properly doesn't run ad infinitum
+
+Allow parameters to be tweaked in MASON panel
+
+Allow 1-click choice of preset scenarios
+
+Parmeterize all speeds/accelerations by a time factor (seconds)
+    The same time factor is an input into the scheduleRepeating so we can step over other time intervals
+    not just per second
+
+Implement Greediness
+
+Implement batch simulation
+
+Tidy code
+
+Implement throttling & Contraflow
+
+Implement method of reading network topology from file
+
+Implement scheduling & routing
+
+
+
+
+
+
+Make for nicer & easier setup
+    Methodize setup.
+        Move some setup into Car.init() ???
+    Allow for parameterized map setup with a single method call
+        Fields set up programattically
+
+Easy experiment setup
+ - Simple parameter change
+ - Simple map style change
 
 Customisable options in Mason window
     Population size

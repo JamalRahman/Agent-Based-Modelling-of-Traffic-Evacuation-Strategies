@@ -20,6 +20,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
     private static final long serialVersionUID = 1;
     private EvacSim simulation;
+    private Stoppable stoppable;
 
     // Properties of this particular agent
     private double acceleration = 1;
@@ -106,12 +107,14 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
     private void cleanup() {
         currentRoad.getTraffic().remove(this);
+        simulation.cars.remove(this);
+        stoppable.stop();
     }
 
     private void calculateDistanceToNextNeighbour() {
         int tempPathIndex = pathIndex;
         Road tempRoad = currentRoad;
-        Edge tempEdge = currentEdge;
+        Edge tempEdge;
         double tempCurrentIndex = currentIndex;
         double tempEndIndex = endIndex;
         boolean neighbourPresentInSearchRange = false;
@@ -183,7 +186,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private double calculateMovement(){
         return calculateMovement(speedlimit);
     }
-    // TODO: Fix deceleration due to an in-front car when crossing a junction. See todo.txt
+
     private double calculateMovement(double maximumMove) {
         // Accelerate up to the speed limit
         speed+=acceleration;
@@ -218,5 +221,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
     public final void draw(Object object, Graphics2D graphics, DrawInfo2D info){
         graphics.setColor(Color.RED);
         graphics.fillOval((int)(info.draw.x-6/2),(int)(info.draw.y-6/2),(int)(6),(int)(6));
+    }
+
+    public void setStoppable(Stoppable scheduleRepeating) {
+        stoppable = scheduleRepeating;
     }
 }
