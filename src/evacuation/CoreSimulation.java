@@ -47,7 +47,7 @@ public class CoreSimulation extends SimState {
 
     private static final int GRIDHEIGHT = 25;
     private static final int GRIDWIDTH = 25;
-    private static final int ROADLENGTH = 200;
+    private static final int ROADLENGTH = 50;
 
 
     /**

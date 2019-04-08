@@ -86,6 +86,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
     }
 
+    // Architectural
     private static final long serialVersionUID = 1;
     private CoreSimulation simulation;
     private Stoppable stoppable;
@@ -99,7 +100,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private boolean isGreedy;
     private double greedthreshold;
 
-
+    // Properties
     private Junction goalJunction;
     private Junction spawnJunction;
 
@@ -107,8 +108,10 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private Double2D location;
     private boolean evacuated = false;
 
+    // Pathfinding & Movement mechanism
     private ArrayList<Edge> route = new ArrayList<>();
     private int pathIndex = 0;
+
     private Edge currentEdge;           // Current edge (wrapping the current road)
     private Road currentRoad;           // Current road
     private double currentIndex=0;    // Current distance along road
@@ -128,30 +131,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
         timeFactor = builder.timeFactor;
         greedthreshold = builder.agentGreedthreshold;
         isGreedy = builder.isGreedy;
-    }
-
-    public void init(){
-        updateLocation(spawnJunction.getLocation());
-        calculatePath();
-        getEdgeInformation();
-    }
-
-    private void getEdgeInformation() {
-        if(currentRoad!=null){
-            currentRoad.getTraffic().remove(this);
-        }
-        currentEdge = route.get(pathIndex);
-        currentRoad = (Road) currentEdge.getInfo();
-        currentRoad.getTraffic().add(this);
-
-        currentIndex = 0;
-        endIndex = currentRoad.getLength();
-
-    }
-
-    private void calculatePath() {
-        pathIndex = 0;
-        route = simulation.aStarSearch.getEdgeRoute(spawnJunction,goalJunction);
     }
 
     /**
@@ -185,12 +164,49 @@ public class Car extends SimplePortrayal2D implements Steppable {
         }
     }
 
-    private void cleanup() {
-        currentRoad.getTraffic().remove(this);
-        simulation.cars.remove(this);
-        stoppable.stop();
+    /**
+     * Calculates how far the car would travel in one step, with a maximum step dictated by the speed limit
+     * This uses an adapted version of the Nagel-Schrekenberg model
+     *
+     * @return The distance the car would travel this step
+     */
+    private double calculateMovement(){
+        return calculateMovement(speedlimit);
     }
 
+    /**
+     * Calculates how far the car would travel in one step
+     * The maximum step distance is given.
+     * This uses an adapted version of the Nagel-Schrekenberg model
+     *
+     * @param maximumMove
+     * @return The distance the car would travel this step
+     */
+    private double calculateMovement(double maximumMove) {
+        speed+=acceleration;
+        if(speed>maximumMove){
+            speed = maximumMove;
+        }
+
+        if(distanceToNextNeighbour>=0 && (distanceToNextNeighbour<speed || distanceToNextNeighbour<vehicleBuffer)){
+            speed = (distanceToNextNeighbour-vehicleBuffer);
+        }
+        // Add random component to account for human discrepancy
+        if(simulation.random.nextBoolean(0.5)){
+            speed-=(acceleration/2);
+        }
+        if(speed<0){
+            speed=0;
+        }
+        return speed;
+    }
+
+    /**
+     * Detects the distance to the first other car ahead of this agent
+     * The agent can only search within its perception radius
+     * Sets the distance to -1 if no agent is found within the search radius
+     *
+     */
     private void calculateDistanceToNextNeighbour() {
         int tempPathIndex = pathIndex;
         Road tempRoad = currentRoad;
@@ -242,7 +258,16 @@ public class Car extends SimplePortrayal2D implements Steppable {
         }
     }
 
+    /**
+     * Transitions a single step of movement across the boundary between edges, if the agent's movement would move it
+     * onto a new edge
+     *
+     * @param residualMovement The amount of movement left to displace the agent (in this step) once it is moved onto
+     *                         the new edge
+     */
     private void nextEdge(double residualMovement) {
+
+        // If we have just moved onto/through the goal node, our journey is over
         if(currentEdge.getTo().equals(goalJunction)){
             evacuated = true;
             currentIndex = endIndex;
@@ -250,9 +275,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
             return;
         }
         pathIndex++;
-        getEdgeInformation();
+        prepareEdge();
         calculateDistanceToNextNeighbour();
-        currentIndex+=calculateMovement(residualMovement);
+        currentIndex+=residualMovement;
 
         if(currentIndex > endIndex){
             nextEdge(currentIndex - endIndex);
@@ -260,44 +285,69 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
     }
 
+    /**
+     * Prepares a car agent to move along a new road segment
+     */
+    private void prepareEdge() {
+        if(currentRoad!=null){
+            currentRoad.getTraffic().remove(this);
+        }
+        currentEdge = route.get(pathIndex);
+        currentRoad = (Road) currentEdge.getInfo();
+        currentRoad.getTraffic().add(this);
 
+        currentIndex = 0;
+        endIndex = currentRoad.getLength();
+    }
+
+    /**
+     * Initialises the car agent into the environment and readies it for simulation
+     */
+    public void init(){
+        updateLocation(spawnJunction.getLocation());
+        calculatePath();
+        prepareEdge();
+    }
+
+    /**
+     * Removes Car agent from environment fields and signals to the scheduler to remove the agent from the system
+     */
+    private void cleanup() {
+        currentRoad.getTraffic().remove(this);
+        simulation.cars.remove(this);
+        stoppable.stop();
+    }
+
+    /**
+     * Uses A* to calculate a edge-to-edge route to the goal node
+     */
+    private void calculatePath() {
+        pathIndex = 0;
+        route = simulation.aStarSearch.getEdgeRoute(spawnJunction,goalJunction);
+    }
+
+    /**
+     * Updates the location of the car in the environment space
+     *
+     * @param loc Coordinate pair to update location to
+     */
     public void updateLocation(Double2D loc) {
         location = loc;
         simulation.cars.setObjectLocation(this,location);
     }
 
-    private double calculateMovement(){
-        return calculateMovement(speedlimit);
-    }
 
-    private double calculateMovement(double maximumMove) {
-        // Accelerate up to the speed limit
-        speed+=acceleration;
-        if(speed>maximumMove){
-            speed = maximumMove;
-        }
 
-        if(distanceToNextNeighbour>=0 && (distanceToNextNeighbour<speed || distanceToNextNeighbour<vehicleBuffer)){
-            speed = (distanceToNextNeighbour-vehicleBuffer);
-        }
-        // Add random component to account for human discrepancy
-        if(simulation.random.nextBoolean(0.5)){
-            speed-=(acceleration/2);
-        }
-        if(speed<0){
-            speed=0;
-        }
-        return speed;
-    }
+
 
 
     // Setters and getters
-    public void setGoalJunction(Junction goalJunction) {
-        this.goalJunction = goalJunction;
-    }
-
     public double getCurrentIndex(){
         return currentIndex;
+    }
+
+    public void setStoppable(Stoppable scheduleRepeating) {
+        stoppable = scheduleRepeating;
     }
 
     // Architectural
@@ -306,7 +356,4 @@ public class Car extends SimplePortrayal2D implements Steppable {
         graphics.fillOval((int)(info.draw.x-6/2),(int)(info.draw.y-6/2),(int)(6),(int)(6));
     }
 
-    public void setStoppable(Stoppable scheduleRepeating) {
-        stoppable = scheduleRepeating;
-    }
 }
