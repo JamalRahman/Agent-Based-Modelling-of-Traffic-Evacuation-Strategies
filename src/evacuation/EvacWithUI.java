@@ -16,7 +16,6 @@ public class EvacWithUI extends GUIState {
 
     public Display2D display;
     public JFrame displayFrame;
-
     NetworkPortrayal2D roadPortrayal = new NetworkPortrayal2D();
     ContinuousPortrayal2D junctionPortrayal = new ContinuousPortrayal2D();
     ContinuousPortrayal2D carPortrayal = new ContinuousPortrayal2D();
@@ -26,9 +25,7 @@ public class EvacWithUI extends GUIState {
     }
 
     public EvacWithUI(){
-
         super(new CoreSimulation(System.currentTimeMillis()));
-
     }
 
     public void start(){
@@ -48,6 +45,7 @@ public class EvacWithUI extends GUIState {
         roadPortrayal.setPortrayalForAll(p);
 
         carPortrayal.setField(((CoreSimulation)state).cars);
+
         junctionPortrayal.setField(((CoreSimulation)state).roadEnvironment);
 
         display.reset();

@@ -11,7 +11,6 @@ import sim.util.Double2D;
 import java.awt.*;
 import java.util.ArrayList;
 
-
 /**
  * The simulated vehicle agents themselves. Cars act within and according to their roadEnvironment.
  * Cars are called to be stepped by the SimState's scheduler object at every time step of the simulation.
@@ -187,7 +186,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
             speed = maximumMove;
         }
 
-        if(neighbourPresentInPerception && (distanceToNextNeighbour<speed || distanceToNextNeighbour<vehicleBuffer)){
+        if(distanceToNextNeighbour>=0 && (distanceToNextNeighbour<speed || distanceToNextNeighbour<vehicleBuffer)){
             speed = (distanceToNextNeighbour-vehicleBuffer);
         }
 
@@ -228,12 +227,12 @@ public class Car extends SimplePortrayal2D implements Steppable {
                 if(Math.abs(neighbourIndex-tempCurrentIndex)+distanceCovered > perceptionRadius){
                     continue;
                 }
-                if (neighbourIndex > tempCurrentIndex) {
+                if (neighbourIndex > tempCurrentIndex || (distanceCovered>0 && neighbourIndex>=tempCurrentIndex)) {
                     // Neighbour is between the agent and the end of the road, and is hence ahead of the agent
 
                     neighbourPresentInPerception = true;
                     // If this neighbour is closest en-route store it's distance
-                    if (neighbourIndex < closestNeighbourIndex) {
+                    if (neighbourIndex <= closestNeighbourIndex) {
                         closestNeighbourIndex = neighbourIndex;
                         distanceToNeighbour = distanceCovered+neighbourIndex-tempCurrentIndex;
                     }
@@ -355,7 +354,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     // Architectural
     public final void draw(Object object, Graphics2D graphics, DrawInfo2D info){
         graphics.setColor(Color.RED);
-        graphics.fillOval((int)(info.draw.x-6/2),(int)(info.draw.y-6/2),(int)(6),(int)(6));
+        graphics.fillOval((int) (info.draw.x - 6 / 2), (int) (info.draw.y - 6 / 2), (int) (6), (int) (6));
     }
 
 }
