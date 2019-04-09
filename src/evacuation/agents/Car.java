@@ -229,7 +229,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
                     }
 
                     // Construct path. First edge is set so we want to A* search from after firstEdge
-
                     ArrayList<Edge> tempRoute = new ArrayList<>();
                     tempRoute.add(firstEdge);
                     tempRoute.addAll(calculatePath((Junction) firstEdge.getTo(),goalJunction,ignoredEdges));
@@ -416,6 +415,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     public void init(){
         updateLocation(spawnJunction.getLocation());
         route = calculatePath(spawnJunction,goalJunction,new ArrayList<>());
+        pathIndex = 0;
         prepareEdge();
     }
 
@@ -432,7 +432,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
      * Uses A* to calculate a edge-to-edge route to the goal node
      */
     private ArrayList<Edge> calculatePath(Junction start, Junction goal, ArrayList<Edge> ignoredEdges){
-        pathIndex = 0;
         return simulation.aStarSearch.getEdgeRoute(start,goal,ignoredEdges);
     }
 
@@ -468,5 +467,4 @@ public class Car extends SimplePortrayal2D implements Steppable {
         }
         graphics.fillOval((int) (info.draw.x - 6 / 2), (int) (info.draw.y - 6 / 2), (int) (6), (int) (6));
     }
-
 }
