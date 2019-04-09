@@ -39,7 +39,7 @@ public class EvacWithUI extends GUIState {
 
     private void setupPortrayals() {
 
-        roadPortrayal.setField(new SpatialNetwork2D( ((CoreSimulation)state).roadEnvironment,((CoreSimulation)state).network));
+        roadPortrayal.setField(new SpatialNetwork2D( ((CoreSimulation)state).roadEnvironment,((CoreSimulation)state).getNetwork()));
         SimpleEdgePortrayal2D p = new SimpleEdgePortrayal2D(Color.lightGray, null);
         p.setShape(SimpleEdgePortrayal2D.SHAPE_THIN_LINE);
         roadPortrayal.setPortrayalForAll(p);

@@ -7,7 +7,7 @@ import evacuation.system.Junction;
  *
  */
 public class AStarNode {
-    private AStarNode routeParent;
+    private AStarNode routeParent = this;
     private double f;
     private double g;
     private final Junction junction;
@@ -43,5 +43,21 @@ public class AStarNode {
 
     public Junction getJunction() {
         return junction;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+
+        if (o == null)
+            return false;
+
+        if (getClass() != o.getClass())
+            return false;
+
+        AStarNode node = (AStarNode) o;
+
+        return junction.equals(node.getJunction());
     }
 }

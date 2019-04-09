@@ -25,7 +25,7 @@ public class CoreSimulation extends SimState {
     public NetworkFactory networkFactory = new NetworkFactory();
     public AStarSearch aStarSearch;
 
-    public Network network;                 // Field to store networked aspects of the roads. e.g - which junctions
+    private Network network;                 // Field to store networked aspects of the roads. e.g - which junctions
                                                 // connect to which via which roads
     public Continuous2D roadEnvironment;    // Field to store spatial aspects of the roads. e.g - where junctions are
     public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
@@ -36,7 +36,9 @@ public class CoreSimulation extends SimState {
 
     // Simulation parameters
     private int populationSize = 1000 ;         // Number of cars on the network
-    private double timeFactor = 1;              // Seconds per step
+    private double timeFactor = 1;
+
+    // Seconds per step
     private double greedyAgentProportion = 0.5;
 
     private double agentAcceleration = 1;       // m/s/s
@@ -44,10 +46,13 @@ public class CoreSimulation extends SimState {
     private double agentBuffer = 2;             // m
     private double agentPerceptionRadius = 40;  // m
     private double agentGreedthreshold = 1;
+    private double agentGreedChance = 1;
+    private double agentGreedMaxLengthFactor = 2;
+    private int agentGreedMaxChanges = 10;
 
-    private static final int GRIDHEIGHT = 20;
-    private static final int GRIDWIDTH = 20;
-    private static final int ROADLENGTH = 40;
+    private static final int GRIDHEIGHT = 10;
+    private static final int GRIDWIDTH = 10;
+    private static final int ROADLENGTH = 100;
 
 
     /**
@@ -133,6 +138,9 @@ public class CoreSimulation extends SimState {
                         .setAgentSpeedLimit(agentSpeedLimit)
                         .setTimeFactor(timeFactor)
                         .setIsGreedy(isGreedy)
+                        .setAgentGreedChance(agentGreedChance)
+                        .setAgentGreedMaxLengthFactor(agentGreedMaxLengthFactor)
+                        .setAgentGreedMaxChanges(agentGreedMaxChanges)
                         .createCar();
                 car.init();
                 car.setStoppable(schedule.scheduleRepeating(schedule.EPOCH,car,timeFactor));
@@ -185,6 +193,9 @@ public class CoreSimulation extends SimState {
         return (Junction) goalJunctions.get(random.nextInt(goalJunctions.size()));
     }
 
+    public Network getNetwork(){
+        return network;
+    }
 
     // Main     --------------------------------------------------------------------------------------------------------
     public static void main(String[] args) {

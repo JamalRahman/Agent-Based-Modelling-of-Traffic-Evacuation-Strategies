@@ -48,7 +48,6 @@ public class AStarSearch {
         AStarNode startNode = nodes.get(startJunction);
         AStarNode goalNode = nodes.get(goalJunction);
         AStarNode currentNode;
-
         openList.add(startNode);
         startNode.setG(0);
         while(!openList.isEmpty()){
@@ -57,12 +56,20 @@ public class AStarSearch {
             if(currentNode.equals(goalNode)){
                 // Goal is found, return the route by traversing the list backwards via each node's parent node
                 ArrayList<Edge> route = new ArrayList<>();
-                do{
+
+                while(!currentNode.equals(startNode)) {
                     AStarNode nextNode = currentNode.getRouteParent();
-                    Edge edge = network.getEdge(nextNode.getJunction(),currentNode.getJunction());
-                    route.add(edge);
-                    currentNode = nextNode;
-                }while(!currentNode.equals(startNode));
+                    Edge edge = network.getEdge(nextNode.getJunction(), currentNode.getJunction());
+                    if (route.size() > 100) {
+                        System.exit(1);
+                    }
+                    try {
+                        route.add(edge);
+                        currentNode = nextNode;
+                    } catch (NullPointerException e) {
+                        return route;
+                    }
+                }
                 //TODO: Could just A* search from goal to start to avoid reversing list later
                 Collections.reverse(route);
                 return route;
@@ -110,7 +117,7 @@ public class AStarSearch {
 
     private Set<AStarNode> getChildren(AStarNode node,ArrayList<Edge> ignoredEdges) {
         Junction tempJunc = node.getJunction();
-        Bag edges = network.getEdges(tempJunc,null);
+        Bag edges = network.getEdgesOut(tempJunc);
         HashSet<AStarNode> children = new HashSet<>();
         for(Object edge: edges){
             Edge tempEdge = (Edge)edge;

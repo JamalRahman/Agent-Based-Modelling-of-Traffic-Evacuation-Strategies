@@ -1,6 +1,13 @@
 Alter greediness
     On a greedy-route-change, agents first choose least congested edge THEN calculate shortest path thereafter.
+    If the new route exceeds a significant length increase on the old route, OR the agent has already exceeded a number
+    of route changes, the agent will not change route
+        2 times length = no go
+        10 route changes = no go
 
+Implement Throttling
+
+Option to spawn agents on node or spawn agents on edge somewhere
 
 Car is messy and gross again
     See if we can't make that nicer
@@ -9,8 +16,6 @@ Car is messy and gross again
 
 Batch simulation
 Data collection / analysis tools
-
-Implement throttling & Contraflow
 
 Implement user friendly parameter-input
 
