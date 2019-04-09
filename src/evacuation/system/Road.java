@@ -58,6 +58,11 @@ public class Road  implements java.io.Serializable{
         return length;
     }
 
+    public double getCongestion(double averageVehicleLength){
+        double congestion = ((double)traffic.size())/(length/averageVehicleLength);
+        return congestion;
+    }
+
     public ArrayList<Car> getTraffic(){
         return traffic;
     }

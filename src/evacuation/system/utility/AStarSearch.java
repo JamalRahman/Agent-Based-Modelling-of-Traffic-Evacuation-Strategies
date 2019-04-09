@@ -25,6 +25,9 @@ public class AStarSearch {
     }
 
     public ArrayList<Edge> getEdgeRoute(Junction startJunction, Junction goalJunction){
+        return getEdgeRoute(startJunction,goalJunction,new ArrayList<>());
+    }
+    public ArrayList<Edge> getEdgeRoute(Junction startJunction, Junction goalJunction, ArrayList<Edge> ignoredEdges){
 
         HashSet<AStarNode> closedSet = new HashSet<>();
         PriorityQueue<AStarNode> openList = new PriorityQueue<>(11, new Comparator<AStarNode>() {
@@ -67,7 +70,7 @@ public class AStarSearch {
 
             closedSet.add(currentNode);
 
-            Set<AStarNode> children = getChildren(currentNode);
+            Set<AStarNode> children = getChildren(currentNode,ignoredEdges);
             for(AStarNode child : children){
 
                 if(closedSet.contains(child)){
@@ -105,13 +108,15 @@ public class AStarSearch {
         return null;
     }
 
-    private Set<AStarNode> getChildren(AStarNode node) {
+    private Set<AStarNode> getChildren(AStarNode node,ArrayList<Edge> ignoredEdges) {
         Junction tempJunc = node.getJunction();
         Bag edges = network.getEdges(tempJunc,null);
         HashSet<AStarNode> children = new HashSet<>();
         for(Object edge: edges){
             Edge tempEdge = (Edge)edge;
-            children.add(nodes.get(tempEdge.getTo()));
+            if(!ignoredEdges.contains(tempEdge)){
+                children.add(nodes.get(tempEdge.getTo()));
+            }
         }
         children.remove(node);
         return children;

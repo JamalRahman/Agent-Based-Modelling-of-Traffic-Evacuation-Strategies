@@ -31,7 +31,7 @@ public class CoreSimulation extends SimState {
     public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
 
     // Simulation modes
-    private boolean greedyAgentsEnabled = false;
+    private boolean greedyAgentsEnabled = true;
     private boolean throttlingEnabled = false;
 
     // Simulation parameters
@@ -43,11 +43,11 @@ public class CoreSimulation extends SimState {
     private double agentSpeedLimit = 20;        // m/s
     private double agentBuffer = 2;             // m
     private double agentPerceptionRadius = 40;  // m
-    private double agentGreedthreshold = 0.5;
+    private double agentGreedthreshold = 1;
 
-    private static final int GRIDHEIGHT = 10;
-    private static final int GRIDWIDTH = 10;
-    private static final int ROADLENGTH = 50;
+    private static final int GRIDHEIGHT = 20;
+    private static final int GRIDWIDTH = 20;
+    private static final int ROADLENGTH = 40;
 
 
     /**
@@ -80,6 +80,7 @@ public class CoreSimulation extends SimState {
      * Outputs clearance time to System.out
      */
     public  void finish(){
+        System.out.println(schedule.getSteps());
         super.finish();
     }
 
@@ -114,6 +115,10 @@ public class CoreSimulation extends SimState {
         for (int i = 0; i < populationSize; i++) {
 
             Junction startJunction;
+            boolean isGreedy = false;
+            if(greedyAgentsEnabled){
+                isGreedy = random.nextBoolean(greedyAgentProportion);
+            }
             // TODO: Better handling of the IllegalArgumentException if there are no source nodes
             try{
                 startJunction = sourceJunctions.get(random.nextInt(sourceJunctions.size()));
@@ -127,7 +132,7 @@ public class CoreSimulation extends SimState {
                         .setAgentPerceptionRadius(agentPerceptionRadius)
                         .setAgentSpeedLimit(agentSpeedLimit)
                         .setTimeFactor(timeFactor)
-                        .setIsGreedy(greedyAgentsEnabled)
+                        .setIsGreedy(isGreedy)
                         .createCar();
                 car.init();
                 car.setStoppable(schedule.scheduleRepeating(schedule.EPOCH,car,timeFactor));

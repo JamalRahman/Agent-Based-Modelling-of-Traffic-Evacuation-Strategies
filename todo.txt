@@ -1,18 +1,11 @@
-Implement Greediness
-    Easy to check when you change edge
-    But consider the case where:
-        Our next edge has a neighbour agent prior to where we would land from our residualMovement
-        So we look-ahead on our A* route and curtail our movement accordingly
-    But if we then change route at the junction anyway would it be right to curtail the residualMovement
-    As afterall we are deciding not to go down the route which is the only thing curtailing us!
+Alter greediness
+    On a greedy-route-change, agents first choose least congested edge THEN calculate shortest path thereafter.
 
-    In step() we perform "updateDistanceToNeighborino" before anything else, so we could replace
-    that with a general lookAhead() which updatesDistanceTONeighbour but also makes mental note of whether we
-    are changing route so taking this all into account
 
-    Could   1) Check we would reach next junction
-            2) Look ahead
-            3) Move
+Car is messy and gross again
+    See if we can't make that nicer
+    Less void methods that work with fields more methods which take arguments and return them
+        So we can CHOOSE when fields are updated versus when we use the methods just for their functionality
 
 Batch simulation
 Data collection / analysis tools

@@ -110,7 +110,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private double speed = 0;
     private double overbreaking = 1;
     private Double2D location;
-    private boolean evacuated = false;
     private boolean neighbourPresentInPerception = false;
 
     // Pathfinding & Movement mechanism
@@ -145,6 +144,16 @@ public class Car extends SimplePortrayal2D implements Steppable {
     public void step(SimState state) {
         CoreSimulation sim = (CoreSimulation)state;
 
+        // Calculate if we reach it to the junction based on our movement and neighbours on THIS EDGE ONLY
+        // If we WILL make it to the junction:
+            // lookAhead to potentially change route after the junc
+                // Then move as normal once the route is changed
+        // Else:
+            // move as normal
+        boolean reachingJunction = calculateIfReachingJunction();
+        if(reachingJunction){
+            lookAhead();
+        }
         updateDistanceToNextNeighbour();
         currentIndex += calculateMovement();
 
@@ -160,6 +169,40 @@ public class Car extends SimplePortrayal2D implements Steppable {
             Double2D newLocation = currentRoad.getCoordinate(currentIndex);
             updateLocation(newLocation);
         }
+    }
+
+    private void lookAhead() {
+
+        // IF next road is over congestion threshold:
+        // Select new path, excluding congested road
+        // Do we exclude all previously asserted congested roads? Or only the current one?
+
+
+        // No need to look ahead if that next junction is the goal
+        if(pathIndex<route.size()-1){
+            if(isGreedy){
+                Edge nextEdge = route.get(pathIndex+1);
+                Road nextRoad = (Road) nextEdge.getInfo();
+                double congestion = nextRoad.getCongestion(vehicleBuffer*2);
+                ArrayList<Edge> ignoredEdges = new ArrayList<>();
+                ignoredEdges.add(nextEdge);
+
+                if(congestion>greedthreshold){
+                    calculatePath((Junction) currentEdge.getTo(),goalJunction,ignoredEdges);
+                    pathIndex = -1;
+                }
+            }
+        }
+    }
+
+    private boolean calculateIfReachingJunction() {
+        updateDistanceToNextNeighbour(1);
+        double tempCurrentIndex = currentIndex;
+        double tempSpeed = speed;
+
+        tempCurrentIndex += calculateMovement();
+        speed = tempSpeed;
+        return (tempCurrentIndex >endIndex);
     }
 
     /**
@@ -186,7 +229,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
             speed = maximumMove;
         }
 
-        if(distanceToNextNeighbour>=0 && (distanceToNextNeighbour<speed || distanceToNextNeighbour<vehicleBuffer)){
+        if(neighbourPresentInPerception && (distanceToNextNeighbour<speed || distanceToNextNeighbour<vehicleBuffer)){
             speed = (distanceToNextNeighbour-vehicleBuffer);
         }
 
@@ -207,8 +250,13 @@ public class Car extends SimplePortrayal2D implements Steppable {
      *
      * @return The distance to the next closest neighbour
      */
-    private void updateDistanceToNextNeighbour() {
+
+    private void updateDistanceToNextNeighbour(){
+        updateDistanceToNextNeighbour(route.size());
+    }
+    private void updateDistanceToNextNeighbour(int edgesToConsider) {
         int tempPathIndex = pathIndex;
+        int edgesConsidered = 0;
         Road tempRoad = currentRoad;
         Edge tempEdge;
         double tempCurrentIndex = currentIndex;
@@ -218,7 +266,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
         neighbourPresentInPerception = false;
 
-        while(!neighbourPresentInPerception && distanceCovered<(perceptionRadius) && tempPathIndex<route.size()){
+        do{
             ArrayList<Car> neighbours = tempRoad.getTraffic();
             double closestNeighbourIndex = tempEndIndex;
 
@@ -244,12 +292,14 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
             // Set up next (imaginary) edge for searching
             tempPathIndex++;
+            edgesConsidered++;
+
             if(tempPathIndex<route.size()){
                 tempEdge = route.get(tempPathIndex);
                 tempRoad = (Road) tempEdge.getInfo();
                 tempCurrentIndex = 0;
             }
-        }
+        }while(!neighbourPresentInPerception && distanceCovered<(perceptionRadius) && tempPathIndex<route.size() && edgesConsidered<edgesToConsider);
 
         if(neighbourPresentInPerception){
             distanceToNextNeighbour = distanceToNeighbour;
@@ -270,7 +320,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
         // If we have just moved onto/through the goal node, our journey is over
         if(currentEdge.getTo().equals(goalJunction)){
-            evacuated = true;
             currentIndex = endIndex;
             cleanup();
             return;
@@ -283,7 +332,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
         if(currentIndex > endIndex){
             nextEdge(currentIndex - endIndex);
         }
-
     }
 
     /**
@@ -306,7 +354,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
      */
     public void init(){
         updateLocation(spawnJunction.getLocation());
-        calculatePath();
+        calculatePath(spawnJunction,goalJunction,new ArrayList<>());
         prepareEdge();
     }
 
@@ -322,9 +370,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
     /**
      * Uses A* to calculate a edge-to-edge route to the goal node
      */
-    private void calculatePath() {
+    private void calculatePath(Junction start, Junction goal, ArrayList<Edge> ignoredEdges){
         pathIndex = 0;
-        route = simulation.aStarSearch.getEdgeRoute(spawnJunction,goalJunction);
+        route = simulation.aStarSearch.getEdgeRoute(start,goal,ignoredEdges);
     }
 
     /**
@@ -354,6 +402,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
     // Architectural
     public final void draw(Object object, Graphics2D graphics, DrawInfo2D info){
         graphics.setColor(Color.RED);
+        if(isGreedy){
+            graphics.setColor(Color.blue);
+        }
         graphics.fillOval((int) (info.draw.x - 6 / 2), (int) (info.draw.y - 6 / 2), (int) (6), (int) (6));
     }
 
