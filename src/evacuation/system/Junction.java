@@ -55,4 +55,9 @@ public class Junction extends SimplePortrayal2D{
 
         return location.equals(junction.location);
     }
+
+    @Override
+    public String toString() {
+        return ("("+location.x+","+location.y+")");
+    }
 }

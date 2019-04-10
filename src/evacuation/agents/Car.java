@@ -19,9 +19,8 @@ import java.util.ArrayList;
 public class Car extends SimplePortrayal2D implements Steppable {
 
 
-
     /**
-     * Builder inner class which
+     * Builder inner class
      */
     public static class CarBuilder {
         private CoreSimulation simulation;
@@ -109,7 +108,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
     }
 
     // Architectural
-    private static final long serialVersionUID = 1;
     private CoreSimulation simulation;
     private Stoppable stoppable;
 
@@ -133,6 +131,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private double overbreaking = 1;
     private Double2D location;
     private boolean neighbourPresentInPerception = false;
+    private boolean evacuated = false;
 
     // Pathfinding & Movement mechanism
     private ArrayList<Edge> route = new ArrayList<>();
@@ -183,8 +182,11 @@ public class Car extends SimplePortrayal2D implements Steppable {
         // displacement across to that segment.
         if(currentIndex > endIndex){
             nextEdge(currentIndex - endIndex);
-            Double2D newLocation = currentRoad.getCoordinate(currentIndex);
-            updateLocation(newLocation);
+            if(!evacuated){
+
+                Double2D newLocation = currentRoad.getCoordinate(currentIndex);
+                updateLocation(newLocation);
+            }
         }
         else{   // All movement on this edge
             // Calculate real-world coordinate at the currentIndex along that edge.
@@ -204,7 +206,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
             if(isGreedy && simulation.random.nextBoolean(greedChance) && greedChangeCount<greedMaxChanges){
                 Edge nextEdge = route.get(pathIndex+1);
                 Road nextRoad = (Road) nextEdge.getInfo();
-                double nextEdgeCongestion = nextRoad.getCongestion(vehicleBuffer*2);
+                double nextEdgeCongestion = nextRoad.getCongestion(vehicleBuffer);
                 ArrayList<Edge> ignoredEdges = new ArrayList<>();
                 ignoredEdges.add(nextEdge);
 
@@ -219,7 +221,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
                     for(Object o : edges){
                         Edge e = (Edge) o;
                         Road road = (Road) e.getInfo();
-                        double eCongestion = road.getCongestion(vehicleBuffer*2);
+                        double eCongestion = road.getCongestion(vehicleBuffer);
                         if(eCongestion <= minimumCongestion){
                             if(!(eCongestion==minimumCongestion) && simulation.random.nextBoolean(0.5)){
                                 minimumCongestion = eCongestion;
@@ -251,7 +253,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
             Road r =(Road) path.get(i).getInfo();
             sum += r.getLength();
         }
-
         return sum;
     }
 
@@ -292,7 +293,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
         if(neighbourPresentInPerception && (distanceToNextNeighbour<speed || distanceToNextNeighbour<vehicleBuffer)){
             speed = (distanceToNextNeighbour-vehicleBuffer);
         }
-
         // Add random component to account for human discrepancy
         if(simulation.random.nextBoolean(0.5)){
             speed-=(overbreaking*timeFactor);
@@ -301,6 +301,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
             speed=0;
         }
         return speed;
+
     }
 
     /**
@@ -331,11 +332,20 @@ public class Car extends SimplePortrayal2D implements Steppable {
             double closestNeighbourIndex = tempEndIndex;
 
             for(Car neighbour : neighbours) {
+                if(neighbour.equals(this)){
+                    continue;
+                }
                 double neighbourIndex = neighbour.getCurrentIndex();
                 if(Math.abs(neighbourIndex-tempCurrentIndex)+distanceCovered > perceptionRadius){
                     continue;
                 }
-                if (neighbourIndex > tempCurrentIndex || (distanceCovered>0 && neighbourIndex>=tempCurrentIndex)) {
+                // This doesnt consider stacked dudes at a junction
+                // It provides a special allowance for stacked dudes if distanceCovered = 0
+                // Which is required to stop the initial sim from locking up
+                // BUT this method is called consisntely
+                // Where distanceCovered=0 ISNT JUST FOR THE START OF SIM
+
+                if (neighbourIndex > tempCurrentIndex || (edgesConsidered>0 && neighbourIndex>=tempCurrentIndex)) {
                     // Neighbour is between the agent and the end of the road, and is hence ahead of the agent
 
                     neighbourPresentInPerception = true;
@@ -423,6 +433,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
      * Removes Car agent from environment fields and signals to the scheduler to remove the agent from the system
      */
     private void cleanup() {
+        evacuated=true;
         currentRoad.getTraffic().remove(this);
         simulation.cars.remove(this);
         stoppable.stop();
@@ -442,7 +453,8 @@ public class Car extends SimplePortrayal2D implements Steppable {
      */
     public void updateLocation(Double2D loc) {
         location = loc;
-        simulation.cars.setObjectLocation(this,location);
+        Double2D newLocation = new Double2D(loc.x,loc.y);
+        simulation.cars.setObjectLocation(this,newLocation);
     }
 
 

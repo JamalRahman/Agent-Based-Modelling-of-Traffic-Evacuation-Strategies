@@ -25,6 +25,7 @@ public class Road  implements java.io.Serializable{
     private final double normalisedVectorX;
     private final double normalisedVectorY;
     private final ArrayList<Car> traffic = new ArrayList<>();
+    private boolean isThrottled = false;
 
     public Road(Junction fromJunction, Junction toJunction){
         this.fromJunction = fromJunction;
@@ -59,11 +60,25 @@ public class Road  implements java.io.Serializable{
     }
 
     public double getCongestion(double averageVehicleLength){
-        double congestion = ((double)traffic.size())/(length/averageVehicleLength);
+        averageVehicleLength=averageVehicleLength/2;
+        double congestion = ((double)traffic.size())/((length/averageVehicleLength)+1);
         return congestion;
     }
 
     public ArrayList<Car> getTraffic(){
         return traffic;
+    }
+
+    public boolean isThrottled() {
+        return isThrottled;
+    }
+
+    public void setThrottled(boolean isThrottled){
+        this.isThrottled = isThrottled;
+    }
+
+    @Override
+    public String toString() {
+        return (fromJunction.toString()+" -> "+toJunction.toString()+" : " + getTraffic().size());
     }
 }

@@ -1,6 +1,7 @@
 package evacuation;
 
 import evacuation.agents.Car;
+import evacuation.agents.Overseer;
 import evacuation.system.Junction;
 import evacuation.system.utility.AStarSearch;
 import evacuation.system.utility.NetworkFactory;
@@ -31,24 +32,27 @@ public class CoreSimulation extends SimState {
     public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
 
     // Simulation modes
-    private boolean greedyAgentsEnabled = true;
-    private boolean throttlingEnabled = false;
+    private boolean greedyAgentsEnabled = false;
+    private boolean throttlingEnabled = true;
 
     // Simulation parameters
     private int populationSize = 1000 ;         // Number of cars on the network
     private double timeFactor = 1;
 
-    // Seconds per step
     private double greedyAgentProportion = 0.5;
 
     private double agentAcceleration = 1;       // m/s/s
     private double agentSpeedLimit = 20;        // m/s
-    private double agentBuffer = 2;             // m
+    private double agentBuffer = 4;             // m
     private double agentPerceptionRadius = 40;  // m
-    private double agentGreedthreshold = 0.3;
+    private double agentGreedthreshold = 1;
     private double agentGreedChance = 1;
     private double agentGreedMaxLengthFactor = 2;
     private int agentGreedMaxChanges = 10;
+
+    // blockTheshold >= unblockThreshold
+    private double blockThreshold = 0.5;
+    private double unblockThreshold = 0.1;
 
     private static final int GRIDHEIGHT = 10;
     private static final int GRIDWIDTH = 10;
@@ -78,6 +82,15 @@ public class CoreSimulation extends SimState {
         aStarSearch = new AStarSearch(network,this);
 
         populateSimulation();
+        
+        setupOverseers();
+    }
+
+    private void setupOverseers() {
+        if(throttlingEnabled){
+            Overseer overseer = new Overseer(network,this,agentBuffer,blockThreshold,unblockThreshold);
+            overseer.setStoppable(schedule.scheduleRepeating(overseer,-1,timeFactor));
+        }
     }
 
     /**
@@ -100,12 +113,12 @@ public class CoreSimulation extends SimState {
     private void setupSimulation() {
 
         // Setup Environment
-//        roadEnvironment = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        roadEnvironment = new Continuous2D(1.0,100,100);
-//        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
-        network = networkFactory.buildMadireddyTestNetwork(this,100);
-//        cars = new Continuous2D(8.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        cars = new Continuous2D(1.0,100,100);
+        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
+//        roadEnvironment = new Continuous2D(1.0,100,100);
+        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
+//        network = networkFactory.buildMadireddyTestNetwork(this,100);
+        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
+//        cars = new Continuous2D(1.0,100,100);
     }
 
     /**
@@ -116,7 +129,6 @@ public class CoreSimulation extends SimState {
         Bag allJunctions = network.getAllNodes();
         ArrayList<Junction> sourceJunctions = extractSourceJunctions(allJunctions);
         Junction goalJunction = selectRandomGoalJunction(allJunctions);
-
         for (int i = 0; i < populationSize; i++) {
 
             Junction startJunction;
@@ -149,6 +161,9 @@ public class CoreSimulation extends SimState {
                 System.out.println("Error - Road network has no source nodes from which to spawn Agents");
                 e.printStackTrace();
                 System.exit(1);
+            }
+            catch (IndexOutOfBoundsException e){
+
             }
         }
     }
@@ -196,6 +211,7 @@ public class CoreSimulation extends SimState {
     public Network getNetwork(){
         return network;
     }
+    public double getAgentBuffer(){ return agentBuffer; }
 
     // Main     --------------------------------------------------------------------------------------------------------
     public static void main(String[] args) {

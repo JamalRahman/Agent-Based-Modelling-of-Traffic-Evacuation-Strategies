@@ -1,9 +1,12 @@
 package evacuation;
 
+import evacuation.system.Road;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
+import sim.field.network.Edge;
+import sim.portrayal.DrawInfo2D;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.network.NetworkPortrayal2D;
 import sim.portrayal.network.SimpleEdgePortrayal2D;
@@ -40,7 +43,22 @@ public class EvacWithUI extends GUIState {
     private void setupPortrayals() {
 
         roadPortrayal.setField(new SpatialNetwork2D( ((CoreSimulation)state).roadEnvironment,((CoreSimulation)state).getNetwork()));
-        SimpleEdgePortrayal2D p = new SimpleEdgePortrayal2D(Color.lightGray, null);
+        SimpleEdgePortrayal2D p = new SimpleEdgePortrayal2D(Color.lightGray, null){
+            @Override
+            public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
+                Edge e = (Edge) object;
+                Road r = (Road) e.getInfo();
+                if(r.isThrottled()){
+                    fromPaint = Color.red;
+                    toPaint = Color.red;
+                }
+                else{
+                    fromPaint = Color.lightGray;
+                    toPaint = Color.lightGray;
+                }
+                super.draw(object, graphics, info);
+            }
+        };
         p.setShape(SimpleEdgePortrayal2D.SHAPE_THIN_LINE);
         roadPortrayal.setPortrayalForAll(p);
 

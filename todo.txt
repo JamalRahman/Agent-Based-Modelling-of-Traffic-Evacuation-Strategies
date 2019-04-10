@@ -1,4 +1,5 @@
 Implement Throttling
+    Maybe have Overseer superclass/interface and then a throttling, or scheduling, subclasses of Overseer
 
 Option to spawn agents on node or spawn agents on edge somewhere
 
