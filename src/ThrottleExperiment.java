@@ -110,6 +110,7 @@ public class ThrottleExperiment {
                     if (!state.schedule.step(state)) break;
                 while(state.schedule.getSteps() < timeout);
                 System.out.println(state.schedule.getSteps());
+                printWriter.println(state.schedule.getSteps());
                 // Write to a file
                 state.finish();
                 jobCounter++;
