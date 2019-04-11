@@ -142,16 +142,7 @@ public class CoreSimulation extends SimState {
             }
             // TODO: Better handling of the IllegalArgumentException if there are no source nodes
             try{
-                double p = random.nextDouble();
-                if(p<0.3){
-                    startJunction = sourceJunctions.get(0);
-                }
-                else if(p>=0.3 && p<0.7){
-                    startJunction = sourceJunctions.get(1);
-                }
-                else{
-                    startJunction = sourceJunctions.get(2);
-                }
+                startJunction = sourceJunctions.get(random.nextInt(sourceJunctions.size()));
                 Car car = new Car.CarBuilder()
                         .setSimulation(this)
                         .setSpawnJunction(startJunction)
