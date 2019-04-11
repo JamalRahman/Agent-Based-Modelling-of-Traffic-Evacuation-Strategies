@@ -118,11 +118,11 @@ public class CoreSimulation extends SimState {
 
         // Setup Environment
 //        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        roadEnvironment = new Continuous2D(1.0,20,20);
+        roadEnvironment = new Continuous2D(1.0,75,75);
 //        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
-        network = networkFactory.buildMadireddyTestNetwork(this,20);
+        network = networkFactory.buildMadireddyTestNetwork(this,75);
 //        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        cars = new Continuous2D(1.0,20,20);
+        cars = new Continuous2D(1.0,75,75);
     }
 
     /**
