@@ -36,7 +36,7 @@ public class CoreSimulation extends SimState {
     private boolean throttlingEnabled = true;
 
     // Simulation parameters
-    private int populationSize = 1000 ;         // Number of cars on the network
+    private int populationSize = 500 ;         // Number of cars on the network
     private double timeFactor = 1;
 
     private double greedyAgentProportion = 0.5;
@@ -56,7 +56,7 @@ public class CoreSimulation extends SimState {
 
     private static final int GRIDHEIGHT = 10;
     private static final int GRIDWIDTH = 10;
-    private static final int ROADLENGTH = 100;
+    private static final int ROADLENGTH = 50;
 
 
     /**

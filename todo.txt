@@ -1,5 +1,8 @@
-Implement Throttling
-    Maybe have Overseer superclass/interface and then a throttling, or scheduling, subclasses of Overseer
+Make agents respond to throttled routes
+    Lookahead()
+        Ignore throttled edges
+
+calculatePath throw error on null route
 
 Option to spawn agents on node or spawn agents on edge somewhere
 

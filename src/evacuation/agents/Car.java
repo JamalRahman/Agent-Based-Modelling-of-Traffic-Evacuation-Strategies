@@ -11,6 +11,8 @@ import sim.util.Double2D;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * The simulated vehicle agents themselves. Cars act within and according to their roadEnvironment.
@@ -175,6 +177,11 @@ public class Car extends SimplePortrayal2D implements Steppable {
         if(reachingJunction){
             lookAhead();
         }
+
+        // No route to goal, routes are all throttled. Just wait until a route opens up.
+        if(route.size()==0){
+            return;
+        }
         updateDistanceToNextNeighbour();
         currentIndex += calculateMovement();
 
@@ -197,17 +204,30 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
     private void lookAhead() {
 
-        // IF next road is over congestion threshold:
-        // Select new path, excluding congested road
-
-
         // No need to look ahead if that next junction is the goal
-        if(pathIndex<route.size()-1){
+        if(currentEdge.getTo().equals(goalJunction)) {
+            return;
+        }
+
+        HashSet<Edge> ignoredEdges = new HashSet<>();
+
+        if(route.size()>0){
+            Edge nextEdge = route.get(pathIndex+1);
+            Road nextRoad = (Road) nextEdge.getInfo();
+
+            if(nextRoad.isThrottled()){
+                Bag edgesFromUpcomingJunction = simulation.getNetwork().getEdgesOut(currentEdge.getTo());
+                for(Object obj : edgesFromUpcomingJunction){
+                    Edge edgeFromUpcomingJunction = (Edge) obj;
+                    Road roadFromUpcomingJunction = (Road) edgeFromUpcomingJunction.getInfo();
+                    if(roadFromUpcomingJunction.isThrottled()){
+                        ignoredEdges.add(edgeFromUpcomingJunction);
+                    }
+                }
+            }
+
             if(isGreedy && simulation.random.nextBoolean(greedChance) && greedChangeCount<greedMaxChanges){
-                Edge nextEdge = route.get(pathIndex+1);
-                Road nextRoad = (Road) nextEdge.getInfo();
                 double nextEdgeCongestion = nextRoad.getCongestion(vehicleBuffer);
-                ArrayList<Edge> ignoredEdges = new ArrayList<>();
                 ignoredEdges.add(nextEdge);
 
                 if(nextEdgeCongestion>=greedthreshold){
@@ -244,6 +264,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
                 }
             }
         }
+
+        route = calculatePath((Junction)currentEdge.getTo(),goalJunction,ignoredEdges);
+        pathIndex = -1;
     }
 
     private double getPathLength(ArrayList<Edge> path, int index) {
@@ -442,7 +465,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     /**
      * Uses A* to calculate a edge-to-edge route to the goal node
      */
-    private ArrayList<Edge> calculatePath(Junction start, Junction goal, ArrayList<Edge> ignoredEdges){
+    private ArrayList<Edge> calculatePath(Junction start, Junction goal, Collection<Edge> ignoredEdges){
         return simulation.aStarSearch.getEdgeRoute(start,goal,ignoredEdges);
     }
 
@@ -456,9 +479,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
         Double2D newLocation = new Double2D(loc.x,loc.y);
         simulation.cars.setObjectLocation(this,newLocation);
     }
-
-
-
 
 
 
