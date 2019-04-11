@@ -1,9 +1,3 @@
-Make agents respond to throttled routes
-    Lookahead()
-        Ignore throttled edges
-
-calculatePath throw error on null route
-
 Option to spawn agents on node or spawn agents on edge somewhere
 
 Car is messy and gross again

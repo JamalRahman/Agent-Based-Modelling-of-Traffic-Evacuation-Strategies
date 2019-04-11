@@ -36,7 +36,7 @@ public class CoreSimulation extends SimState {
     private boolean throttlingEnabled = true;
 
     // Simulation parameters
-    private int populationSize = 500 ;         // Number of cars on the network
+    private int populationSize = 1000 ;         // Number of cars on the network
     private double timeFactor = 1;
 
     private double greedyAgentProportion = 0.5;
@@ -51,7 +51,7 @@ public class CoreSimulation extends SimState {
     private int agentGreedMaxChanges = 10;
 
     // blockTheshold >= unblockThreshold
-    private double blockThreshold = 0.5;
+    private double blockThreshold = 0.1;
     private double unblockThreshold = 0.1;
 
     private static final int GRIDHEIGHT = 10;
@@ -82,7 +82,7 @@ public class CoreSimulation extends SimState {
         aStarSearch = new AStarSearch(network,this);
 
         populateSimulation();
-        
+
         setupOverseers();
     }
 
@@ -113,12 +113,12 @@ public class CoreSimulation extends SimState {
     private void setupSimulation() {
 
         // Setup Environment
-        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-//        roadEnvironment = new Continuous2D(1.0,100,100);
-        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
-//        network = networkFactory.buildMadireddyTestNetwork(this,100);
-        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-//        cars = new Continuous2D(1.0,100,100);
+//        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
+        roadEnvironment = new Continuous2D(1.0,20,20);
+//        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
+        network = networkFactory.buildMadireddyTestNetwork(this,20);
+//        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
+        cars = new Continuous2D(1.0,20,20);
     }
 
     /**

@@ -6,8 +6,6 @@ import sim.engine.*;
 import sim.field.network.Edge;
 import sim.field.network.Network;
 
-import java.util.ArrayList;
-
 public class Overseer implements Steppable {
 
     private final Network network;

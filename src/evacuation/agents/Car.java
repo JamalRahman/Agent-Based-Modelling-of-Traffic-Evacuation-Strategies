@@ -130,7 +130,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private Junction spawnJunction;
 
     private double speed = 0;
-    private double overbreaking = 1;
+    private double overbreaking = 0.5;
     private Double2D location;
     private boolean neighbourPresentInPerception = false;
     private boolean evacuated = false;
@@ -171,7 +171,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
      * @param state The simulation in which the agent is being stepped
      */
     public void step(SimState state) {
-        CoreSimulation sim = (CoreSimulation)state;
 
         boolean reachingJunction = calculateIfReachingJunction();
         if(reachingJunction){
@@ -182,12 +181,13 @@ public class Car extends SimplePortrayal2D implements Steppable {
         if(route.size()==0){
             return;
         }
+
         updateDistanceToNextNeighbour();
         currentIndex += calculateMovement();
 
         // If the current timestep's movement takes the vehicle into a new road segment, carry the residual
         // displacement across to that segment.
-        if(currentIndex > endIndex){
+        if(currentIndex >= endIndex){
             nextEdge(currentIndex - endIndex);
             if(!evacuated){
 
@@ -238,7 +238,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
                     // Choose first edge - the least congested (unthrottled) edge from the next junction
                     Edge firstEdgeToChoose = null;
-                    double minimumCongestion = 1;
+                    double minimumCongestion = 2;
 
                     // Find the edge with minimum congestion from adjacent open roads
                     for(Object o : openEdgesFromUpcomingJunction){
@@ -320,7 +320,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
             speed = maximumMove;
         }
 
-        if(neighbourPresentInPerception && (distanceToNextNeighbour<speed || distanceToNextNeighbour<vehicleBuffer)){
+        if(neighbourPresentInPerception && (distanceToNextNeighbour<speed+vehicleBuffer || distanceToNextNeighbour<vehicleBuffer)){
             speed = (distanceToNextNeighbour-vehicleBuffer);
         }
         // Add random component to account for human discrepancy
