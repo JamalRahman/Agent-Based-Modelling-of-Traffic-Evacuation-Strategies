@@ -51,8 +51,8 @@ public class CoreSimulation extends SimState {
     private int agentGreedMaxChanges = 10;
 
     // blockTheshold >= unblockThreshold
-    private double blockThreshold = 0.1;
-    private double unblockThreshold = 0.1;
+    private double upperThreshold = 0.5;
+    private double lowerThreshold = 0.3;
 
     private static final int GRIDHEIGHT = 10;
     private static final int GRIDWIDTH = 10;
@@ -67,6 +67,11 @@ public class CoreSimulation extends SimState {
      */
     public CoreSimulation(long seed){
         super(seed);
+    }
+    public CoreSimulation(long seed,double upperThreshold,double lowerThreshold){
+        super(seed);
+        this.upperThreshold = upperThreshold;
+        this.lowerThreshold = lowerThreshold;
     }
 
 
@@ -88,7 +93,7 @@ public class CoreSimulation extends SimState {
 
     private void setupOverseers() {
         if(throttlingEnabled){
-            Overseer overseer = new Overseer(network,this,agentBuffer,blockThreshold,unblockThreshold);
+            Overseer overseer = new Overseer(network,this,agentBuffer,upperThreshold,lowerThreshold);
             overseer.setStoppable(schedule.scheduleRepeating(overseer,-1,timeFactor));
         }
     }
@@ -98,7 +103,6 @@ public class CoreSimulation extends SimState {
      * Outputs clearance time to System.out
      */
     public  void finish(){
-        System.out.println(schedule.getSteps());
         super.finish();
     }
 
@@ -208,10 +212,23 @@ public class CoreSimulation extends SimState {
         return (Junction) goalJunctions.get(random.nextInt(goalJunctions.size()));
     }
 
+
     public Network getNetwork(){
         return network;
     }
     public double getAgentBuffer(){ return agentBuffer; }
+
+    public void setThrottlingEnabled(boolean throttlingEnabled) {
+        this.throttlingEnabled = throttlingEnabled;
+    }
+
+    public void setUpperThreshold(double upperThreshold) {
+        this.upperThreshold = upperThreshold;
+    }
+
+    public void setLowerThreshold(double lowerThreshold) {
+        this.lowerThreshold = lowerThreshold;
+    }
 
     // Main     --------------------------------------------------------------------------------------------------------
     public static void main(String[] args) {
