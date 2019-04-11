@@ -2,6 +2,11 @@ import evacuation.CoreSimulation;
 import org.apache.commons.cli.*;
 import sim.engine.SimState;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 public class ThrottleExperiment {
 
     /*
@@ -87,11 +92,13 @@ public class ThrottleExperiment {
             CoreSimulation state = new CoreSimulation(System.currentTimeMillis());
             state.nameThread();
 
+            FileWriter fileWriter = new FileWriter("output.txt");
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+
             state.setThrottlingEnabled(false);
-
             int jobCounter= 0;
-
             System.out.println("BASE");
+            printWriter.println("BASE");
 
             for(int i=0; i< repeats; i++)
             {
@@ -106,6 +113,8 @@ public class ThrottleExperiment {
                 jobCounter++;
             }
 
+            state.setThrottlingEnabled(true);
+            
             for(double UT=minUT;UT<=maxUT;UT+=interval){
                 for(double LT=minLT;LT<=maxLT;LT+=interval){
                     if(LT>UT){
@@ -114,8 +123,9 @@ public class ThrottleExperiment {
 
                     state.setUpperThreshold(UT);
                     state.setLowerThreshold(LT);
-                    
+
                     System.out.println("["+UT+","+LT+"]");
+                    printWriter.println("["+UT+","+LT+"]");
                     // Write to file
 
                     for(int i=0; i< repeats; i++)
@@ -126,19 +136,22 @@ public class ThrottleExperiment {
                             if (!state.schedule.step(state)) break;
                         while(state.schedule.getSteps() < timeout);
                         System.out.println(state.schedule.getSteps());
+                        printWriter.println(state.schedule.getSteps());
                         // Write to a file
                         state.finish();
                         jobCounter++;
                     }
                 }
             }
-
+            printWriter.close();
             System.exit(0);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
             formatter.printHelp("utility-name", options);
 
             System.exit(1);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         /* Read args for:
