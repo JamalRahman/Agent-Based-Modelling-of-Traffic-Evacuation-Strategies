@@ -6,6 +6,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 public class ThrottleExperiment {
 
@@ -114,8 +116,11 @@ public class ThrottleExperiment {
             }
 
             state.setThrottlingEnabled(true);
-
+            DecimalFormat df = new DecimalFormat("#.###");
+            df.setRoundingMode(RoundingMode.HALF_UP);
             for(double UT=minUT;UT<=maxUT;UT+=interval){
+                UT = Double.parseDouble(df.format(UT));
+
                 for(double LT=minLT;LT<=maxLT;LT+=interval){
                     if(LT>UT){
                         continue;
