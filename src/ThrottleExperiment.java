@@ -123,7 +123,7 @@ public class ThrottleExperiment {
 
                 for(double LT=minLT;LT<=maxLT;LT+=interval){
                     LT = Double.parseDouble(df.format(LT));
-                    
+
                     if(LT>UT){
                         continue;
                     }
