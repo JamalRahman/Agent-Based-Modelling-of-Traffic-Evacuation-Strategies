@@ -32,7 +32,7 @@ public class CoreSimulation extends SimState {
     public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
 
     // Simulation modes
-    private boolean greedyAgentsEnabled = false;
+    private boolean greedyAgentsEnabled = true;
     private boolean throttlingEnabled = true;
 
     // Simulation parameters

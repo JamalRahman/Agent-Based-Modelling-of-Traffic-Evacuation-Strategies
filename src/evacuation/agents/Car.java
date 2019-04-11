@@ -211,56 +211,63 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
         HashSet<Edge> ignoredEdges = new HashSet<>();
 
+        // If we actually have a route, we can look ahead and see if we will augment that route
         if(route.size()>0){
             Edge nextEdge = route.get(pathIndex+1);
             Road nextRoad = (Road) nextEdge.getInfo();
 
-            if(nextRoad.isThrottled()){
-                Bag edgesFromUpcomingJunction = simulation.getNetwork().getEdgesOut(currentEdge.getTo());
-                for(Object obj : edgesFromUpcomingJunction){
-                    Edge edgeFromUpcomingJunction = (Edge) obj;
-                    Road roadFromUpcomingJunction = (Road) edgeFromUpcomingJunction.getInfo();
-                    if(roadFromUpcomingJunction.isThrottled()){
-                        ignoredEdges.add(edgeFromUpcomingJunction);
-                    }
+            Bag edgesFromUpcomingJunction = simulation.getNetwork().getEdgesOut(currentEdge.getTo());
+            HashSet<Edge> openEdgesFromUpcomingJunction = new HashSet<>();
+
+            for(Object obj : edgesFromUpcomingJunction){
+                Edge edgeFromUpcomingJunction = (Edge) obj;
+                Road roadFromUpcomingJunction = (Road) edgeFromUpcomingJunction.getInfo();
+                if(roadFromUpcomingJunction.isThrottled()){
+                    ignoredEdges.add(edgeFromUpcomingJunction);
+                }
+                else{
+                    openEdgesFromUpcomingJunction.add(edgeFromUpcomingJunction);
                 }
             }
 
             if(isGreedy && simulation.random.nextBoolean(greedChance) && greedChangeCount<greedMaxChanges){
                 double nextEdgeCongestion = nextRoad.getCongestion(vehicleBuffer);
-                ignoredEdges.add(nextEdge);
 
                 if(nextEdgeCongestion>=greedthreshold){
-                    // Choose first edge - the least congested edge from the next junction
+                    ignoredEdges.add(nextEdge);
 
-                    Bag edges = simulation.getNetwork().getEdgesOut(currentEdge.getTo());
-                    Edge firstEdge = null;
+                    // Choose first edge - the least congested (unthrottled) edge from the next junction
+                    Edge firstEdgeToChoose = null;
                     double minimumCongestion = 1;
 
-                    // Find the edge with minimum congestion
-                    for(Object o : edges){
-                        Edge e = (Edge) o;
-                        Road road = (Road) e.getInfo();
-                        double eCongestion = road.getCongestion(vehicleBuffer);
+                    // Find the edge with minimum congestion from adjacent open roads
+                    for(Object o : openEdgesFromUpcomingJunction){
+                        Edge edgeFromUpcomingJunction = (Edge) o;
+                        Road roadFromUpcomingJunction = (Road) edgeFromUpcomingJunction.getInfo();
+                        double eCongestion = roadFromUpcomingJunction.getCongestion(vehicleBuffer);
+
                         if(eCongestion <= minimumCongestion){
                             if(!(eCongestion==minimumCongestion) && simulation.random.nextBoolean(0.5)){
                                 minimumCongestion = eCongestion;
                             }
-                            firstEdge = e;
+                            firstEdgeToChoose = edgeFromUpcomingJunction;
                         }
                     }
 
                     // Construct path. First edge is set so we want to A* search from after firstEdge
-                    ArrayList<Edge> tempRoute = new ArrayList<>();
-                    tempRoute.add(firstEdge);
-                    tempRoute.addAll(calculatePath((Junction) firstEdge.getTo(),goalJunction,ignoredEdges));
+                    if(firstEdgeToChoose!=null){
+                        ArrayList<Edge> tempRoute = new ArrayList<>();
+                        tempRoute.add(firstEdgeToChoose);
+                        tempRoute.addAll(calculatePath((Junction) firstEdgeToChoose.getTo(),goalJunction,ignoredEdges));
 
-                    // if the new route , tempROute, is less than MaxLengthFactor times the current route, accept it.
-                    if(getPathLength(tempRoute,0)<=getPathLength(route,pathIndex+1)*greedMaxLengthFactor){
-                        route = tempRoute;
-                        pathIndex = -1;
+                        // if the new route , tempROute, is less than MaxLengthFactor times the current route, accept it.
+                        if(getPathLength(tempRoute,0)<=getPathLength(route,pathIndex+1)*greedMaxLengthFactor){
+                            route = tempRoute;
+                            pathIndex = -1;
+                            greedChangeCount++;
+                            return;
+                        }
                     }
-                    greedChangeCount++;
                 }
             }
         }
