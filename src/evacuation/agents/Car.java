@@ -272,8 +272,11 @@ public class Car extends SimplePortrayal2D implements Steppable {
             }
         }
 
-        route = calculatePath((Junction)currentEdge.getTo(),goalJunction,ignoredEdges);
-        pathIndex = -1;
+        ArrayList<Edge> newPath = new ArrayList<>();
+        newPath.add(currentEdge);
+        newPath.addAll(calculatePath((Junction) currentEdge.getTo(),goalJunction,ignoredEdges));
+        route = newPath;
+        pathIndex = 0;
     }
 
     private double getPathLength(ArrayList<Edge> path, int index) {
@@ -293,7 +296,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
         tempCurrentIndex += calculateMovement();
         speed = tempSpeed;
-        return (tempCurrentIndex >endIndex);
+        return (tempCurrentIndex >=endIndex);
     }
 
     /**
