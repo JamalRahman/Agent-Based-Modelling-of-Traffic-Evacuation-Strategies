@@ -32,8 +32,8 @@ public class CoreSimulation extends SimState {
     public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
 
     // Simulation modes
-    private boolean greedyAgentsEnabled = true;
-    private boolean throttlingEnabled = true;
+    private boolean greedyAgentsEnabled = false;
+    private boolean throttlingEnabled = false;
 
     // Simulation parameters
     private int populationSize = 1000 ;         // Number of cars on the network
@@ -51,8 +51,8 @@ public class CoreSimulation extends SimState {
     private int agentGreedMaxChanges = 10;
 
     // blockTheshold >= unblockThreshold
-    private double upperThreshold = 0.5;
-    private double lowerThreshold = 0.3;
+    private double upperThreshold = 0.9;
+    private double lowerThreshold = 0.5;
 
     private static final int GRIDHEIGHT = 10;
     private static final int GRIDWIDTH = 10;
@@ -118,11 +118,11 @@ public class CoreSimulation extends SimState {
 
         // Setup Environment
 //        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        roadEnvironment = new Continuous2D(1.0,20,20);
+        roadEnvironment = new Continuous2D(1.0,100,100);
 //        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
-        network = networkFactory.buildMadireddyTestNetwork(this,20);
+        network = networkFactory.buildMadireddyTestNetwork(this,100);
 //        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        cars = new Continuous2D(1.0,20,20);
+        cars = new Continuous2D(1.0,100,100);
     }
 
     /**
