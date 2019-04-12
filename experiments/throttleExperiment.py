@@ -65,15 +65,15 @@ def main():
     zi = griddata((x, y), z, (xi[None,:], yi[:,None]), method='linear')
 
     jet = cm.get_cmap('jet',12)
-    x = [0,3,5,10,15,25,35,47]
+    test = [0,3,7,10,15,25,35,47]
 
-    r = [0,0,0.04,0.92,1,0.91,0.5,0]
-    g = [0,0,0.95,1,0.67,0,0,0]
-    b = [0.5,0.5,0.92,0.04,0,0,0,0]
+    r = [0,0,0.25,0.92,1,0.91,0.5,0]
+    g = [0,0,0.9,1,0.67,0,0,0]
+    b = [0.5,0.5,1,0.04,0,0,0,0]
     
-    f_red = interpolate.interp1d(x,r)
-    f_green = interpolate.interp1d(x,g)
-    f_blue = interpolate.interp1d(x,b)
+    f_red = interpolate.interp1d(test,r)
+    f_green = interpolate.interp1d(test,g)
+    f_blue = interpolate.interp1d(test,b)
     vals = []
     for i in range(0,45):
         entry = [f_red(i),f_green(i),f_blue(i),1]
@@ -82,9 +82,13 @@ def main():
     newColor = ListedColormap(vals)
 
 
-
     plt.contourf(xi,yi,zi,levels=8,cmap=newColor)
-    plt.colorbar()
+    plt.xticks(x)
+    plt.yticks(y)
+    plt.xlabel("Lower Threshold")
+    plt.ylabel("Upper Threshold")
+    colorbar = plt.colorbar()
+    colorbar.set_label("Percentage Improvement over no throttling")
     plt.show()
 
     # plt.tricontour(x,y,z,colors='k')
