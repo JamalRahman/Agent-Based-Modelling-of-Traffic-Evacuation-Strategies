@@ -32,8 +32,8 @@ public class CoreSimulation extends SimState {
     public Continuous2D cars;               // Field to store spatial aspects of the cars. e.g - where cars are
 
     // Simulation modes
-    private boolean greedyAgentsEnabled = false;
-    private boolean throttlingEnabled = false;
+    private boolean greedyAgentsEnabled = true;
+    private boolean throttlingEnabled = true;
 
     // Simulation parameters
     private int populationSize = 1000 ;         // Number of cars on the network
@@ -51,8 +51,8 @@ public class CoreSimulation extends SimState {
     private int agentGreedMaxChanges = 10;
 
     // blockTheshold >= unblockThreshold
-    private double upperThreshold = 0.9;
-    private double lowerThreshold = 0.5;
+    private double upperThreshold = 0.5;
+    private double lowerThreshold = 0.1;
 
     private static final int GRIDHEIGHT = 10;
     private static final int GRIDWIDTH = 10;

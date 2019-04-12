@@ -232,7 +232,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
             if(isGreedy && simulation.random.nextBoolean(greedChance) && greedChangeCount<greedMaxChanges){
                 double nextEdgeCongestion = nextRoad.getCongestion(vehicleBuffer);
-
                 if(nextEdgeCongestion>=greedthreshold){
                     ignoredEdges.add(nextEdge);
 
@@ -257,15 +256,21 @@ public class Car extends SimplePortrayal2D implements Steppable {
                     // Construct path. First edge is set so we want to A* search from after firstEdge
                     if(firstEdgeToChoose!=null){
                         ArrayList<Edge> tempRoute = new ArrayList<>();
+                        tempRoute.add(currentEdge);
                         tempRoute.add(firstEdgeToChoose);
-                        tempRoute.addAll(calculatePath((Junction) firstEdgeToChoose.getTo(),goalJunction,ignoredEdges));
-
-                        // if the new route , tempROute, is less than MaxLengthFactor times the current route, accept it.
-                        if(getPathLength(tempRoute,0)<=getPathLength(route,pathIndex+1)*greedMaxLengthFactor){
-                            route = tempRoute;
-                            pathIndex = -1;
-                            greedChangeCount++;
-                            return;
+                        try {
+                            tempRoute.addAll(calculatePath((Junction) firstEdgeToChoose.getTo(), goalJunction, ignoredEdges));
+                            // if the new route , tempROute, is less than MaxLengthFactor times the current route, accept it.
+                            if(getPathLength(tempRoute,0)<=getPathLength(route,pathIndex+1)*greedMaxLengthFactor){
+                                route = tempRoute;
+                                pathIndex = 0;
+                                greedChangeCount++;
+                                return;
+                            }
+                        }
+                        catch(Exception e){
+                            route= new ArrayList<>();
+                            pathIndex=0;
                         }
                     }
                 }
@@ -274,9 +279,15 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
         ArrayList<Edge> newPath = new ArrayList<>();
         newPath.add(currentEdge);
-        newPath.addAll(calculatePath((Junction) currentEdge.getTo(),goalJunction,ignoredEdges));
-        route = newPath;
-        pathIndex = 0;
+        try{
+            newPath.addAll(calculatePath((Junction) currentEdge.getTo(),goalJunction,ignoredEdges));
+            route = newPath;
+            pathIndex = 0;
+        }
+        catch(Exception e){
+            route = new ArrayList<>();
+            pathIndex=0;
+        }
     }
 
     private double getPathLength(ArrayList<Edge> path, int index) {
@@ -457,7 +468,12 @@ public class Car extends SimplePortrayal2D implements Steppable {
      */
     public void init(){
         updateLocation(spawnJunction.getLocation());
-        route = calculatePath(spawnJunction,goalJunction,new ArrayList<>());
+        try{
+            route = calculatePath(spawnJunction,goalJunction,new ArrayList<>());
+        }
+        catch(Exception e){
+            route = new ArrayList<>();
+        }
         pathIndex = 0;
         prepareEdge();
     }
@@ -475,8 +491,12 @@ public class Car extends SimplePortrayal2D implements Steppable {
     /**
      * Uses A* to calculate a edge-to-edge route to the goal node
      */
-    private ArrayList<Edge> calculatePath(Junction start, Junction goal, Collection<Edge> ignoredEdges){
-        return simulation.aStarSearch.getEdgeRoute(start,goal,ignoredEdges);
+    private ArrayList<Edge> calculatePath(Junction start, Junction goal, Collection<Edge> ignoredEdges) throws Exception{
+        ArrayList<Edge> path = simulation.aStarSearch.getEdgeRoute(start,goal,ignoredEdges);
+        if(path.isEmpty()){
+            throw new Exception();
+        }
+        else return path;
     }
 
     /**

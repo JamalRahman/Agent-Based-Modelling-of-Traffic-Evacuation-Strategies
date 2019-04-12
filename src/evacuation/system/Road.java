@@ -60,8 +60,10 @@ public class Road  implements java.io.Serializable{
     }
 
     public double getCongestion(double averageVehicleLength){
-        averageVehicleLength=averageVehicleLength/2;
         double congestion = ((double)traffic.size())/((length/averageVehicleLength)+1);
+        if(congestion>1){
+            congestion = 1;
+        }
         return congestion;
     }
 
