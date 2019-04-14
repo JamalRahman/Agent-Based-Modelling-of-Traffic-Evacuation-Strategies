@@ -6,6 +6,8 @@ import sim.engine.*;
 import sim.field.network.Edge;
 import sim.field.network.Network;
 
+import java.util.HashMap;
+
 public class Overseer implements Steppable {
 
     private final Network network;
@@ -15,6 +17,7 @@ public class Overseer implements Steppable {
     private double blockThreshold;
     private double unblockThreshold;
     private Stoppable stoppable;
+    HashMap<Edge,Double> previousCongestionLevels;
 
     public Overseer(Network network, CoreSimulation simulation, double vehicleBuffer, double blockThreshold, double unblockThreshold ) {
         this.network = network;
@@ -23,12 +26,18 @@ public class Overseer implements Steppable {
         this.blockThreshold = blockThreshold;
         this.unblockThreshold = unblockThreshold;
         allEdges = network.getAdjacencyList(true);
+        previousCongestionLevels = new HashMap<>();
+        for(int i=0;i<allEdges.length;i++){
+            for(int j=0;j<allEdges[i].length;j++){
+                previousCongestionLevels.put(allEdges[i][j],Double.valueOf(0));
+            }
+        }
 
     }
 
     @Override
     public void step(SimState state) {
-        if(simulation.cars.getAllObjects().isEmpty()){
+        if(simulation.isComplete()){
             stoppable.stop();
         }
         else{
@@ -36,16 +45,14 @@ public class Overseer implements Steppable {
                 for(int j=0;j<allEdges[i].length;j++){
                     Road road = (Road) allEdges[i][j].getInfo();
                     double congestion = road.getCongestion(vehicleBuffer);
-                    if(road.isThrottled()){
-                        if(congestion<=unblockThreshold){
-                            road.setThrottled(false);
-                        }
+
+                    if(previousCongestionLevels.get(allEdges[i][j])<blockThreshold && congestion>= blockThreshold){
+                        road.setThrottled(true);
                     }
-                    else{
-                        if(congestion>=blockThreshold){
-                            road.setThrottled(true);
-                        }
+                    else if(previousCongestionLevels.get(allEdges[i][j])>unblockThreshold && congestion<=unblockThreshold){
+                        road.setThrottled(false);
                     }
+                    previousCongestionLevels.replace(allEdges[i][j],Double.valueOf(congestion));
                 }
             }
         }

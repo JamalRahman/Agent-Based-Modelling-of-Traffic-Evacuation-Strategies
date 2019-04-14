@@ -25,6 +25,7 @@ public class CoreSimulation extends SimState {
     private static final long serialNumber = 1;
     public NetworkFactory networkFactory = new NetworkFactory();
     public AStarSearch aStarSearch;
+    private int evacuatedCount = 0;
 
     private Network network;                 // Field to store networked aspects of the roads. e.g - which junctions
                                                 // connect to which via which roads
@@ -44,8 +45,8 @@ public class CoreSimulation extends SimState {
     private double agentAcceleration = 1;       // m/s/s
     private double agentSpeedLimit = 20;        // m/s
     private double agentBuffer = 4;             // m
-    private double agentPerceptionRadius = 40;  // m
-    private double agentGreedthreshold = 0.3;
+    private double agentPerceptionRadius = 200;  // m
+    private double agentGreedthreshold = 1;
     private double agentGreedChance = 1;
     private double agentGreedMaxLengthFactor = 2;
     private int agentGreedMaxChanges = 10;
@@ -56,7 +57,7 @@ public class CoreSimulation extends SimState {
 
     private static final int GRIDHEIGHT = 10;
     private static final int GRIDWIDTH = 10;
-    private static final int ROADLENGTH = 50;
+    private  int roadLength = 100;
 
 
     /**
@@ -115,14 +116,14 @@ public class CoreSimulation extends SimState {
      * This method may set the simulation parameters according to some configuration input.
      */
     private void setupSimulation() {
-
+        evacuatedCount = 0;
         // Setup Environment
-//        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        roadEnvironment = new Continuous2D(1.0,100,100);
-//        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,ROADLENGTH);
-        network = networkFactory.buildMadireddyTestNetwork(this,100);
-//        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*ROADLENGTH,(GRIDHEIGHT-1)*ROADLENGTH);
-        cars = new Continuous2D(1.0,100,100);
+//        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
+        roadEnvironment = new Continuous2D(1.0, roadLength, roadLength);
+//        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,roadLength);
+        network = networkFactory.buildMadireddyTestNetwork(this, roadLength);
+//        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
+        cars = new Continuous2D(1.0, roadLength, roadLength);
     }
 
     /**
@@ -142,7 +143,16 @@ public class CoreSimulation extends SimState {
             }
             // TODO: Better handling of the IllegalArgumentException if there are no source nodes
             try{
-                startJunction = sourceJunctions.get(random.nextInt(sourceJunctions.size()));
+                double rand = random.nextDouble();
+                if(rand<0.3){
+                    startJunction = sourceJunctions.get(0);
+                }
+                else if(rand>=0.3 && rand<0.7){
+                    startJunction = sourceJunctions.get(1);
+                }
+                else{
+                    startJunction = sourceJunctions.get(2);
+                }
                 Car car = new Car.CarBuilder()
                         .setSimulation(this)
                         .setSpawnJunction(startJunction)
@@ -234,5 +244,14 @@ public class CoreSimulation extends SimState {
     public static void main(String[] args) {
         doLoop(CoreSimulation.class,args);
         System.exit(0);
+    }
+
+    public void notifyEvacuated(Car car) {
+        cars.remove(car);
+        evacuatedCount++;
+    }
+
+    public boolean isComplete() {
+        return evacuatedCount==populationSize;
     }
 }

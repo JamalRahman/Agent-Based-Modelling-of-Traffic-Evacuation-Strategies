@@ -94,64 +94,73 @@ public class ThrottleExperiment {
             CoreSimulation state = new CoreSimulation(System.currentTimeMillis());
             state.nameThread();
 
-            FileWriter fileWriter = new FileWriter("output.txt");
-            PrintWriter printWriter = new PrintWriter(fileWriter);
+            //
+            int minRoad = 50;
+            int maxRoad = 300;
+            int roadInterval = 25;
+            for(int r=minRoad;r<maxRoad;r+=roadInterval){
+                String filename = r+".txt";
+                FileWriter fileWriter = new FileWriter(filename);
+                PrintWriter printWriter = new PrintWriter(fileWriter);
 
-            state.setThrottlingEnabled(false);
-            int jobCounter= 0;
-            System.out.println("BASE");
-            printWriter.println("BASE");
+                state.setThrottlingEnabled(false);
+                int jobCounter= 0;
+                System.out.println("BASE");
+                printWriter.println("BASE");
 
-            for(int i=0; i< repeats; i++)
-            {
-                state.setJob(jobCounter);
-                state.start();
-                do
-                    if (!state.schedule.step(state)) break;
-                while(state.schedule.getSteps() < timeout);
-                System.out.println(state.schedule.getSteps());
-                printWriter.println(state.schedule.getSteps());
-                // Write to a file
-                state.finish();
-                jobCounter++;
-            }
+                for(int i=0; i< repeats; i++)
+                {
+                    state.setJob(jobCounter);
+                    state.start();
+                    do
+                        if (!state.schedule.step(state)) break;
+                    while(state.schedule.getSteps() < timeout);
+                    System.out.println(state.schedule.getSteps());
+                    printWriter.println(state.schedule.getSteps());
+                    // Write to a file
+                    state.finish();
+                    jobCounter++;
+                }
 
-            state.setThrottlingEnabled(true);
-            DecimalFormat df = new DecimalFormat("#.###");
-            df.setRoundingMode(RoundingMode.HALF_UP);
-            for(double UT=minUT;UT<=maxUT;UT+=interval){
-                UT = Double.parseDouble(df.format(UT));
+                state.setThrottlingEnabled(true);
+                DecimalFormat df = new DecimalFormat("#.###");
+                df.setRoundingMode(RoundingMode.HALF_UP);
+                for(double UT=minUT;UT<=maxUT;UT+=interval){
+                    UT = Double.parseDouble(df.format(UT));
 
-                for(double LT=minLT;LT<=maxLT;LT+=interval){
-                    LT = Double.parseDouble(df.format(LT));
+                    for(double LT=minLT;LT<=maxLT;LT+=interval){
+                        LT = Double.parseDouble(df.format(LT));
 
-                    if(LT>UT){
-                        continue;
-                    }
+                        if(LT>UT){
+                            continue;
+                        }
 
-                    state.setUpperThreshold(UT);
-                    state.setLowerThreshold(LT);
+                        state.setUpperThreshold(UT);
+                        state.setLowerThreshold(LT);
 
-                    System.out.println("["+UT+","+LT+"]");
-                    printWriter.println("["+UT+","+LT+"]");
-                    // Write to file
+                        System.out.println("["+UT+","+LT+"]");
+                        printWriter.println("["+UT+","+LT+"]");
+                        // Write to file
 
-                    for(int i=0; i< repeats; i++)
-                    {
-                        state.setJob(jobCounter);
-                        state.start();
-                        do
-                            if (!state.schedule.step(state)) break;
-                        while(state.schedule.getSteps() < timeout);
-                        System.out.println(state.schedule.getSteps());
-                        printWriter.println(state.schedule.getSteps());
-                        // Write to a file
-                        state.finish();
-                        jobCounter++;
+                        for(int i=0; i< repeats; i++)
+                        {
+                            state.setJob(jobCounter);
+                            state.start();
+                            do
+                                if (!state.schedule.step(state)) break;
+                            while(state.schedule.getSteps() < timeout);
+                            System.out.println(state.schedule.getSteps());
+                            printWriter.println(state.schedule.getSteps());
+                            // Write to a file
+                            state.finish();
+                            jobCounter++;
+                        }
                     }
                 }
+                printWriter.close();
             }
-            printWriter.close();
+
+
             System.exit(0);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
