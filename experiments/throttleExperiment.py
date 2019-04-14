@@ -9,7 +9,7 @@ import re
 import copy 
 
 def main():     
-    lines = [line.rstrip() for line in open('results.txt')]
+    lines = [line.rstrip() for line in open('same.txt')]
 
     data = []
     datapoint=[]

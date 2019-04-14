@@ -45,11 +45,10 @@ public class Overseer implements Steppable {
                 for(int j=0;j<allEdges[i].length;j++){
                     Road road = (Road) allEdges[i][j].getInfo();
                     double congestion = road.getCongestion(vehicleBuffer);
-
-                    if(previousCongestionLevels.get(allEdges[i][j])<blockThreshold && congestion>= blockThreshold){
+                    if(!road.isThrottled() && congestion>= blockThreshold){
                         road.setThrottled(true);
                     }
-                    else if(previousCongestionLevels.get(allEdges[i][j])>unblockThreshold && congestion<=unblockThreshold){
+                    else if(road.isThrottled() && congestion<=unblockThreshold){
                         road.setThrottled(false);
                     }
                     previousCongestionLevels.replace(allEdges[i][j],Double.valueOf(congestion));

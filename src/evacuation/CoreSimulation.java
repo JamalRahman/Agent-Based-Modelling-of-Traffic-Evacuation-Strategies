@@ -37,10 +37,10 @@ public class CoreSimulation extends SimState {
     private boolean throttlingEnabled = true;
 
     // Simulation parameters
-    private int populationSize = 1000 ;         // Number of cars on the network
+    private int populationSize = 10gi00;         // Number of cars on the network
     private double timeFactor = 1;
 
-    private double greedyAgentProportion = 0.5;
+    private double greedyAgentProportion = 1;
 
     private double agentAcceleration = 1;       // m/s/s
     private double agentSpeedLimit = 20;        // m/s
@@ -57,7 +57,7 @@ public class CoreSimulation extends SimState {
 
     private static final int GRIDHEIGHT = 10;
     private static final int GRIDWIDTH = 10;
-    private  int roadLength = 100;
+    private int roadLength = 200;
 
 
     /**
@@ -104,6 +104,7 @@ public class CoreSimulation extends SimState {
      * Outputs clearance time to System.out
      */
     public  void finish(){
+        System.out.println(schedule.getSteps());
         super.finish();
     }
 
@@ -141,18 +142,18 @@ public class CoreSimulation extends SimState {
             if(greedyAgentsEnabled){
                 isGreedy = random.nextBoolean(greedyAgentProportion);
             }
-            // TODO: Better handling of the IllegalArgumentException if there are no source nodes
             try{
-                double rand = random.nextDouble();
-                if(rand<0.3){
-                    startJunction = sourceJunctions.get(0);
-                }
-                else if(rand>=0.3 && rand<0.7){
-                    startJunction = sourceJunctions.get(1);
-                }
-                else{
-                    startJunction = sourceJunctions.get(2);
-                }
+//                double rand = random.nextDouble();
+//                if(rand<0.3){
+//                    startJunction = sourceJunctions.get(0);
+//                }
+//                else if(rand>=0.3 && rand<0.7){
+//                    startJunction = sourceJunctions.get(1);
+//                }
+//                else{
+//                    startJunction = sourceJunctions.get(2);
+//                }
+                startJunction = sourceJunctions.get(random.nextInt(sourceJunctions.size()));
                 Car car = new Car.CarBuilder()
                         .setSimulation(this)
                         .setSpawnJunction(startJunction)
