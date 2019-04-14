@@ -1,3 +1,14 @@
+Refactor Car
+    Clean up hacky implementations
+
+Agents do not load onto edges when initialised.
+    First part of agent step() algorithm tries to spawn the agent if it is not yet spawned
+
+Set up new main() class which reads simulation config files and executes them in sequence
+
+
+
+
 Option to spawn agents on node or spawn agents on edge somewhere
 
 Car is messy and gross again
