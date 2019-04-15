@@ -212,7 +212,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     }
 
     private void attemptSpawn() {
-        ArrayList<Edge> oldrRoute = route;
+        ArrayList<Edge> oldRoute = route;
         evaluateNextJunction(spawnJunction);
         if(route.isEmpty()){
             return;
@@ -294,13 +294,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
         Bag edgesFromUpcomingJunction = simulation.getNetwork().getEdgesOut(targetJunction);
 
-//        Bag allNodes = simulation.getNetwork().getAllNodes();
-//
-//        HashSet<Edge> allEdges = new HashSet<>();
-//        for(Object obj : allNodes){
-//            allEdges.addAll(simulation.getNetwork().getEdgesOut(obj));
-//        }
-
         HashSet<Edge> ignoredEdges = new HashSet<>();
         HashSet<Edge> openEdgesFromUpcomingJunction = new HashSet<>();
 
@@ -318,7 +311,13 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
         if(isGreedy && simulation.random.nextBoolean(greedChance) && greedChangeCount<greedMaxChanges){
             if(!route.isEmpty() && pathIndex<route.size()-1){
-                Road nextRoad = (Road) route.get(pathIndex+1).getInfo();
+                Road nextRoad;
+                if(spawned){
+                    nextRoad =(Road) route.get(pathIndex+1).getInfo();
+                }
+                else{
+                    nextRoad = (Road) route.get(0).getInfo();
+                }
                 if(nextRoad.getCongestion(vehicleBuffer) >= greedthreshold){
                     // Choose first edge - the least congested (unthrottled) edge from the next junction
                     Edge firstEdgeToChoose = null;
@@ -343,7 +342,10 @@ public class Car extends SimplePortrayal2D implements Steppable {
                         ArrayList<Edge> tempRoute = new ArrayList<>();
                         ArrayList<Edge> calculatedRoute = new ArrayList<>();
                         calculatedRoute = calculatePath((Junction) firstEdgeToChoose.getTo(), goalJunction, ignoredEdges);
-                        if(currentEdge!=null && !calculatedRoute.isEmpty()){
+                        if(!calculatedRoute.isEmpty()){
+                            if(currentEdge!=null){
+                                tempRoute.add(currentEdge);
+                            }
                             tempRoute.add(firstEdgeToChoose);
                             tempRoute.addAll(calculatedRoute);
                         }
@@ -371,6 +373,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
         }
         else{
             route = tempPath;
+            pathIndex = 0;
         }
     }
 
@@ -505,6 +508,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
         return currentIndex;
     }
 
+    public ArrayList<Edge> getRoute(){
+        return route;
+    }
     public void setStoppable(Stoppable scheduleRepeating) {
         stoppable = scheduleRepeating;
     }
@@ -516,5 +522,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
             graphics.setColor(Color.blue);
         }
         graphics.fillOval((int) (info.draw.x - 6 / 2), (int) (info.draw.y - 6 / 2), (int) (6), (int) (6));
+    }
+
+    public String toString(){
+        return currentEdge+" : "+"Index: "+currentIndex;
     }
 }

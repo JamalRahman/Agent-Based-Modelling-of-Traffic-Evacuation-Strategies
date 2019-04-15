@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib import cm
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+import matplotlib.colors as mc
 import numpy as np
 from scipy.interpolate import griddata
 from scipy import interpolate
@@ -9,7 +10,7 @@ import re
 import copy 
 
 def main():     
-    lines = [line.rstrip() for line in open('same.txt')]
+    lines = [line.rstrip() for line in open('TestNetA_throttling_thresholds.txt')]
 
     data = []
     datapoint=[]
@@ -64,8 +65,8 @@ def main():
     yi = np.linspace(0,1,100)
     zi = griddata((x, y), z, (xi[None,:], yi[:,None]), method='linear')
 
-    jet = cm.get_cmap('jet',12)
-    test = [0,3,7,10,15,25,35,47]
+
+    test = [0,0.1,5,10,15,25,35,47]
 
     r = [0,0,0.25,0.92,1,0.91,0.5,0]
     g = [0,0,0.9,1,0.67,0,0,0]
@@ -82,17 +83,19 @@ def main():
     newColor = ListedColormap(vals)
 
 
-    plt.contourf(xi,yi,zi,levels=8,cmap=newColor)
+    plt.contour(xi,yi,zi,levels=32,colors='k',linewidths=0.2)
+    plt.contourf(xi,yi,zi,levels=128,cmap=newColor)
     plt.xticks(x)
     plt.yticks(y)
     plt.xlabel("Lower Threshold")
     plt.ylabel("Upper Threshold")
-    colorbar = plt.colorbar()
+    colorbar = plt.colorbar(ticks=range(0,int(np.max(z)),5))
+
     colorbar.set_label("Percentage Improvement over no throttling")
     plt.show()
 
-    # plt.tricontour(x,y,z,colors='k')
-    # plt.tricontourf(x,y,z,cmap='jet')
+    # plt.tricontour(x,y,z,levels=10,colors='k',linewidths=0.1)
+    # plt.tricontourf(x,y,z,levels=10,cmap='jet')
     # plt.colorbar()
     # plt.show()
 
