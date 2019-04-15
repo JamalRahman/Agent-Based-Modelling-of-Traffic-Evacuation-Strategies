@@ -84,15 +84,15 @@ public class NetworkFactory {
         Junction j3 = new Junction(new Double2D(0,networkDiameter),false,true);
         Junction j4 = new Junction(new Double2D(networkDiameter/2,networkDiameter/2),false);
         Junction j5 = new Junction(new Double2D(networkDiameter,0),false);
-//        Junction j6 = new Junction(new Double2D(networkDiameter,networkDiameter),false);
+        Junction j6 = new Junction(new Double2D(networkDiameter,networkDiameter),false);
         Junction j7 = new Junction(new Double2D(networkDiameter,networkDiameter/2),true);
 
         junctionOutbounds.put(j1,new ArrayList<>(Arrays.asList(j4,j5)));
         junctionOutbounds.put(j2,new ArrayList<>(Arrays.asList(j4)));
-        junctionOutbounds.put(j3,new ArrayList<>(Arrays.asList(j4)));
-        junctionOutbounds.put(j4,new ArrayList<>(Arrays.asList(j7)));
-        junctionOutbounds.put(j5,new ArrayList<>(Arrays.asList(j7)));
-//        junctionOutbounds.put(j6,new ArrayList<>(Arrays.asList(j3,j7)));
+        junctionOutbounds.put(j3,new ArrayList<>(Arrays.asList(j4,j6)));
+        junctionOutbounds.put(j4,new ArrayList<>(Arrays.asList(j7,j1,j2,j3)));
+        junctionOutbounds.put(j5,new ArrayList<>(Arrays.asList(j7,j1)));
+        junctionOutbounds.put(j6,new ArrayList<>(Arrays.asList(j3,j7)));
         junctionOutbounds.put(j7,new ArrayList<>(Arrays.asList()));
 
         // For each junction, add it to the simulation Fiel2d and create outbound edges.

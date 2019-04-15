@@ -34,7 +34,7 @@ public class CoreSimulation extends SimState {
 
     // Simulation modes
     private boolean greedyAgentsEnabled = true;
-    private boolean throttlingEnabled = false;
+    private boolean throttlingEnabled = true;
 
     // Simulation parameters
     private int populationSize = 1000;         // Number of cars on the network
@@ -58,7 +58,7 @@ public class CoreSimulation extends SimState {
 
     private static final int GRIDHEIGHT = 6;
     private static final int GRIDWIDTH = 6;
-    private int roadLength = 200;
+    private int roadLength = 100;
 
 
     /**
@@ -120,12 +120,12 @@ public class CoreSimulation extends SimState {
     private void setupSimulation() {
         evacuatedCount = 0;
         // Setup Environment
-        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
-//        roadEnvironment = new Continuous2D(1.0, roadLength, roadLength);
-        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,roadLength);
-//        network = networkFactory.buildMadireddyTestNetwork(this, roadLength);
-        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
-//        cars = new Continuous2D(1.0, roadLength, roadLength);
+//        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
+        roadEnvironment = new Continuous2D(1.0, roadLength, roadLength);
+//        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,roadLength);
+        network = networkFactory.buildMadireddyTestNetwork(this, roadLength);
+//        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
+        cars = new Continuous2D(1.0, roadLength, roadLength);
     }
 
     /**

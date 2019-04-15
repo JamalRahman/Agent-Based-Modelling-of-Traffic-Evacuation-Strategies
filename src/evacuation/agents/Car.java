@@ -341,13 +341,12 @@ public class Car extends SimplePortrayal2D implements Steppable {
                     // Construct path. First edge is set so we want to A* search from after firstEdge
                     if(firstEdgeToChoose!=null){
                         ArrayList<Edge> tempRoute = new ArrayList<>();
-
-                        if(currentEdge!=null){
-                            tempRoute.add(currentEdge);
+                        ArrayList<Edge> calculatedRoute = new ArrayList<>();
+                        calculatedRoute = calculatePath((Junction) firstEdgeToChoose.getTo(), goalJunction, ignoredEdges);
+                        if(currentEdge!=null && !calculatedRoute.isEmpty()){
+                            tempRoute.add(firstEdgeToChoose);
+                            tempRoute.addAll(calculatedRoute);
                         }
-                        tempRoute.add(firstEdgeToChoose);
-                        tempRoute.addAll(calculatePath((Junction) firstEdgeToChoose.getTo(), goalJunction, ignoredEdges));
-
                         // if the new route , tempROute, is less than MaxLengthFactor times the current route, accept it.
                         if(getPathLength(tempRoute,0)<=getPathLength(route,pathIndex+1)*greedMaxLengthFactor){
                             route = tempRoute;
@@ -425,13 +424,19 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private void nextEdge(double residualMovement) {
 
         // If we have just moved onto/through the goal node, our journey is over
-        if(currentEdge.getTo().equals(goalJunction)){
+        if(currentEdge.getTo().equals(goalJunction)) {
             currentIndex = endIndex;
             cleanup();
             return;
         }
 
         pathIndex++;
+        if(pathIndex==route.size()){
+            System.out.println("Moving from edge: ");
+            System.out.println(currentEdge);
+            System.out.println("Route is: ");
+            System.out.println(route);
+        }
         prepareEdge(route.get(pathIndex));
         currentIndex+=residualMovement;
 
