@@ -96,10 +96,10 @@ public class ThrottleExperiment {
 
             //
             int minRoad = 50;
-            int maxRoad = 300;
+            int maxRoad = 51;
             int roadInterval = 25;
             for(int r=minRoad;r<maxRoad;r+=roadInterval){
-                String filename = r+".txt";
+                String filename = "same.txt";
                 FileWriter fileWriter = new FileWriter(filename);
                 PrintWriter printWriter = new PrintWriter(fileWriter);
 
