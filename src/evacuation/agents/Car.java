@@ -293,12 +293,18 @@ public class Car extends SimplePortrayal2D implements Steppable {
             return;
         }
 
-        Bag edgesFromUpcomingJunction = simulation.getNetwork().getEdgesOut(targetJunction);
+//        Bag edgesFromUpcomingJunction = simulation.getNetwork().getEdgesOut(targetJunction);
+        Bag allNodeyBois = simulation.getNetwork().getAllNodes();
+
+        HashSet<Edge> allEdges = new HashSet<>();
+        for(Object obj : allNodeyBois){
+            allEdges.addAll(simulation.getNetwork().getEdgesOut(obj));
+        }
 
         HashSet<Edge> ignoredEdges = new HashSet<>();
         HashSet<Edge> openEdgesFromUpcomingJunction = new HashSet<>();
 
-        for(Object obj : edgesFromUpcomingJunction){
+        for(Object obj : allEdges){
 
             Edge edgeFromUpcomingJunction = (Edge) obj;
             Road roadFromUpcomingJunction = (Road) edgeFromUpcomingJunction.getInfo();

@@ -37,10 +37,10 @@ public class CoreSimulation extends SimState {
     private boolean throttlingEnabled = true;
 
     // Simulation parameters
-    private int populationSize = 10gi00;         // Number of cars on the network
+    private int populationSize = 1000;         // Number of cars on the network
     private double timeFactor = 1;
 
-    private double greedyAgentProportion = 1;
+    private double greedyAgentProportion = 0.5;
 
     private double agentAcceleration = 1;       // m/s/s
     private double agentSpeedLimit = 20;        // m/s
@@ -52,12 +52,12 @@ public class CoreSimulation extends SimState {
     private int agentGreedMaxChanges = 10;
 
     // blockTheshold >= unblockThreshold
-    private double upperThreshold = 0.1;
-    private double lowerThreshold = 0.1;
+    private double upperThreshold = 0.5;
+    private double lowerThreshold = 0.2;
 
     private static final int GRIDHEIGHT = 10;
     private static final int GRIDWIDTH = 10;
-    private int roadLength = 200;
+    private int roadLength = 100;
 
 
     /**
@@ -119,12 +119,12 @@ public class CoreSimulation extends SimState {
     private void setupSimulation() {
         evacuatedCount = 0;
         // Setup Environment
-//        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
-        roadEnvironment = new Continuous2D(1.0, roadLength, roadLength);
-//        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,roadLength);
-        network = networkFactory.buildMadireddyTestNetwork(this, roadLength);
-//        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
-        cars = new Continuous2D(1.0, roadLength, roadLength);
+        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
+//        roadEnvironment = new Continuous2D(1.0, roadLength, roadLength);
+        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,roadLength);
+//        network = networkFactory.buildMadireddyTestNetwork(this, roadLength);
+        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
+//        cars = new Continuous2D(1.0, roadLength, roadLength);
     }
 
     /**
