@@ -34,30 +34,31 @@ public class CoreSimulation extends SimState {
 
     // Simulation modes
     private boolean greedyAgentsEnabled = true;
-    private boolean throttlingEnabled = true;
+    private boolean throttlingEnabled = false;
 
     // Simulation parameters
     private int populationSize = 1000;         // Number of cars on the network
     private double timeFactor = 1;
 
-    private double greedyAgentProportion = 0.5;
+    private double greedyAgentProportion = 1;
 
     private double agentAcceleration = 1;       // m/s/s
     private double agentSpeedLimit = 20;        // m/s
     private double agentBuffer = 4;             // m
     private double agentPerceptionRadius = 200;  // m
-    private double agentGreedthreshold = 1;
+    private double agentGreedthreshold = 0;
     private double agentGreedChance = 1;
+
     private double agentGreedMaxLengthFactor = 2;
-    private int agentGreedMaxChanges = 10;
+    private int agentGreedMaxChanges = 50;
 
     // blockTheshold >= unblockThreshold
-    private double upperThreshold = 0.5;
-    private double lowerThreshold = 0.2;
+    private double upperThreshold = 0.1;
+    private double lowerThreshold = 0.1;
 
-    private static final int GRIDHEIGHT = 10;
-    private static final int GRIDWIDTH = 10;
-    private int roadLength = 100;
+    private static final int GRIDHEIGHT = 6;
+    private static final int GRIDWIDTH = 6;
+    private int roadLength = 200;
 
 
     /**

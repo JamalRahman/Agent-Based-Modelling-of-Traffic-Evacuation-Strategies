@@ -130,7 +130,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private Junction spawnJunction;
 
     private double speed = 0;
-    private double overbreaking = 0.5;
+    private double overbreaking = 1;
     private Double2D location;
     private boolean neighbourPresentInPerception = false;
     private boolean evacuated = false;
@@ -177,12 +177,10 @@ public class Car extends SimplePortrayal2D implements Steppable {
             attemptSpawn();
             return;
         }
-
         boolean reachingJunction = calculateIfReachingJunction();
         if(reachingJunction){
             evaluateNextJunction((Junction) currentEdge.getTo());
         }
-
         if(route.isEmpty()){
             return;
         }
@@ -214,6 +212,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     }
 
     private void attemptSpawn() {
+        ArrayList<Edge> oldrRoute = route;
         evaluateNextJunction(spawnJunction);
         if(route.isEmpty()){
             return;
@@ -293,18 +292,19 @@ public class Car extends SimplePortrayal2D implements Steppable {
             return;
         }
 
-//        Bag edgesFromUpcomingJunction = simulation.getNetwork().getEdgesOut(targetJunction);
-        Bag allNodeyBois = simulation.getNetwork().getAllNodes();
+        Bag edgesFromUpcomingJunction = simulation.getNetwork().getEdgesOut(targetJunction);
 
-        HashSet<Edge> allEdges = new HashSet<>();
-        for(Object obj : allNodeyBois){
-            allEdges.addAll(simulation.getNetwork().getEdgesOut(obj));
-        }
+//        Bag allNodes = simulation.getNetwork().getAllNodes();
+//
+//        HashSet<Edge> allEdges = new HashSet<>();
+//        for(Object obj : allNodes){
+//            allEdges.addAll(simulation.getNetwork().getEdgesOut(obj));
+//        }
 
         HashSet<Edge> ignoredEdges = new HashSet<>();
         HashSet<Edge> openEdgesFromUpcomingJunction = new HashSet<>();
 
-        for(Object obj : allEdges){
+        for(Object obj : edgesFromUpcomingJunction){
 
             Edge edgeFromUpcomingJunction = (Edge) obj;
             Road roadFromUpcomingJunction = (Road) edgeFromUpcomingJunction.getInfo();
@@ -344,7 +344,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
 
                         if(currentEdge!=null){
                             tempRoute.add(currentEdge);
-
                         }
                         tempRoute.add(firstEdgeToChoose);
                         tempRoute.addAll(calculatePath((Junction) firstEdgeToChoose.getTo(), goalJunction, ignoredEdges));

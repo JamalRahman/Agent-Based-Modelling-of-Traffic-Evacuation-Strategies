@@ -81,6 +81,6 @@ public class Road  implements java.io.Serializable{
 
     @Override
     public String toString() {
-        return (fromJunction.toString()+" -> "+toJunction.toString()+" : " + getTraffic().size());
+        return String.valueOf(getTraffic().size());
     }
 }
