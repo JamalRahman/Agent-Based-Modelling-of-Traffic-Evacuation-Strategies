@@ -5,6 +5,10 @@ import sim.field.network.*;
 import evacuation.system.*;
 import sim.util.Double2D;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,7 +26,7 @@ public class NetworkFactory {
      * @param gridWidth Number of vertical junctions
      * @param roadLength Length of each road section
      */
-    public Network buildGridNetwork(CoreSimulation state, int gridHeight, int gridWidth, int roadLength) {
+    public Network buildGridNetwork(int gridHeight, int gridWidth, int roadLength) {
         Junction[][] junctions = new Junction[gridWidth][gridHeight];
         Network network = new Network();
 
@@ -38,7 +42,6 @@ public class NetworkFactory {
                 Junction newJunc = new Junction(location,isExit,!isExit);
 
                 junctions[i][j] = newJunc;
-                state.roadEnvironment.setObjectLocation(newJunc,location);
                 network.addNode(newJunc);
             }
         }
@@ -74,7 +77,7 @@ public class NetworkFactory {
     }
 
 
-    public Network buildMadireddyTestNetwork(CoreSimulation state, double networkDiameter){
+    public Network buildMadireddyTestNetwork(double networkDiameter){
         Network network = new Network();
         HashMap<Junction, ArrayList<Junction>> junctionOutbounds = new HashMap<>();
         //Create nodes
@@ -97,7 +100,6 @@ public class NetworkFactory {
 
         // For each junction, add it to the simulation Fiel2d and create outbound edges.
         for(Junction junction : junctionOutbounds.keySet()){
-            state.roadEnvironment.setObjectLocation(junction,junction.getLocation());
             network.addNode(junction);
 
             for(Junction target : junctionOutbounds.get(junction)){
@@ -111,4 +113,65 @@ public class NetworkFactory {
         return network;
 
     }
+
+    public Network buildNetworkFromFile(String fileName) throws IOException {
+        Network network = new Network();
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        ArrayList<Junction> junctions = new ArrayList<>();
+        String line;
+        String mode = new String();
+
+        while((line = reader.readLine())!=null){
+            if(line.equals("<NODES>")){
+                mode = line;
+                continue;
+            }
+            else if(line.equals("<EDGES>")){
+                mode = line;
+                continue;
+            }
+
+            if(mode.equals("<NODES>")){
+                String[] inputLine = line.split("\\s+");
+                double x = Double.parseDouble(inputLine[0]);
+                double y = Double.parseDouble(inputLine[1]);
+                boolean isExit = false;
+                boolean isSource = false;
+                if(inputLine.length > 2){
+                    isExit = "1".equals(inputLine[2]);
+                }
+                if(inputLine.length == 4){
+                    isSource = "1".equals(inputLine[3]);
+                }
+                Junction junction = new Junction(new Double2D(x,y),isExit,isSource);
+                junctions.add(junction);
+                network.addNode(junction);
+            }
+            else if(mode.equals("<EDGES>")){
+                String[] inputLine = line.split("\\s+");
+                int fromJunctionIndex = Integer.parseInt(inputLine[0]);
+                int toJunctionIndex = Integer.parseInt(inputLine[1]);
+                Junction fromJunction = junctions.get(fromJunctionIndex-1);
+                Junction toJunction = junctions.get(toJunctionIndex-1);
+
+                Road road;
+                double length;
+                if(inputLine.length==3){
+                    length = Double.parseDouble(inputLine[2]);
+                    road = new Road(fromJunction,toJunction,length);
+                }
+                else{
+                    road = new Road(fromJunction,toJunction);
+                }
+
+                Edge edge = new Edge(fromJunction,toJunction,road);
+                network.addEdge(edge);
+            }
+        }
+
+        reader.close();
+
+        return network;
+    }
+
 }

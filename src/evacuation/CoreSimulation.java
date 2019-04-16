@@ -10,6 +10,7 @@ import sim.field.continuous.Continuous2D;
 import sim.field.network.Network;
 import sim.util.Bag;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -58,7 +59,7 @@ public class CoreSimulation extends SimState {
 
     private static final int GRIDHEIGHT = 6;
     private static final int GRIDWIDTH = 6;
-    private int roadLength = 200;
+    private int roadLength = 100;
 
 
     /**
@@ -69,11 +70,6 @@ public class CoreSimulation extends SimState {
      */
     public CoreSimulation(long seed){
         super(seed);
-    }
-    public CoreSimulation(long seed,double upperThreshold,double lowerThreshold){
-        super(seed);
-        this.upperThreshold = upperThreshold;
-        this.lowerThreshold = lowerThreshold;
     }
 
 
@@ -120,13 +116,25 @@ public class CoreSimulation extends SimState {
     private void setupSimulation() {
         evacuatedCount = 0;
         // Setup Environment
-        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
-//        roadEnvironment = new Continuous2D(1.0, roadLength, roadLength);
-        network = networkFactory.buildGridNetwork(this,GRIDHEIGHT,GRIDWIDTH,roadLength);
-//        network = networkFactory.buildMadireddyTestNetwork(this, roadLength);
-        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
-//        cars = new Continuous2D(1.0, roadLength, roadLength);
+//        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
+        roadEnvironment = new Continuous2D(1.0, roadLength, roadLength);
+//        network = networkFactory.buildGridNetwork(GRIDHEIGHT,GRIDWIDTH,roadLength);
+//        network = networkFactory.buildMadireddyTestNetwork(roadLength);
+        try {
+            network = networkFactory.buildNetworkFromFile("experiments/config_data/testNet.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
+        cars = new Continuous2D(1.0, roadLength, roadLength);
+
+        for(Object obj : network.getAllNodes()){
+            Junction junction = (Junction) obj;
+            roadEnvironment.setObjectLocation(junction,junction.getLocation());
+        }
+
     }
+
 
     /**
      * Creates the population of car agents, randomly assigns them a spawn point out of the set of source nodes
