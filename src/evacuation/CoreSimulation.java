@@ -46,7 +46,7 @@ public class CoreSimulation extends SimState {
     private double agentSpeedLimit = 20;        // m/s
     private double agentBuffer = 4;             // m
     private double agentPerceptionRadius = 40;  // m
-    private double agentGreedthreshold = 0.5;
+    private double agentGreedthreshold = 0;
     private double agentGreedChance = 1;
 
     private double agentGreedMaxLengthFactor = 2;

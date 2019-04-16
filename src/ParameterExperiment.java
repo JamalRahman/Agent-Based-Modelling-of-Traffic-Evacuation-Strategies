@@ -2,14 +2,11 @@ import evacuation.CoreSimulation;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 public class ParameterExperiment {
 
-    /*
-        Source for Command Line parser code:
-            https://stackoverflow.com/questions/367706/how-do-i-parse-command-line-arguments-in-java
-
-     */
     public static void main(String[] args){
 
         try{
@@ -18,7 +15,7 @@ public class ParameterExperiment {
 
             double minGreedProportion = 0;
             double maxGreedProportion = 1;
-            int repeats = 1;
+            int repeats = 10;
             int timeout = 10000;
 
 
@@ -28,38 +25,35 @@ public class ParameterExperiment {
 
                 state.setThrottlingEnabled(false);
                 int jobCounter= 0;
+
+                DecimalFormat df = new DecimalFormat("#.#");
+                df.setRoundingMode(RoundingMode.HALF_UP);
+
                 for(double greedProportion=minGreedProportion;greedProportion<=maxGreedProportion;greedProportion+=0.1){
-                        state.setGreedyAgentProportion(greedProportion);
-                        System.out.println("["+greedProportion+"]");
-                        // Write to file
-                        for(int i=0; i< repeats; i++)
-                        {
-                            state.setJob(jobCounter);
-                            state.start();
-                            do
-                                if (!state.schedule.step(state)) break;
-                            while(state.schedule.getSteps() < timeout);
-                            System.out.println(state.schedule.getSteps());
-                            printWriter.println(state.schedule.getSteps());
-                            // Write to a file
-                            state.finish();
-                            jobCounter++;
-                        }
+
+                    greedProportion = Double.parseDouble(df.format(greedProportion));
+
+                    state.setGreedyAgentProportion(greedProportion);
+                    System.out.println("["+greedProportion+"]");
+                    printWriter.println("["+greedProportion+"]");
+                    // Write to file
+                    for(int i=0; i< repeats; i++)
+                    {
+                        state.setJob(jobCounter);
+                        state.start();
+                        do
+                            if (!state.schedule.step(state)) break;
+                        while(state.schedule.getSteps() < timeout);
+                        System.out.println(state.schedule.getSteps());
+                        printWriter.println(state.schedule.getSteps());
+                        // Write to a file
+                        state.finish();
+                        jobCounter++;
                     }
+                }
                 printWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        /* Read args for:
-            Repeats
-            Min Upper/Block threshold
-            Max Upper/Block threshold
-            Min Lower/Unblock threshold
-            Max lower/Unblock threshold
-            threshold interval
-            timeout
-         */
-
     }
 }

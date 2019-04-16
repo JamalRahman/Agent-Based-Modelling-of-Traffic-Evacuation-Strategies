@@ -42,6 +42,20 @@ public class Road  implements java.io.Serializable{
         normalisedVectorY = (toJunctionY - fromJunctionY)/length;
     }
 
+    public Road(Junction fromJunction, Junction toJunction, double length) {
+        this.fromJunction = fromJunction;
+        this.toJunction = toJunction;
+        this.length = length;
+
+        fromJunctionX = fromJunction.getLocation().getX();
+        fromJunctionY = fromJunction.getLocation().getY();
+
+        double toJunctionX = toJunction.getLocation().getX();
+        double toJunctionY = toJunction.getLocation().getY();
+
+        normalisedVectorX = (toJunctionX - fromJunctionX) / length;
+        normalisedVectorY = (toJunctionY - fromJunctionY) / length;
+    }
     /**
      * Linearly interpolates the real-world coordinate at a given distance along the road
      *
