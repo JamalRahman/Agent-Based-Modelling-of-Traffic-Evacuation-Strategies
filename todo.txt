@@ -1,8 +1,0 @@
-Make evacuation.Experiment object set up CoreSimulation according to properties file
-    Let variableLoop handle generic iterating over bool and int variables as well as just double typed variables
-
-Make Experiment.main() take cli arg which is file path to config file
-
-Allow chaining of multiple experiments
-
-Implement scheduling & routing

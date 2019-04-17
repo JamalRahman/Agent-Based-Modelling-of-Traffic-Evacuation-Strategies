@@ -1,0 +1,25 @@
+<?xml version = "1.0"?>
+<experiment>
+    <name>XMLTest</name>
+    <network type="file">
+        <filepath>experiments/config_data/TestNetA_madireddy.txt</filepath>
+    </network>
+    <repeats>10</repeats>
+
+    <variable var="populationSize" type="int">1000</variable>
+
+    <variable var="upperThreshold" type="double" varType="independent">
+        <min>0.1</min>
+        <max>1</max>
+        <interval>0.1</interval>
+    </variable>
+
+    <variable var="lowerThreshold" type="double" varType="independent">
+        <min>0.1</min>
+        <max>1</max>
+        <interval>0.1</interval>
+    </variable>
+
+    <variable var="greedEnabled" type="boolean">false</variable>
+    <variable var="throttlingEnabled" type="boolean">true</variable>
+</experiment>
