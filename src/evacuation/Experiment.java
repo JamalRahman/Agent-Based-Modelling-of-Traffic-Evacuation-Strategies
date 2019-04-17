@@ -42,10 +42,11 @@ public class Experiment {
 
     private Network network;
     private Map<String,String> variableMap;
-    private Map<String,String> independentVariableCurrentMap = new HashMap<>();
+    private Map<String,String> independentVariableMinMap = new HashMap<>();
     private Map<String,String> independentVariableMaxMap = new HashMap<>();
     private Map<String,String> independentVariableIntervalMap = new HashMap<>();
     private Map<String,String> independentVariableTypeMap = new HashMap<>();
+    private Map<String,String> independentVariableCurrentMap = new HashMap<>();
 
     private List<String> allIndependentVariables = new ArrayList<>();
 
@@ -55,6 +56,7 @@ public class Experiment {
     public static void main(String[] args) {
         Experiment experiment = new Experiment(new CoreSimulation(System.currentTimeMillis()));
         experiment.parseXML();
+        experiment.setSimulationParameters();
         experiment.run();
     }
 
@@ -70,6 +72,7 @@ public class Experiment {
             Node networkNode = doc.getElementsByTagName("network").item(0);
             Node nameNode = doc.getElementsByTagName("name").item(0);
             Node repeatsNode = doc.getElementsByTagName("repeats").item(0);
+            Node timeoutNode = doc.getElementsByTagName("timeout").item(0);
 
             if(nameNode!=null){
                 name = nameNode.getTextContent();
@@ -83,6 +86,12 @@ public class Experiment {
             else{
                 repeats = 1;
             }
+            if(timeoutNode!=null){
+                timeout = Integer.parseInt(timeoutNode.getTextContent());
+            }
+            else{
+                timeout = 20000;
+            }
             if(networkNode!=null){
                 parseNetworkNode(networkNode);
             }
@@ -90,6 +99,7 @@ public class Experiment {
                 System.err.println("No network specified in config file");
                 System.exit(1);
             }
+
 
             NodeList nodeList = doc.getElementsByTagName("variable");
             for (int i=0; i<nodeList.getLength(); i++) {
@@ -99,9 +109,10 @@ public class Experiment {
                     String min = variableElement.getElementsByTagName("min").item(0).getTextContent();
                     String max = variableElement.getElementsByTagName("max").item(0).getTextContent();
                     String interval = variableElement.getElementsByTagName("interval").item(0).getTextContent();
-                    independentVariableCurrentMap.put(varName,min);
+                    independentVariableMinMap.put(varName,min);
                     independentVariableMaxMap.put(varName,max);
                     independentVariableIntervalMap.put(varName,interval);
+                    independentVariableCurrentMap.put(varName,min);
                     allIndependentVariables.add(varName);
                     independentVariableTypeMap.put(varName,variableElement.getAttribute("type"));
                     variableMap.put(varName,min);
@@ -147,9 +158,14 @@ public class Experiment {
     //TODO: Make work for non-doubles as well
     private void variableLoop(List<String> independentVariables) {
         if(independentVariables.isEmpty()){
-            setSimulationParameters();
-            for(int i=0;i<repeats;i++){
-                runSimulation();
+            double upperThreshold = Double.parseDouble(variableMap.get("upperThreshold"));
+            double lowerThreshold = Double.parseDouble(variableMap.get("lowerThreshold"));
+            if(upperThreshold>=lowerThreshold){
+                System.out.println(independentVariableCurrentMap);
+                setSimulationParameters();
+                for(int i=0;i<repeats;i++){
+                    runSimulation();
+                }
             }
             return;
         }
@@ -157,7 +173,7 @@ public class Experiment {
 
         double max = Double.parseDouble(independentVariableMaxMap.get(independentVariable));
         double interval = Double.parseDouble(independentVariableIntervalMap.get(independentVariable));
-        double min = Double.parseDouble(independentVariableCurrentMap.get(independentVariable));
+        double min = Double.parseDouble(independentVariableMinMap.get(independentVariable));
         // Set corresponding field
         for (double currentValue = min; currentValue<= max; currentValue+= interval) {
 
@@ -165,6 +181,7 @@ public class Experiment {
             df.setRoundingMode(RoundingMode.HALF_UP);
             currentValue = Double.parseDouble(df.format(currentValue));
             variableMap.put(independentVariable, String.valueOf(currentValue));
+            independentVariableCurrentMap.put(independentVariable,String.valueOf(currentValue));
             variableLoop(new ArrayList<>(independentVariables));
         }
     }

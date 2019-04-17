@@ -17,7 +17,7 @@ public class DefaultParameters {
     public static final double LOWERTHRESHOLD = 0.1;
 
     public static final double AGENTACCELERATION =1;
-    public static final double AGENTSPEEDLIMIT = 1;
+    public static final double AGENTSPEEDLIMIT = 20;
     public static final double AGENTBUFFER = 4;
     public static final double AGENTPERCEPTIONRADIUS = 40;
     public static final double AGENTGREEDTHRESHOLD = 0;
