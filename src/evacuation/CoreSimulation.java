@@ -104,7 +104,6 @@ public class CoreSimulation extends SimState {
      * Outputs clearance time to System.out
      */
     public  void finish(){
-        System.out.println(schedule.getSteps());
         super.finish();
     }
 

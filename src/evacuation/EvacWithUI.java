@@ -24,6 +24,8 @@ public class EvacWithUI extends GUIState {
     ContinuousPortrayal2D junctionPortrayal = new ContinuousPortrayal2D();
     ContinuousPortrayal2D carPortrayal = new ContinuousPortrayal2D();
     CoreSimulation simulation;
+    Experiment experiment;
+
     public static void main(String[] args) {
         new EvacWithUI().createController();
     }
@@ -31,7 +33,9 @@ public class EvacWithUI extends GUIState {
     public EvacWithUI(){
         super(new CoreSimulation(System.currentTimeMillis()));
         simulation = (CoreSimulation) state;
-
+        experiment = new Experiment(simulation);
+        experiment.parseXML("experiments/config_data/TestConfig.xml");
+        experiment.setSimulationParameters();
     }
 
     public void start(){

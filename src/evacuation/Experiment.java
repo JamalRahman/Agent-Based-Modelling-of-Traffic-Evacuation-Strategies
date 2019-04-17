@@ -20,21 +20,6 @@ import java.util.*;
 public class Experiment {
     private String name;
     private int timeout;
-    private boolean greedEnabled;
-    boolean throttlingEnabled;
-
-    private int populationSize;
-    private double timeFactor;
-    private double greedProportion;
-
-    private double upperThreshold;
-    private double lowerThreshold;
-
-    private double agentAcceleration;
-    private double agentBuffer;
-    private double agentPerceptionRadius;
-    private double agentGreedthreshold;
-    private double agentGreedChance;
 
     private int repeats;
     private int jobCounter = 0;
@@ -55,15 +40,15 @@ public class Experiment {
     }
     public static void main(String[] args) {
         Experiment experiment = new Experiment(new CoreSimulation(System.currentTimeMillis()));
-        experiment.parseXML();
+        experiment.parseXML("experiments/config_data/TestConfig.xml");
         experiment.setSimulationParameters();
         experiment.run();
     }
 
-    public void parseXML(){
+    public void parseXML(String filepath){
         variableMap = new HashMap<>();
         try{
-            File inputFile = new File("experiments/config_data/TestConfig.xml");
+            File inputFile = new File(filepath);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(inputFile);
@@ -152,17 +137,19 @@ public class Experiment {
     }
 
     public void run(){
-        variableLoop(new ArrayList<>(allIndependentVariables));
+        iVariableIterator(new ArrayList<>(allIndependentVariables));
     }
 
-    //TODO: Make work for non-doubles as well
-    private void variableLoop(List<String> independentVariables) {
+    private void iVariableIterator(List<String> independentVariables) {
         if(independentVariables.isEmpty()){
-            double upperThreshold = Double.parseDouble(variableMap.get("upperThreshold"));
-            double lowerThreshold = Double.parseDouble(variableMap.get("lowerThreshold"));
-            if(upperThreshold>=lowerThreshold){
+            // If the paramters are correct for running a simulation, run one
+            if(validParameterValues()){
+                //Simulation is good to run
                 System.out.println(independentVariableCurrentMap);
+
+                // Set the simulation's fields to the current iteration of parameters
                 setSimulationParameters();
+                // Run the simulation 'repeats' number of times
                 for(int i=0;i<repeats;i++){
                     runSimulation();
                 }
@@ -170,20 +157,52 @@ public class Experiment {
             return;
         }
         String independentVariable = independentVariables.remove(0);
+        String iVariableType = independentVariableTypeMap.get(independentVariable);
+        if(iVariableType.equals("int")) {
+            int max = Integer.parseInt(independentVariableMaxMap.get(independentVariable));
+            int interval = Integer.parseInt(independentVariableIntervalMap.get(independentVariable));
+            int min = Integer.parseInt(independentVariableMinMap.get(independentVariable));
 
-        double max = Double.parseDouble(independentVariableMaxMap.get(independentVariable));
-        double interval = Double.parseDouble(independentVariableIntervalMap.get(independentVariable));
-        double min = Double.parseDouble(independentVariableMinMap.get(independentVariable));
-        // Set corresponding field
-        for (double currentValue = min; currentValue<= max; currentValue+= interval) {
-
-            DecimalFormat df = new DecimalFormat("#.###");
-            df.setRoundingMode(RoundingMode.HALF_UP);
-            currentValue = Double.parseDouble(df.format(currentValue));
-            variableMap.put(independentVariable, String.valueOf(currentValue));
-            independentVariableCurrentMap.put(independentVariable,String.valueOf(currentValue));
-            variableLoop(new ArrayList<>(independentVariables));
+            for (int currentValue = min; currentValue<= max; currentValue+= interval) {
+                variableMap.put(independentVariable, String.valueOf(currentValue));
+                independentVariableCurrentMap.put(independentVariable,String.valueOf(currentValue));
+                iVariableIterator(new ArrayList<>(independentVariables));
+            }
         }
+        else if(iVariableType.equals("double")) {
+            double max = Double.parseDouble(independentVariableMaxMap.get(independentVariable));
+            double interval = Double.parseDouble(independentVariableIntervalMap.get(independentVariable));
+            double min = Double.parseDouble(independentVariableMinMap.get(independentVariable));
+
+            for (double currentValue = min; currentValue<= max; currentValue+= interval) {
+
+                DecimalFormat df = new DecimalFormat("#.###");
+                df.setRoundingMode(RoundingMode.HALF_UP);
+                currentValue = Double.parseDouble(df.format(currentValue));
+                variableMap.put(independentVariable, String.valueOf(currentValue));
+                independentVariableCurrentMap.put(independentVariable,String.valueOf(currentValue));
+                iVariableIterator(new ArrayList<>(independentVariables));
+            }
+        }
+        else if(iVariableType.equals("boolean")){
+            boolean last = Boolean.parseBoolean(independentVariableMaxMap.get(independentVariable));
+            boolean first = Boolean.parseBoolean(independentVariableMinMap.get(independentVariable));
+            boolean currentValue = first;
+            while(currentValue==first){
+                variableMap.put(independentVariable, String.valueOf(currentValue));
+                independentVariableCurrentMap.put(independentVariable,String.valueOf(currentValue));
+                iVariableIterator(new ArrayList<>(independentVariables));
+                currentValue=!currentValue;
+            }
+        }
+        // Set corresponding field
+
+    }
+
+    private boolean validParameterValues() {
+        double upperThreshold = Double.parseDouble(variableMap.get("upperThreshold"));
+        double lowerThreshold = Double.parseDouble(variableMap.get("lowerThreshold"));
+        return upperThreshold>=lowerThreshold;
     }
 
     public void setSimulationParameters() {
@@ -207,6 +226,7 @@ public class Experiment {
 
 
     private void runSimulation(){
+
         simulation.setJob(jobCounter);
         simulation.start();
         do
@@ -214,6 +234,7 @@ public class Experiment {
         while(simulation.schedule.getSteps() < timeout);
 
         // Here we perform any logging
+        System.out.println(simulation.schedule.getSteps());
 
         simulation.finish();
         jobCounter++;
