@@ -41,9 +41,9 @@ public class Experiment {
     public static void main(String[] args) {
         Experiment experiment = new Experiment(new CoreSimulation(System.currentTimeMillis()));
         System.out.println(System.getProperty("user.dir"));
-        experiment.parseXML("target/production/fyp/main/resources/TestConfig.xml");
-//        experiment.setSimulationParameters();
-//        experiment.run();
+        experiment.parseXML(args[0]);
+        experiment.setSimulationParameters();
+        experiment.run();
     }
 
     public void parseXML(String filepath){
