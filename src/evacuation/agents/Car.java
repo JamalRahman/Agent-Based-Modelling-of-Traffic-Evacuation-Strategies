@@ -469,7 +469,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
      */
     public void init(){
         route = calculatePath(spawnJunction,goalJunction,new ArrayList<>());
-
     }
 
     /**

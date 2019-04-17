@@ -1,11 +1,10 @@
 Read network from file
 Other fields set up their sizes according to the network size
+Fix setup
 
-Make Experiment object set up CoreSimulation according to properties file
+Make evacuation.Experiment object set up CoreSimulation according to properties file
 
 
-
-Option to spawn agents on node or spawn agents on edge somewhere
 
 Car is messy and gross again
     See if we can't make that nicer

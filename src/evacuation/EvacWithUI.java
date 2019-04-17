@@ -1,6 +1,7 @@
 package evacuation;
 
 import evacuation.system.Road;
+import jdk.jfr.Experimental;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
@@ -22,16 +23,19 @@ public class EvacWithUI extends GUIState {
     NetworkPortrayal2D roadPortrayal = new NetworkPortrayal2D();
     ContinuousPortrayal2D junctionPortrayal = new ContinuousPortrayal2D();
     ContinuousPortrayal2D carPortrayal = new ContinuousPortrayal2D();
-
+    CoreSimulation simulation;
     public static void main(String[] args) {
         new EvacWithUI().createController();
     }
 
     public EvacWithUI(){
         super(new CoreSimulation(System.currentTimeMillis()));
+        simulation = (CoreSimulation) state;
+
     }
 
     public void start(){
+
         super.start();
         setupPortrayals();
     }

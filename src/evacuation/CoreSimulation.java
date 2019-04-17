@@ -9,6 +9,7 @@ import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.field.network.Network;
 import sim.util.Bag;
+import sim.util.Double2D;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,17 +36,18 @@ public class CoreSimulation extends SimState {
 
     // Simulation modes
     private boolean greedyAgentsEnabled = true;
-    private boolean throttlingEnabled = false;
+    private boolean throttlingEnabled = true;
 
     // Simulation parameters
-    private int populationSize = 1000;         // Number of cars on the network
+    private int populationSize = 2000;         // Number of cars on the network
     private double timeFactor = 1;
 
-    private double greedyAgentProportion = 0.5;
+    private double greedyAgentProportion = 1;
 
     private double agentAcceleration = 1;       // m/s/s
     private double agentSpeedLimit = 20;        // m/s
     private double agentBuffer = 4;             // m
+
     private double agentPerceptionRadius = 40;  // m
     private double agentGreedthreshold = 0;
     private double agentGreedChance = 1;
@@ -56,10 +58,6 @@ public class CoreSimulation extends SimState {
     // blockTheshold >= unblockThreshold
     private double upperThreshold = 0.1;
     private double lowerThreshold = 0.1;
-
-    private static final int GRIDHEIGHT = 6;
-    private static final int GRIDWIDTH = 6;
-    private int roadLength = 100;
 
 
     /**
@@ -80,7 +78,12 @@ public class CoreSimulation extends SimState {
     public void start(){
         super.start();      // Cleans threads and resets the scheduler
 
-        setupSimulation();  // Sets parameters, environments, etc according to simulation configuration
+        try {
+            setupSimulation();  // Sets parameters, environments, etc according to simulation configuration
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         aStarSearch = new AStarSearch(network,this);
 
@@ -113,26 +116,40 @@ public class CoreSimulation extends SimState {
      * Constructs simulation objects such as environment fields
      * This method may set the simulation parameters according to some configuration input.
      */
-    private void setupSimulation() {
+    private void setupSimulation() throws IOException {
         evacuatedCount = 0;
-        // Setup Environment
-//        roadEnvironment = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
-        roadEnvironment = new Continuous2D(1.0, roadLength, roadLength);
-//        network = networkFactory.buildGridNetwork(GRIDHEIGHT,GRIDWIDTH,roadLength);
-//        network = networkFactory.buildMadireddyTestNetwork(roadLength);
-        try {
-            network = networkFactory.buildNetworkFromFile("experiments/config_data/testNet.txt");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//        cars = new Continuous2D(1.0,(GRIDWIDTH-1)*roadLength,(GRIDHEIGHT-1)*roadLength);
-        cars = new Continuous2D(1.0, roadLength, roadLength);
 
+        // Setup Environment
+
+        network = networkFactory.buildNetworkFromFile("experiments/config_data/TestNetA_madireddy.txt");
+        // Get network height and width;
+        Double2D networkBounds = getNetworkBounds(network);
+        cars = new Continuous2D(1.0,networkBounds.getX(),networkBounds.getY());
+
+        roadEnvironment = new Continuous2D(1.0,networkBounds.getX(),networkBounds.getY());
         for(Object obj : network.getAllNodes()){
             Junction junction = (Junction) obj;
             roadEnvironment.setObjectLocation(junction,junction.getLocation());
         }
+    }
 
+    private Double2D getNetworkBounds(Network network) {
+        Bag allNodes = network.getAllNodes();
+        double xMax = 0;
+        double yMax = 0;
+        for(Object obj : allNodes){
+            Junction junction = (Junction) obj;
+            double x = junction.getLocation().getX();
+            double y = junction.getLocation().getY();
+            if(x>xMax){
+                xMax = x;
+            }
+            if(y>yMax){
+                yMax = y;
+            }
+        }
+
+        return new Double2D(xMax,yMax);
     }
 
 
@@ -152,16 +169,6 @@ public class CoreSimulation extends SimState {
                 isGreedy = random.nextBoolean(greedyAgentProportion);
             }
             try{
-//                double rand = random.nextDouble();
-//                if(rand<0.3){
-//                    startJunction = sourceJunctions.get(0);
-//                }
-//                else if(rand>=0.3 && rand<0.7){
-//                    startJunction = sourceJunctions.get(1);
-//                }
-//                else{
-//                    startJunction = sourceJunctions.get(2);
-//                }
                 startJunction = sourceJunctions.get(random.nextInt(sourceJunctions.size()));
                 Car car = new Car.CarBuilder()
                         .setSimulation(this)
@@ -183,7 +190,6 @@ public class CoreSimulation extends SimState {
             }
             catch(IllegalArgumentException e){
                 System.out.println("Error - Road network has no source nodes from which to spawn Agents");
-                e.printStackTrace();
                 System.exit(1);
             }
             catch (IndexOutOfBoundsException e){
@@ -191,8 +197,6 @@ public class CoreSimulation extends SimState {
             }
         }
     }
-
-
 
     // Helper Methods   ------------------------------------------------------------------------------------------------
 
@@ -232,11 +236,70 @@ public class CoreSimulation extends SimState {
         return (Junction) goalJunctions.get(random.nextInt(goalJunctions.size()));
     }
 
-
-    public Network getNetwork(){
-        return network;
+    public void notifyEvacuated(Car car) {
+        cars.remove(car);
+        evacuatedCount++;
     }
-    public double getAgentBuffer(){ return agentBuffer; }
+
+    public boolean isComplete() {
+        return evacuatedCount==populationSize;
+    }
+
+
+
+
+
+
+
+
+
+    public void setNetwork(Network network) {
+        this.network = network;
+    }
+
+    public void setGreedEnabled(boolean greedyAgentsEnabled) {
+        this.greedyAgentsEnabled = greedyAgentsEnabled;
+    }
+
+    public void setPopulationSize(int populationSize) {
+        this.populationSize = populationSize;
+    }
+
+    public void setTimeFactor(double timeFactor) {
+        this.timeFactor = timeFactor;
+    }
+
+    public void setAgentAcceleration(double agentAcceleration) {
+        this.agentAcceleration = agentAcceleration;
+    }
+
+    public void setAgentSpeedLimit(double agentSpeedLimit) {
+        this.agentSpeedLimit = agentSpeedLimit;
+    }
+
+    public void setAgentBuffer(double agentBuffer) {
+        this.agentBuffer = agentBuffer;
+    }
+
+    public void setAgentPerceptionRadius(double agentPerceptionRadius) {
+        this.agentPerceptionRadius = agentPerceptionRadius;
+    }
+
+    public void setAgentGreedthreshold(double agentGreedthreshold) {
+        this.agentGreedthreshold = agentGreedthreshold;
+    }
+
+    public void setAgentGreedChance(double agentGreedChance) {
+        this.agentGreedChance = agentGreedChance;
+    }
+
+    public void setAgentGreedMaxLengthFactor(double agentGreedMaxLengthFactor) {
+        this.agentGreedMaxLengthFactor = agentGreedMaxLengthFactor;
+    }
+
+    public void setAgentGreedMaxChanges(int agentGreedMaxChanges) {
+        this.agentGreedMaxChanges = agentGreedMaxChanges;
+    }
 
     public void setThrottlingEnabled(boolean throttlingEnabled) {
         this.throttlingEnabled = throttlingEnabled;
@@ -250,20 +313,10 @@ public class CoreSimulation extends SimState {
         this.lowerThreshold = lowerThreshold;
     }
 
-    // Main     --------------------------------------------------------------------------------------------------------
-    public static void main(String[] args) {
-        doLoop(CoreSimulation.class,args);
-        System.exit(0);
+    public Network getNetwork(){
+        return network;
     }
-
-    public void notifyEvacuated(Car car) {
-        cars.remove(car);
-        evacuatedCount++;
-    }
-
-    public boolean isComplete() {
-        return evacuatedCount==populationSize;
-    }
+    public double getAgentBuffer(){ return agentBuffer; }
 
     public void setGreedyAgentProportion(double greedProportion) {
         this.greedyAgentProportion = greedProportion;

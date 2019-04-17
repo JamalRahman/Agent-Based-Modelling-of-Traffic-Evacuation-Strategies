@@ -122,6 +122,9 @@ public class NetworkFactory {
         String mode = new String();
 
         while((line = reader.readLine())!=null){
+            if(line.startsWith("#")){
+                continue;
+            }
             if(line.equals("<NODES>")){
                 mode = line;
                 continue;
