@@ -1,8 +1,3 @@
-Make evacuation.Experiment object set up CoreSimulation according to properties file
-    Let variableLoop handle generic iterating over bool and int variables as well as just double typed variables
-
-Make Experiment.main() take cli arg which is file path to config file
-
-Allow chaining of multiple experiments
-
-Implement scheduling & routing
+1) ExperimentSequence generates directories if missing
+2) Use of File.separatorChar instead of '/'
+3) ExperimentSequence generates log file within directory which logs what time the experiments started and completed

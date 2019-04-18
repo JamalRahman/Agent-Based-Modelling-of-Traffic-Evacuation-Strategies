@@ -2,16 +2,16 @@
 <experiment>
     <name>XMLTest</name>
     <network type="file">
-        <filepath>experiments/config_data/TestNetA_madireddy.txt</filepath>
+        <filepath>config/networks/TestNetA_madireddy.txt</filepath>
     </network>
-    <repeats>10</repeats>
+    <repeats>1</repeats>
 
     <variable var="populationSize" type="int">1000</variable>
 
     <variable var="upperThreshold" type="double" varType="independent">
         <min>0.1</min>
         <max>1</max>
-        <interval>0.1</interval>
+        <interval>0.5</interval>
     </variable>
 
     <variable var="lowerThreshold" type="double" varType="independent">

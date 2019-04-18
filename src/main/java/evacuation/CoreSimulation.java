@@ -118,9 +118,6 @@ public class CoreSimulation extends SimState {
     private void setupSimulation() throws IOException {
         evacuatedCount = 0;
 
-        // Setup Environment
-
-        network = networkFactory.buildNetworkFromFile("experiments/config_data/TestNetA_madireddy.txt");
         // Get network height and width;
         Double2D networkBounds = getNetworkBounds(network);
         cars = new Continuous2D(1.0,networkBounds.getX(),networkBounds.getY());

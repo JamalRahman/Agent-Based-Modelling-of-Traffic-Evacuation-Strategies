@@ -1,5 +1,5 @@
-package evacuation;
-
+import evacuation.CoreSimulation;
+import evacuation.DefaultParameters;
 import evacuation.system.utility.NetworkFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -12,12 +12,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.*;
 
-public class Experiment {
+public class EvacExperiment {
     private String name;
     private int timeout;
 
@@ -34,16 +36,22 @@ public class Experiment {
     private Map<String,String> independentVariableCurrentMap = new HashMap<>();
 
     private List<String> allIndependentVariables = new ArrayList<>();
+    private FileWriter fileWriter;
+    private PrintWriter printWriter;
 
-    public Experiment(CoreSimulation simulation){
+    public EvacExperiment(CoreSimulation simulation){
         this.simulation = simulation;
     }
+
     public static void main(String[] args) {
-        Experiment experiment = new Experiment(new CoreSimulation(System.currentTimeMillis()));
-        System.out.println(System.getProperty("user.dir"));
+        EvacExperiment experiment = new EvacExperiment(new CoreSimulation(System.currentTimeMillis()));
         experiment.parseXML(args[0]);
-        experiment.setSimulationParameters();
-        experiment.run();
+        try {
+            experiment.run("results/");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void parseXML(String filepath){
@@ -64,7 +72,7 @@ public class Experiment {
                 name = nameNode.getTextContent();
             }
             else{
-                name = "memes";
+                name = pruneXMLFileName(filepath);
             }
             if(repeatsNode!=null){
                 repeats = Integer.parseInt(repeatsNode.getTextContent());
@@ -118,6 +126,11 @@ public class Experiment {
         }
     }
 
+    private String pruneXMLFileName(String filepath) {
+        String path = filepath;
+        return path.substring(path.lastIndexOf("/",path.length()-4));
+    }
+
     private void fillVariableMapWithDefaults() {
         for(String parameter : DefaultParameters.DEFAULTSTRINGSMAP.keySet()){
             variableMap.putIfAbsent(parameter,DefaultParameters.DEFAULTSTRINGSMAP.get(parameter));
@@ -137,8 +150,12 @@ public class Experiment {
         }
     }
 
-    public void run(){
+    public void run(String savePathPrefix) throws IOException {
+        fileWriter = new FileWriter(savePathPrefix+name+".txt");
+        printWriter = new PrintWriter(fileWriter);
         iVariableIterator(new ArrayList<>(allIndependentVariables));
+        printWriter.close();
+        fileWriter.close();
     }
 
     private void iVariableIterator(List<String> independentVariables) {
@@ -147,7 +164,7 @@ public class Experiment {
             if(validParameterValues()){
                 //Simulation is good to run
                 System.out.println(independentVariableCurrentMap);
-
+                printWriter.println(independentVariableCurrentMap);
                 // Set the simulation's fields to the current iteration of parameters
                 setSimulationParameters();
                 // Run the simulation 'repeats' number of times
@@ -236,7 +253,7 @@ public class Experiment {
 
         // Here we perform any logging
         System.out.println(simulation.schedule.getSteps());
-
+        printWriter.println(simulation.schedule.getSteps());
         simulation.finish();
         jobCounter++;
     }

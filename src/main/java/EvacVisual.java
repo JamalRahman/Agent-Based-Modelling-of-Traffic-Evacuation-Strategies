@@ -1,7 +1,5 @@
-package evacuation;
-
+import evacuation.CoreSimulation;
 import evacuation.system.Road;
-import jdk.jfr.Experimental;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
@@ -16,7 +14,7 @@ import sim.portrayal.network.SpatialNetwork2D;
 import javax.swing.*;
 import java.awt.*;
 
-public class EvacWithUI extends GUIState {
+public class EvacVisual extends GUIState {
 
     public Display2D display;
     public JFrame displayFrame;
@@ -24,17 +22,17 @@ public class EvacWithUI extends GUIState {
     ContinuousPortrayal2D junctionPortrayal = new ContinuousPortrayal2D();
     ContinuousPortrayal2D carPortrayal = new ContinuousPortrayal2D();
     CoreSimulation simulation;
-    Experiment experiment;
+    EvacExperiment experiment;
 
     public static void main(String[] args) {
-        new EvacWithUI().createController();
+        new EvacVisual(args).createController();
     }
 
-    public EvacWithUI(){
+    public EvacVisual(String[] args){
         super(new CoreSimulation(System.currentTimeMillis()));
         simulation = (CoreSimulation) state;
-        experiment = new Experiment(simulation);
-        experiment.parseXML("experiments/config_data/TestConfig.xml");
+        experiment = new EvacExperiment(simulation);
+        experiment.parseXML(args[0]);
         experiment.setSimulationParameters();
     }
 
