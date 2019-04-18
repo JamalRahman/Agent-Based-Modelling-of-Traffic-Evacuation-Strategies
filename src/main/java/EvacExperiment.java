@@ -1,6 +1,7 @@
 import evacuation.CoreSimulation;
 import evacuation.DefaultParameters;
 import evacuation.system.utility.NetworkFactory;
+import org.apache.commons.cli.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,6 +45,7 @@ public class EvacExperiment {
     }
 
     public static void main(String[] args) {
+
         EvacExperiment experiment = new EvacExperiment(new CoreSimulation(System.currentTimeMillis()));
         experiment.parseXML(args[0]);
         try {
@@ -118,17 +120,19 @@ public class EvacExperiment {
             fillVariableMapWithDefaults();
 
         } catch (ParserConfigurationException e) {
+            System.err.println("Error parsing XML file - is the format correct?");
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SAXException e) {
+            System.err.println("Error parsing XML file - is the format correct?");
             e.printStackTrace();
         }
     }
 
     private String pruneXMLFileName(String filepath) {
         String path = filepath;
-        return path.substring(path.lastIndexOf("/",path.length()-4));
+        return path.substring(path.lastIndexOf(File.separatorChar,path.length()-4));
     }
 
     private void fillVariableMapWithDefaults() {

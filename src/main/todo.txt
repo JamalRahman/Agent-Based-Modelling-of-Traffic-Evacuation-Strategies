@@ -1,3 +1,2 @@
-1) ExperimentSequence generates directories if missing
-2) Use of File.separatorChar instead of '/'
-3) ExperimentSequence generates log file within directory which logs what time the experiments started and completed
+3) ExperimentSequence generates log file within output directory which logs what time the experiments started and completed
+4) ExperimentSequence input can be a directory, if so it will run experiments for all files within
