@@ -120,13 +120,14 @@ public class EvacExperiment {
             fillVariableMapWithDefaults();
 
         } catch (ParserConfigurationException e) {
-            System.err.println("Error parsing XML file - is the format correct?");
-            e.printStackTrace();
+            System.err.println("Error parsing XML file: "+filepath);
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SAXException e) {
-            System.err.println("Error parsing XML file - is the format correct?");
-            e.printStackTrace();
+            System.err.println("Error parsing XML file: "+filepath);
+
+            System.exit(1);
         }
     }
 
