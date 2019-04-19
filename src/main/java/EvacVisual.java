@@ -21,23 +21,24 @@ public class EvacVisual extends GUIState {
     NetworkPortrayal2D roadPortrayal = new NetworkPortrayal2D();
     ContinuousPortrayal2D junctionPortrayal = new ContinuousPortrayal2D();
     ContinuousPortrayal2D carPortrayal = new ContinuousPortrayal2D();
-    CoreSimulation simulation;
     EvacExperiment experiment;
-
+    String[] args;
     public static void main(String[] args) {
         new EvacVisual(args).createController();
     }
 
     public EvacVisual(String[] args){
         super(new CoreSimulation(System.currentTimeMillis()));
-        simulation = (CoreSimulation) state;
-        experiment = new EvacExperiment(simulation);
-        experiment.parseXML(args[0]);
-        experiment.setSimulationParameters();
+        this.args = args;
+
     }
 
     public void start(){
 
+        CoreSimulation simulation = (CoreSimulation) state;
+        experiment = new EvacExperiment(simulation);
+        experiment.parseXML(args[0]);
+        experiment.setSimulationParameters();
         super.start();
         setupPortrayals();
     }

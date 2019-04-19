@@ -1,2 +1,2 @@
-3) ExperimentSequence generates log file within output directory which logs what time the experiments started and completed
-4) ExperimentSequence input can be a directory, if so it will run experiments for all files within
+1) ExperimentSequence generates log file within output directory which logs what time the experiments started and completed
+2) ExperimentSequence saves results in directory structure mirroring the input

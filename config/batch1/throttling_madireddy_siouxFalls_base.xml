@@ -1,0 +1,11 @@
+<?xml version = "1.0"?>
+<experiment>
+    <network type="file">
+        <filepath>config/networks/SiouxFallsNet_madireddy.txt</filepath>
+    </network>
+    <repeats>10</repeats>
+
+    <variable var="populationSize" type="int">2000</variable>
+    <variable var="greedEnabled" type="boolean">false</variable>
+    <variable var="throttlingEnabled" type="boolean">false</variable>
+</experiment>

@@ -1,0 +1,121 @@
+{upperThreshold=1.0, lowerThreshold=0.0}
+4862
+4828
+4932
+4706
+4987
+4785
+4889
+5094
+4966
+4752
+{upperThreshold=1.0, lowerThreshold=0.1}
+4792
+4815
+4861
+4975
+4887
+4833
+4743
+4869
+4858
+4911
+{upperThreshold=1.0, lowerThreshold=0.2}
+4809
+4987
+5009
+4804
+4861
+4907
+4858
+4889
+4948
+4962
+{upperThreshold=1.0, lowerThreshold=0.3}
+4859
+5024
+5077
+4851
+5118
+4914
+4837
+4642
+4822
+4841
+{upperThreshold=1.0, lowerThreshold=0.4}
+4785
+4798
+5023
+4937
+4983
+4891
+4769
+4812
+4713
+4940
+{upperThreshold=1.0, lowerThreshold=0.5}
+4727
+4863
+4687
+4885
+4832
+4869
+4756
+5024
+4700
+5099
+{upperThreshold=1.0, lowerThreshold=0.6}
+4920
+4732
+4740
+4810
+4864
+4853
+4808
+5014
+4815
+4868
+{upperThreshold=1.0, lowerThreshold=0.7}
+4751
+4877
+4875
+4916
+4812
+4676
+4944
+4898
+4838
+4719
+{upperThreshold=1.0, lowerThreshold=0.8}
+4996
+4860
+4677
+4996
+4877
+4873
+4905
+4868
+4751
+4891
+{upperThreshold=1.0, lowerThreshold=0.9}
+4745
+4878
+4900
+4827
+4690
+4808
+4668
+4946
+4859
+4805
+{upperThreshold=1.0, lowerThreshold=1.0}
+4825
+4935
+4698
+4852
+5036
+4834
+5130
+4897
+5040
+4833

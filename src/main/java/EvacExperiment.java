@@ -133,7 +133,10 @@ public class EvacExperiment {
 
     private String pruneXMLFileName(String filepath) {
         String path = filepath;
-        return path.substring(path.lastIndexOf(File.separatorChar,path.length()-4));
+        File f = new File(path);
+        String name = f.getName();
+        name = name.substring(0,name.length()-4);
+        return f.getName();
     }
 
     private void fillVariableMapWithDefaults() {

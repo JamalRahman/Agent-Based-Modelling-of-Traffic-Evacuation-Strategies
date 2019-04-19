@@ -1,33 +1,33 @@
-finalFile = open("SiouxFallsNetworkFull.txt","w+")
-nodesFile = open("config_data/SiouxFalls_nodes.txt","r")
-edgesFile = open("config_data/SiouxFalls_net.txt","r")
+finalFile = open("bham.txt","w+")
+nodesFile = open("bhamNodes.txt","r")
+edgesFile = open("bhamNet.txt","r")
 
 finalFile.write("<NODES>\n")
 for line in nodesFile:
-    inputLine = line.split("\t")
-    inputLine = inputLine[1:-1]
-    x = int(inputLine[0])
-    y = int(inputLine[1])
-    x = str(x-50000)
-    y = str((510000) - y)
+    inputLine = line.split()
+    inputLine = inputLine[1:]
+    x = int(round(float(inputLine[0])))
+    y = int(round(float(inputLine[1])))
     newLine = []
-    newLine.append(x)
-    newLine.append(y)
+    newLine.append(str(x))
+    newLine.append(str(y))
     newLine.append(str(0))
     newLine.append(str(0))
-
     newLine = (" ").join(newLine)
     finalFile.write(newLine+"\n")
 
 finalFile.write("<EDGES>\n")
+print("Edges now")
 
 for line in edgesFile:
     if(line[0]=="<" or line[0]=="~"):
         continue
-    inputLine = line.split("\t")
+    inputLine = line.split()
+
+    if(len(inputLine)==0):
+        continue
     if(inputLine[0]=="\n"):
         continue
-    inputLine = inputLine[1:-1]
     lineData = []
     lineData.append(inputLine[0])
     lineData.append(inputLine[1])
