@@ -1,10 +1,9 @@
-package evacuation;
+package simulation;
 
-import evacuation.agents.Car;
-import evacuation.agents.Overseer;
-import evacuation.system.Junction;
-import evacuation.system.utility.AStarSearch;
-import NetworkFactory;
+import simulation.agents.Car;
+import simulation.agents.Overseer;
+import simulation.system.Junction;
+import simulation.system.utility.AStarSearch;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.field.network.Network;
@@ -25,7 +24,6 @@ public class CoreSimulation extends SimState {
 
     // System Architecture fields
     private static final long serialNumber = 1;
-    public NetworkFactory networkFactory = new NetworkFactory();
     public AStarSearch aStarSearch;
     private int evacuatedCount = 0;
 
@@ -61,7 +59,7 @@ public class CoreSimulation extends SimState {
 
 
     /**
-     * Creates the new evacuation simulation, initialises the random number generator and creates a time schedule for
+     * Creates the new simulation simulation, initialises the random number generator and creates a time schedule for
      * the simulation
      *
      * @param seed The seed used to initialize the simulation's psuedorandom-number-generation

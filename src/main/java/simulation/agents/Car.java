@@ -1,7 +1,7 @@
-package evacuation.agents;
+package simulation.agents;
 
-import evacuation.CoreSimulation;
-import evacuation.system.*;
+import simulation.CoreSimulation;
+import simulation.system.*;
 import sim.engine.*;
 import sim.field.network.Edge;
 import sim.portrayal.DrawInfo2D;

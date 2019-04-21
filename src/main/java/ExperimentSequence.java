@@ -1,4 +1,4 @@
-import evacuation.CoreSimulation;
+import simulation.CoreSimulation;
 import org.apache.commons.cli.*;
 
 import java.io.File;
@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class ExperimentSequence {
 
@@ -76,9 +75,8 @@ public class ExperimentSequence {
 
                 CoreSimulation simulation = new CoreSimulation(System.currentTimeMillis());
                 EvacExperiment evacExperiment = new EvacExperiment(simulation);
-                evacExperiment.parseXML(config);
                 try {
-                    evacExperiment.run(outputLocation);
+                    evacExperiment.run(config,outputLocation);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

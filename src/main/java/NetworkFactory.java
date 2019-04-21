@@ -1,10 +1,8 @@
-import evacuation.CoreSimulation;
 import sim.field.network.*;
-import evacuation.system.*;
+import simulation.system.*;
 import sim.util.Double2D;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;

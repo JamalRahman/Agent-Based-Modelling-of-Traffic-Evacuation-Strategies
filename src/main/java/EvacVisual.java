@@ -1,5 +1,5 @@
-import evacuation.CoreSimulation;
-import evacuation.system.Road;
+import simulation.CoreSimulation;
+import simulation.system.Road;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
@@ -21,7 +21,7 @@ public class EvacVisual extends GUIState {
     NetworkPortrayal2D roadPortrayal = new NetworkPortrayal2D();
     ContinuousPortrayal2D junctionPortrayal = new ContinuousPortrayal2D();
     ContinuousPortrayal2D carPortrayal = new ContinuousPortrayal2D();
-    EvacExperiment experiment;
+    Configuration configuration;
     String[] args;
     public static void main(String[] args) {
         new EvacVisual(args).createController();
@@ -34,11 +34,10 @@ public class EvacVisual extends GUIState {
     }
 
     public void start(){
-
         CoreSimulation simulation = (CoreSimulation) state;
-        experiment = new EvacExperiment(simulation);
-        experiment.parseXML(args[0]);
-        experiment.setSimulationParameters();
+        configuration = new Configuration();
+        configuration.parseXML(args[0]);
+        configuration.setSimulationParameters(simulation);
         super.start();
         setupPortrayals();
     }

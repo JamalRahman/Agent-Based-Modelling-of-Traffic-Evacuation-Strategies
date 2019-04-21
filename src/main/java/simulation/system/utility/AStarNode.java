@@ -1,6 +1,6 @@
-package evacuation.system.utility;
+package simulation.system.utility;
 
-import evacuation.system.Junction;
+import simulation.system.Junction;
 
 /**
  * A wrapper around the simulation network's Junction nodes which contains information used in the A* Algorithm
