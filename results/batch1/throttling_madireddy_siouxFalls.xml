@@ -1,0 +1,24 @@
+<?xml version = "1.0"?>
+<experiment>
+    <network type="file">
+        <filepath>config/networks/SiouxFallsNet_madireddy.txt</filepath>
+    </network>
+    <repeats>10</repeats>
+
+    <variable var="populationSize" type="int">2000</variable>
+
+    <variable var="upperThreshold" type="double" varType="independent">
+        <min>0.0</min>
+        <max>1</max>
+        <interval>0.1</interval>
+    </variable>
+
+    <variable var="lowerThreshold" type="double" varType="independent">
+        <min>0.0</min>
+        <max>1</max>
+        <interval>0.1</interval>
+    </variable>
+
+    <variable var="greedEnabled" type="boolean">false</variable>
+    <variable var="throttlingEnabled" type="boolean">true</variable>
+</experiment>

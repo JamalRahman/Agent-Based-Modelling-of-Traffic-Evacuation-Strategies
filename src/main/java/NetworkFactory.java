@@ -1,5 +1,3 @@
-package evacuation.system.utility;
-
 import evacuation.CoreSimulation;
 import sim.field.network.*;
 import evacuation.system.*;

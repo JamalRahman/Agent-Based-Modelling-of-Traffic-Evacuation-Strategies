@@ -3,10 +3,9 @@
     <network type="file">
         <filepath>config/networks/SiouxFallsNet_madireddy.txt</filepath>
     </network>
-    <repeats>1</repeats>
+    <repeats>10</repeats>
 
     <variable var="populationSize" type="int">2000</variable>
-    <variable var="timeFactor">60</variable>
     <variable var="greedEnabled" type="boolean">false</variable>
     <variable var="throttlingEnabled" type="boolean">false</variable>
 </experiment>

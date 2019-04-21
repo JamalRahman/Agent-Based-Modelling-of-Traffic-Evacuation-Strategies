@@ -4,7 +4,7 @@ import evacuation.agents.Car;
 import evacuation.agents.Overseer;
 import evacuation.system.Junction;
 import evacuation.system.utility.AStarSearch;
-import evacuation.system.utility.NetworkFactory;
+import NetworkFactory;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.field.network.Network;
@@ -95,7 +95,7 @@ public class CoreSimulation extends SimState {
     private void setupOverseers() {
         if(throttlingEnabled){
             Overseer overseer = new Overseer(network,this,agentBuffer,upperThreshold,lowerThreshold);
-            overseer.setStoppable(schedule.scheduleRepeating(overseer,-1,timeFactor));
+            overseer.setStoppable(schedule.scheduleRepeating(schedule.EPOCH,-1,overseer,timeFactor));
         }
     }
 

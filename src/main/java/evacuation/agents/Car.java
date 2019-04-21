@@ -253,7 +253,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
                 }
                 double neighbourIndex = neighbour.getCurrentIndex();
 
-                if(Math.abs(neighbourIndex-startDistance)+distanceCovered > perceptionRadius){
+                if(Math.abs(neighbourIndex-startDistance)+distanceCovered > (perceptionRadius*timeFactor)){
                     continue;
                 }
                 if (neighbourIndex >= startDistance) {
@@ -274,7 +274,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
                 targetRoad = (Road) targetEdge.getInfo();
                 startDistance = 0;
             }
-        }while (!neighbourPresentInPerception && distanceCovered<(perceptionRadius) && tempPathIndex<route.size() && edgesConsidered<edgesToConsider);
+        }while (!neighbourPresentInPerception && distanceCovered<(perceptionRadius*timeFactor) && tempPathIndex<route.size() && edgesConsidered<edgesToConsider);
 
         if(neighbourPresentInPerception){
             return distanceToNeighbour;

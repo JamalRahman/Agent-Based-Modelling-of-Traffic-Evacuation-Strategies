@@ -1,7 +1,5 @@
 import evacuation.CoreSimulation;
 import evacuation.DefaultParameters;
-import evacuation.system.utility.NetworkFactory;
-import org.apache.commons.cli.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,17 +42,6 @@ public class EvacExperiment {
         this.simulation = simulation;
     }
 
-    public static void main(String[] args) {
-
-        EvacExperiment experiment = new EvacExperiment(new CoreSimulation(System.currentTimeMillis()));
-        experiment.parseXML(args[0]);
-        try {
-            experiment.run("results/");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void parseXML(String filepath){
         variableMap = new HashMap<>();
@@ -136,7 +123,7 @@ public class EvacExperiment {
         File f = new File(path);
         String name = f.getName();
         name = name.substring(0,name.length()-4);
-        return f.getName();
+        return name;
     }
 
     private void fillVariableMapWithDefaults() {
