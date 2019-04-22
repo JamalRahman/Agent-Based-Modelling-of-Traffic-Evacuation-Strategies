@@ -5,7 +5,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import sim.field.network.Network;
 import simulation.CoreSimulation;
-import simulation.DefaultParameters;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -134,6 +133,11 @@ public class Configuration {
             Node filepathNode = networkElement.getElementsByTagName("filepath").item(0);
             String filepath = filepathNode.getTextContent();
             network = new NetworkFactory().buildNetworkFromFile(filepath);
+        }
+        else if(networkType.equals("grid")){
+            int size = Integer.parseInt(networkElement.getElementsByTagName("size").item(0).getTextContent());
+            double roadLength = Double.parseDouble(networkElement.getElementsByTagName("roadLength").item(0).getTextContent());
+            network = new NetworkFactory().buildGridNetwork(size,size,roadLength);
         }
     }
 

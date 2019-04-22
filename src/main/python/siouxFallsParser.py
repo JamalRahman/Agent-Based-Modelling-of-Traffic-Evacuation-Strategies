@@ -1,4 +1,4 @@
-finalFile = open("bham.txt","w+")
+finalFile = open("bham.net","w+")
 nodesFile = open("bhamNodes.txt","r")
 edgesFile = open("bhamNet.txt","r")
 

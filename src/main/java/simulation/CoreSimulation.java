@@ -2,8 +2,8 @@ package simulation;
 
 import simulation.agents.Car;
 import simulation.agents.Overseer;
-import simulation.system.Junction;
-import simulation.system.utility.AStarSearch;
+import simulation.environment.Junction;
+import simulation.utility.AStarSearch;
 import sim.engine.*;
 import sim.field.continuous.Continuous2D;
 import sim.field.network.Network;
@@ -12,6 +12,7 @@ import sim.util.Double2D;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * CoreSimulation is the core simulation. It extends SimState which provides fundamental simulation architecture
@@ -154,7 +155,7 @@ public class CoreSimulation extends SimState {
     private void populateSimulation() {
         Bag allJunctions = network.getAllNodes();
         ArrayList<Junction> sourceJunctions = extractSourceJunctions(allJunctions);
-        Junction goalJunction = selectRandomGoalJunction(allJunctions);
+        HashSet<Junction> goalJunctions = extractGoalJunctions(allJunctions);
         for (int i = 0; i < populationSize; i++) {
 
             Junction startJunction;
@@ -167,7 +168,7 @@ public class CoreSimulation extends SimState {
                 Car car = new Car.CarBuilder()
                         .setSimulation(this)
                         .setSpawnJunction(startJunction)
-                        .setGoalJunction(goalJunction)
+                        .setGoalJunctions(goalJunctions)
                         .setAgentAcceleration(agentAcceleration)
                         .setAgentBuffer(agentBuffer)
                         .setAgentGreedthreshold(agentGreedthreshold)
@@ -213,21 +214,20 @@ public class CoreSimulation extends SimState {
     }
 
     /**
-     * From a collection of junction nodes, selects a junction which is flagged as an exit with a uniform random probability
+     *  Produces a list of all the junction nodes out of a collection which are flagged as exit junctions
      * @param allJunctions A Bag collection of every node in the network
-     * @return A single Junction node having the property of being an exit
+     * @return A set of exit junctions
      */
-    private Junction selectRandomGoalJunction(Bag allJunctions) {
-        Bag goalJunctions = new Bag();
+    private HashSet<Junction> extractGoalJunctions(Bag allJunctions) {
+        HashSet<Junction> goalJunctions = new HashSet<>();
         Junction temp;
-        for (Object junction:
-             allJunctions){
-            temp = (Junction)junction;
+        for(Object junction : allJunctions){
+            temp = (Junction) junction;
             if(temp.isExit()){
                 goalJunctions.add(temp);
             }
         }
-        return (Junction) goalJunctions.get(random.nextInt(goalJunctions.size()));
+        return goalJunctions;
     }
 
     public void notifyEvacuated(Car car) {

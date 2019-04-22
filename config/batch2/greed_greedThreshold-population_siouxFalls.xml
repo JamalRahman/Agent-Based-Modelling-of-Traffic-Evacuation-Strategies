@@ -1,7 +1,7 @@
 <?xml version = "1.0"?>
 <experiment>
     <network type="file">
-        <filepath>config/batch2/SiouxFallsNet_multipleSource.txt</filepath>
+        <filepath>config/batch2/SiouxFalls_randomSource.net</filepath>
     </network>
     <repeats>10</repeats>
 

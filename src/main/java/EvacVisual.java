@@ -1,5 +1,5 @@
 import simulation.CoreSimulation;
-import simulation.system.Road;
+import simulation.environment.Road;
 import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
@@ -80,14 +80,15 @@ public class EvacVisual extends GUIState {
 
     public void init(final Controller controller) {
         super.init(controller);
-        display = new Display2D(800, 800, this);
+        display = new Display2D(600, 600, this);
+        display.setClipping(false);
 
         displayFrame = display.createFrame();
         displayFrame.setTitle("CoreSimulation display");
         controller.registerFrame(displayFrame);
         displayFrame.setVisible(true);
         display.attach(roadPortrayal,"Roads");
-        //display.attach(junctionPortrayal, "Junctions");
+//        display.attach(junctionPortrayal, "Junctions");
         display.attach(carPortrayal,"Cars");
     }
 }

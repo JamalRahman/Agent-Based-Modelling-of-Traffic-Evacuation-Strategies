@@ -1,7 +1,7 @@
 package simulation.agents;
 
 import simulation.CoreSimulation;
-import simulation.system.Road;
+import simulation.environment.Road;
 import sim.engine.*;
 import sim.field.network.Edge;
 import sim.field.network.Network;

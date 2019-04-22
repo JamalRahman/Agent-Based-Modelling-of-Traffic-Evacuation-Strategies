@@ -1,5 +1,6 @@
 import sim.field.network.*;
-import simulation.system.*;
+import simulation.environment.Junction;
+import simulation.environment.Road;
 import sim.util.Double2D;
 
 import java.io.BufferedReader;
@@ -22,7 +23,7 @@ public class NetworkFactory {
      * @param gridWidth Number of vertical junctions
      * @param roadLength Length of each road section
      */
-    public Network buildGridNetwork(int gridHeight, int gridWidth, int roadLength) {
+    public Network buildGridNetwork(int gridHeight, int gridWidth, double roadLength) {
         Junction[][] junctions = new Junction[gridWidth][gridHeight];
         Network network = new Network();
 

@@ -1,4 +1,4 @@
-package simulation.system;
+package simulation.environment;
 
 import simulation.agents.Car;
 import sim.util.Double2D;

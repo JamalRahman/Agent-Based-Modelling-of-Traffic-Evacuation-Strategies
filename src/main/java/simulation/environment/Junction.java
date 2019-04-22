@@ -1,4 +1,4 @@
-package simulation.system;
+package simulation.environment;
 
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.SimplePortrayal2D;
@@ -27,7 +27,7 @@ public class Junction extends SimplePortrayal2D{
 
     public final void draw(Object object, Graphics2D graphics, DrawInfo2D info){
         graphics.setColor(Color.BLACK);
-        graphics.fillOval((int)(info.draw.x-6/2),(int)(info.draw.y-6/2),(int)(6),(int)(6));
+        graphics.fillOval((int)(info.draw.x-10/2),(int)(info.draw.y-10/2),(int)(10),(int)(10));
     }
 
     public boolean isExit() {

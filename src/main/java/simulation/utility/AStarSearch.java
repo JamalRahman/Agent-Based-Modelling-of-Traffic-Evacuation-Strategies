@@ -1,8 +1,8 @@
-package simulation.system.utility;
+package simulation.utility;
 
 import simulation.CoreSimulation;
-import simulation.system.Junction;
-import simulation.system.Road;
+import simulation.environment.Junction;
+import simulation.environment.Road;
 import sim.field.network.Edge;
 import sim.field.network.Network;
 import sim.util.Bag;
@@ -13,6 +13,7 @@ public class AStarSearch {
     private HashMap<Junction,AStarNode> nodes = new HashMap<>();
     private Network network;
     private CoreSimulation simulation;
+    private HashSet<AStarNode> goalNodes = new HashSet<>();
 
     public AStarSearch(Network network, CoreSimulation simulation){
         this.network = network;
@@ -24,10 +25,7 @@ public class AStarSearch {
 
     }
 
-    public ArrayList<Edge> getEdgeRoute(Junction startJunction, Junction goalJunction){
-        return getEdgeRoute(startJunction,goalJunction,new ArrayList<>());
-    }
-    public ArrayList<Edge> getEdgeRoute(Junction startJunction, Junction goalJunction, Collection<Edge> ignoredEdges){
+    public ArrayList<Edge> getEdgeRoute(Junction startJunction, HashSet<Junction> goalJunctions, Collection<Edge> ignoredEdges){
 
         HashSet<AStarNode> closedSet = new HashSet<>();
         PriorityQueue<AStarNode> openList = new PriorityQueue<>(11, new Comparator<AStarNode>() {
@@ -46,7 +44,10 @@ public class AStarSearch {
         });
 
         AStarNode startNode = nodes.get(startJunction);
-        AStarNode goalNode = nodes.get(goalJunction);
+        for (Junction goalJunction : goalJunctions){
+            AStarNode goalNode = nodes.get(goalJunction);
+            goalNodes.add(goalNode);
+        }
         AStarNode currentNode;
         openList.add(startNode);
         startNode.setG(0);
@@ -55,7 +56,7 @@ public class AStarSearch {
         while(!openList.isEmpty()){
             currentNode = openList.remove();
 
-            if(currentNode.equals(goalNode)){
+            if(goalNodes.contains(currentNode)){
                 // Goal is found, return the route by traversing the list backwards via each node's parent node
 
                 while(!currentNode.equals(startNode)) {
@@ -88,7 +89,7 @@ public class AStarSearch {
                 double temporaryG = currentNode.getG() + cost(currentNode, child);
 
                 if(!openList.contains(child)){
-                    double f = temporaryG+heuristic(child,goalNode);
+                    double f = temporaryG+heuristic(child,goalNodes);
                     child.setRouteParent(currentNode);
                     child.setG(temporaryG);
                     child.setF(f);
@@ -104,7 +105,7 @@ public class AStarSearch {
                     }
                     child.setRouteParent(currentNode);
                     child.setG(temporaryG);
-                    child.setF(temporaryG + heuristic(child, goalNode));
+                    child.setF(temporaryG + heuristic(child, goalNodes));
                     // PriorityQueue will not resort, remove and re-add the child with altered "f" value
 
                     openList.remove(child);
@@ -130,10 +131,26 @@ public class AStarSearch {
         return children;
     }
 
-    private double heuristic(AStarNode first, AStarNode second){
-        double dx = first.getJunction().getLocation().getX() - second.getJunction().getLocation().getX();
-        double dy = first.getJunction().getLocation().getY() - second.getJunction().getLocation().getY();
-        double distance = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+    private double heuristic(AStarNode first, HashSet<AStarNode> goals){
+        double dx;
+        double dy;
+        double distance = -1;
+        int counter = 0;
+
+        for(AStarNode goal : goals){
+
+            dx = first.getJunction().getLocation().getX() - goal.getJunction().getLocation().getX();
+            dy = first.getJunction().getLocation().getY() - goal.getJunction().getLocation().getY();
+            double tempDistance = Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2));
+
+            if (counter==0){
+                distance = tempDistance;
+            }
+            else{
+                distance = Double.min(distance,tempDistance);
+            }
+            counter++;
+        }
         return distance;
     }
 

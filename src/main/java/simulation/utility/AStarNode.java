@@ -1,6 +1,6 @@
-package simulation.system.utility;
+package simulation.utility;
 
-import simulation.system.Junction;
+import simulation.environment.Junction;
 
 /**
  * A wrapper around the simulation network's Junction nodes which contains information used in the A* Algorithm

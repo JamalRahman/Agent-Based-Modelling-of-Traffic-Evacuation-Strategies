@@ -1,7 +1,7 @@
 <?xml version = "1.0"?>
 <experiment>
     <network type="file">
-        <filepath>config/networks/SiouxFallsNet_madireddy.txt</filepath>
+        <filepath>config/networks/ExampleTriangle.net</filepath>
     </network>
     <repeats>1</repeats>
 

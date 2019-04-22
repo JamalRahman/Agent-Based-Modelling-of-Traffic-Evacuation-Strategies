@@ -1,7 +1,8 @@
 package simulation.agents;
 
 import simulation.CoreSimulation;
-import simulation.system.*;
+import simulation.environment.Junction;
+import simulation.environment.Road;
 import sim.engine.*;
 import sim.field.network.Edge;
 import sim.portrayal.DrawInfo2D;
@@ -27,7 +28,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     public static class CarBuilder {
         private CoreSimulation simulation;
         private Junction spawnJunction;
-        private Junction goalJunction;
+        private HashSet<Junction> goalJunctions;
         private double timeFactor;
         private double agentAcceleration;
         private double agentSpeedLimit;
@@ -49,8 +50,8 @@ public class Car extends SimplePortrayal2D implements Steppable {
             return this;
         }
 
-        public CarBuilder setGoalJunction(Junction goalJunction) {
-            this.goalJunction = goalJunction;
+        public CarBuilder setGoalJunctions(HashSet<Junction> goalJunctions) {
+            this.goalJunctions = goalJunctions;
             return this;
         }
 
@@ -128,6 +129,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     // Properties
     private Junction goalJunction;
     private Junction spawnJunction;
+    private HashSet<Junction> goalJunctions;
 
     private double speed = 0;
     private double overbreaking = 1;
@@ -154,7 +156,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private Car(CarBuilder builder){
         simulation = builder.simulation;
         spawnJunction = builder.spawnJunction;
-        goalJunction = builder.goalJunction;
+        goalJunctions = builder.goalJunctions;
         acceleration = builder.agentAcceleration;
         speedlimit = builder.agentSpeedLimit;
         vehicleBuffer = builder.agentBuffer;
@@ -288,7 +290,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private void evaluateNextJunction(Junction targetJunction){
 
         // No reason to evaluate junction conditions if the target junction is the goal
-        if(targetJunction.equals(goalJunction)){
+        if(goalJunctions.contains(targetJunction)){
             return;
         }
 
@@ -341,7 +343,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
                     if(firstEdgeToChoose!=null){
                         ArrayList<Edge> tempRoute = new ArrayList<>();
                         ArrayList<Edge> calculatedRoute = new ArrayList<>();
-                        calculatedRoute = calculatePath((Junction) firstEdgeToChoose.getTo(), goalJunction, ignoredEdges);
+                        calculatedRoute = calculatePath((Junction) firstEdgeToChoose.getTo(), goalJunctions, ignoredEdges);
                         if(!calculatedRoute.isEmpty()){
                             if(currentEdge!=null){
                                 tempRoute.add(currentEdge);
@@ -361,7 +363,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
             }
         }
 
-        ArrayList<Edge> tempPath = calculatePath((Junction)targetJunction,goalJunction,ignoredEdges);
+        ArrayList<Edge> tempPath = calculatePath((Junction)targetJunction,goalJunctions,ignoredEdges);
         if(!tempPath.isEmpty()){
             ArrayList<Edge> newRoute = new ArrayList<>();
             if(currentEdge!=null){
@@ -427,7 +429,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private void nextEdge(double residualMovement) {
 
         // If we have just moved onto/through the goal node, our journey is over
-        if(currentEdge.getTo().equals(goalJunction)) {
+        if(goalJunctions.contains(currentEdge.getTo())) {
             currentIndex = endIndex;
             cleanup();
             return;
@@ -468,7 +470,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
      * Initialises the car agent into the environment and readies it for simulation
      */
     public void init(){
-        route = calculatePath(spawnJunction,goalJunction,new ArrayList<>());
+        route = calculatePath(spawnJunction,goalJunctions,new ArrayList<>());
     }
 
     /**
@@ -484,8 +486,8 @@ public class Car extends SimplePortrayal2D implements Steppable {
     /**
      * Uses A* to calculate a edge-to-edge route to the goal node
      */
-    private ArrayList<Edge> calculatePath(Junction start, Junction goal, Collection<Edge> ignoredEdges){
-        ArrayList<Edge> path = simulation.aStarSearch.getEdgeRoute(start,goal,ignoredEdges);
+    private ArrayList<Edge> calculatePath(Junction start, HashSet<Junction> goalJunctions, Collection<Edge> ignoredEdges){
+        ArrayList<Edge> path = simulation.aStarSearch.getEdgeRoute(start,goalJunctions,ignoredEdges);
         return path;
     }
 
