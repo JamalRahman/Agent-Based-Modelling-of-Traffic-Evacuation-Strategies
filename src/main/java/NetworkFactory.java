@@ -1,4 +1,5 @@
 import sim.field.network.*;
+import simulation.CoreSimulation;
 import simulation.environment.Junction;
 import simulation.environment.Road;
 import sim.util.Double2D;
@@ -19,24 +20,25 @@ public class NetworkFactory {
     /**
      * Generates a grid-like road network with a specified number of intersecting horizontal and vertical roads
      *
+     * @param simulation
      * @param gridHeight Number of horizontal junctions
      * @param gridWidth Number of vertical junctions
      * @param roadLength Length of each road section
      */
-    public Network buildGridNetwork(int gridHeight, int gridWidth, double roadLength) {
+    public Network buildGridNetwork(CoreSimulation simulation, int gridHeight, int gridWidth, double roadLength) {
         Junction[][] junctions = new Junction[gridWidth][gridHeight];
         Network network = new Network();
 
         for(int i=0;i<gridWidth;i++){
             for (int j = 0; j < gridHeight; j++) {
                 Double2D location = new Double2D(i*roadLength,j*roadLength);
-                boolean isExit = false;
+                boolean isBorder = false;
 
                 if(i==gridWidth-1 || j==gridHeight-1 || i==0 || j==0){
-                    isExit = true;
+                    isBorder = true;
                 }
 
-                Junction newJunc = new Junction(location,isExit,!isExit);
+                Junction newJunc = new Junction(location,false,!isBorder);
 
                 junctions[i][j] = newJunc;
                 network.addNode(newJunc);
@@ -68,7 +70,8 @@ public class NetworkFactory {
                 }
             }
         }
-
+        Junction goalJunc = (Junction)network.getAllNodes().get(simulation.random.nextInt(network.getAllNodes().size()));
+        goalJunc.setExit(true);
         return network;
 
     }

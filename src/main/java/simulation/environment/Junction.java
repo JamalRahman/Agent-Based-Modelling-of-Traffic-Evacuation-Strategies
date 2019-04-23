@@ -7,8 +7,12 @@ import sim.util.Double2D;
 import java.awt.*;
 
 public class Junction extends SimplePortrayal2D{
-    private final boolean isExit;
-    private final boolean isSource;
+
+    private boolean isExit;
+
+
+
+    private boolean isSource;
 
     private final Double2D location;
 
@@ -38,6 +42,13 @@ public class Junction extends SimplePortrayal2D{
 
     public Double2D getLocation() {
         return location;
+    }
+    public void setSource(boolean source) {
+        isSource = source;
+    }
+
+    public void setExit(boolean exit) {
+        isExit = exit;
     }
 
     @Override

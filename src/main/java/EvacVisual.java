@@ -36,7 +36,7 @@ public class EvacVisual extends GUIState {
     public void start(){
         CoreSimulation simulation = (CoreSimulation) state;
         configuration = new Configuration();
-        configuration.parseXML(args[0]);
+        configuration.parseXML(args[0],simulation);
         configuration.setSimulationParameters(simulation);
         super.start();
         setupPortrayals();

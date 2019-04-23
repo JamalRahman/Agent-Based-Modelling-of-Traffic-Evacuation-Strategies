@@ -21,7 +21,7 @@ public class EvacExperiment {
 
 
     public void run(String inputFilepath,String savePathPrefix) throws IOException {
-        configuration.parseXML(inputFilepath);
+        configuration.parseXML(inputFilepath,simulation);
         fileWriter = new FileWriter(savePathPrefix+configuration.name+".txt");
         printWriter = new PrintWriter(fileWriter);
         iVariableIterator(new ArrayList<>(configuration.allIndependentVariables));

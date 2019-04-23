@@ -33,7 +33,7 @@ public class Configuration {
 
     public Configuration(){
     }
-    public void parseXML(String filepath){
+    public void parseXML(String filepath, CoreSimulation simulation){
         variableMap = new HashMap<>();
         try{
             File inputFile = new File(filepath);
@@ -66,7 +66,7 @@ public class Configuration {
                 timeout = 20000;
             }
             if(networkNode!=null){
-                parseNetworkNode(networkNode);
+                parseNetworkNode(networkNode,simulation);
             }
             else{
                 System.err.println("No network specified in config file");
@@ -123,7 +123,7 @@ public class Configuration {
         }
     }
 
-    private void parseNetworkNode(Node networkNode) throws IOException {
+    private void parseNetworkNode(Node networkNode, CoreSimulation simulation) throws IOException {
         Element networkElement = (Element) networkNode;
         String networkType = networkElement.getAttribute("type");
         if(networkType.isEmpty()){
@@ -137,7 +137,7 @@ public class Configuration {
         else if(networkType.equals("grid")){
             int size = Integer.parseInt(networkElement.getElementsByTagName("size").item(0).getTextContent());
             double roadLength = Double.parseDouble(networkElement.getElementsByTagName("roadLength").item(0).getTextContent());
-            network = new NetworkFactory().buildGridNetwork(size,size,roadLength);
+            network = new NetworkFactory().buildGridNetwork(simulation,size,size,roadLength);
         }
     }
 

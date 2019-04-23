@@ -436,12 +436,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
         }
 
         pathIndex++;
-        if(pathIndex==route.size()){
-            System.out.println("Moving from edge: ");
-            System.out.println(currentEdge);
-            System.out.println("Route is: ");
-            System.out.println(route);
-        }
         prepareEdge(route.get(pathIndex));
         currentIndex+=residualMovement;
 
