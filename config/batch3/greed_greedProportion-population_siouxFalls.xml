@@ -1,7 +1,7 @@
 <?xml version = "1.0"?>
 <experiment>
     <network type="file">
-        <filepath>config/batch2/SiouxFalls_allSources.net</filepath>
+        <filepath>config/batch3/SiouxFalls_allSources.net</filepath>
     </network>
     <repeats>10</repeats>
 

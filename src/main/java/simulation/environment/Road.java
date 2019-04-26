@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * An Edge in the Network will hence wrap around a Road object which is what stores the contextual information.
  */
 
-public class Road  implements java.io.Serializable{
+public class Road{
     private final double length;
 
     private final Junction fromJunction;
@@ -74,7 +74,7 @@ public class Road  implements java.io.Serializable{
     }
 
     public double getCongestion(double averageVehicleLength){
-        double congestion = ((double)traffic.size())/((length/averageVehicleLength));
+        double congestion = ((double)traffic.size())/(((length-(length%averageVehicleLength))/averageVehicleLength));
         if(congestion>1){
             congestion = 1;
         }

@@ -217,6 +217,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
         ArrayList<Edge> oldRoute = route;
         evaluateNextJunction(spawnJunction);
         if(route.isEmpty()){
+            route=oldRoute;
             return;
         }
         double distanceToNeighbour = calculateDistanceToNeighbour(1);
@@ -310,7 +311,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
                 openEdgesFromUpcomingJunction.add(edgeFromUpcomingJunction);
             }
         }
-
         if(isGreedy && simulation.random.nextBoolean(greedChance) && greedChangeCount<greedMaxChanges){
             if(!route.isEmpty() && pathIndex<route.size()-1){
                 Road nextRoad;
@@ -322,8 +322,9 @@ public class Car extends SimplePortrayal2D implements Steppable {
                 }
                 if(nextRoad.getCongestion(vehicleBuffer) >= greedthreshold){
                     // Choose first edge - the least congested (unthrottled) edge from the next junction
+
                     Edge firstEdgeToChoose = null;
-                    double minimumCongestion = 2;
+                    double minimumCongestion = 1;
 
                     // Find the edge with minimum congestion from adjacent open roads
                     for(Object o : openEdgesFromUpcomingJunction){
@@ -332,12 +333,14 @@ public class Car extends SimplePortrayal2D implements Steppable {
                         double eCongestion = roadFromUpcomingJunction.getCongestion(vehicleBuffer);
 
                         if(eCongestion <= minimumCongestion){
-                            if(!(eCongestion==minimumCongestion) && simulation.random.nextBoolean(0.5)){
-                                minimumCongestion = eCongestion;
+                            if((eCongestion==minimumCongestion) && simulation.random.nextBoolean(0.5)){
+                                continue;
                             }
+                            minimumCongestion = eCongestion;
                             firstEdgeToChoose = edgeFromUpcomingJunction;
                         }
                     }
+
 
                     // Construct path. First edge is set so we want to A* search from after firstEdge
                     if(firstEdgeToChoose!=null){
@@ -352,10 +355,16 @@ public class Car extends SimplePortrayal2D implements Steppable {
                             tempRoute.addAll(calculatedRoute);
                         }
                         // if the new route , tempROute, is less than MaxLengthFactor times the current route, accept it.
-                        if(getPathLength(tempRoute,0)<=getPathLength(route,pathIndex+1)*greedMaxLengthFactor){
+                        int index = pathIndex+1;
+                        if(!spawned){
+                            index = 0;
+                        }
+                        if(getPathLength(tempRoute,0)<=getPathLength(route,index)*greedMaxLengthFactor){
                             route = tempRoute;
                             pathIndex = 0;
-                            greedChangeCount++;
+                            if(spawned){
+                                greedChangeCount++;
+                            }
                             return;
                         }
                     }

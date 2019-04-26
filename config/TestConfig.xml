@@ -1,14 +1,14 @@
 <?xml version = "1.0"?>
 <experiment>
     <network type="file">
-        <filepath>config/networks/SiouxFalls_allSources.net</filepath>
+        <filepath>config/networks/MadireddyTestA.net</filepath>
     </network>
     <repeats>1</repeats>
 
-    <variable var="populationSize" type="int">1000</variable>
+    <variable var="populationSize">1000</variable>
     <variable var="greedEnabled" type="boolean">true</variable>
-    <variable var="greedThreshold">0.5</variable>
-    <variable var="throttlingEnabled" type="boolean">true</variable>
-    <variable var="upperThreshold">0.5</variable>
-    <variable var="lowerThreshold">0.3</variable>
+    <variable var="agentGreedThreshold">0.3</variable>
+    <variable var="throttlingEnabled" type="boolean">false</variable>
+    <variable var="upperThreshold">1</variable>
+    <variable var="lowerThreshold">0.6</variable>
 </experiment>
