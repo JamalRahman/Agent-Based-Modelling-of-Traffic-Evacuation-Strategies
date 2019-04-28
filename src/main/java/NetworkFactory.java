@@ -109,8 +109,11 @@ public class NetworkFactory {
                 if(inputLine.length > 2){
                     isExit = "1".equals(inputLine[2]);
                 }
-                if(inputLine.length == 4){
+                if(inputLine.length > 3){
                     isSource = "1".equals(inputLine[3]);
+                }
+                if(inputLine.length>4){
+
                 }
                 Junction junction = new Junction(new Double2D(x,y),isExit,isSource);
                 junctions.add(junction);
@@ -120,18 +123,14 @@ public class NetworkFactory {
                 String[] inputLine = line.split("\\s+");
                 int fromJunctionIndex = Integer.parseInt(inputLine[0]);
                 int toJunctionIndex = Integer.parseInt(inputLine[1]);
+                boolean isThrottleable = true;
+                if(inputLine.length>2){
+                    isThrottleable = "1".equals(inputLine[2]);
+                }
                 Junction fromJunction = junctions.get(fromJunctionIndex-1);
                 Junction toJunction = junctions.get(toJunctionIndex-1);
 
-                Road road;
-                double length;
-                if(inputLine.length==3){
-                    length = Double.parseDouble(inputLine[2]);
-                    road = new Road(fromJunction,toJunction,length);
-                }
-                else{
-                    road = new Road(fromJunction,toJunction);
-                }
+                Road road= new Road(fromJunction,toJunction,isThrottleable);
 
                 Edge edge = new Edge(fromJunction,toJunction,road);
                 network.addEdge(edge);

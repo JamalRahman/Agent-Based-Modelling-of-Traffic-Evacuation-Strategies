@@ -16,13 +16,6 @@ public class Junction extends SimplePortrayal2D{
 
     private final Double2D location;
 
-    public Junction(Double2D location){
-        this(location,false,false);
-    }
-
-    public Junction(Double2D location, boolean isExit){
-        this(location,isExit,false);
-    }
     public Junction(Double2D location, boolean isExit, boolean isSource){
         this.location = location;
         this.isExit = isExit;

@@ -25,12 +25,30 @@ public class Road{
     private final double normalisedVectorX;
     private final double normalisedVectorY;
     private final ArrayList<Car> traffic = new ArrayList<>();
+
+
+    private boolean isThrottleable = true;
     private boolean isThrottled = false;
 
     public Road(Junction fromJunction, Junction toJunction){
         this.fromJunction = fromJunction;
         this.toJunction = toJunction;
 
+        fromJunctionX = fromJunction.getLocation().getX();
+        fromJunctionY = fromJunction.getLocation().getY();
+        double toJunctionX = toJunction.getLocation().getX();
+        double toJunctionY = toJunction.getLocation().getY();
+
+        length = Math.sqrt(Math.pow(toJunctionX-fromJunctionX,2)+Math.pow(toJunctionY-fromJunctionY,2));
+
+        normalisedVectorX = (toJunctionX - fromJunctionX)/length;
+        normalisedVectorY = (toJunctionY - fromJunctionY)/length;
+    }
+
+    public Road(Junction fromJunction, Junction toJunction,boolean isThrottleable){
+        this.fromJunction = fromJunction;
+        this.toJunction = toJunction;
+        this.isThrottleable = isThrottleable;
         fromJunctionX = fromJunction.getLocation().getX();
         fromJunctionY = fromJunction.getLocation().getY();
         double toJunctionX = toJunction.getLocation().getX();
@@ -87,6 +105,10 @@ public class Road{
 
     public boolean isThrottled() {
         return isThrottled;
+    }
+
+    public boolean isThrottleable() {
+        return isThrottleable;
     }
 
     public void setThrottled(boolean isThrottled){

@@ -8,9 +8,10 @@ from scipy.interpolate import griddata
 from scipy import interpolate
 import re
 import copy 
+import sys
 
 def main():     
-    lines = [line.rstrip() for line in open('TestNetA_throttling_thresholds.txt')]
+    lines = [line.rstrip() for line in open(sys.argv[1])]
 
     data = []
     datapoint=[]
@@ -45,7 +46,7 @@ def main():
         values = data[i][2]
         average = np.mean(values)
         percentageImprovement = 100*(1-(average/baseAverage))
-        percentageImprovement = round(percentageImprovement,0)
+        percentageImprovement = round(percentageImprovement,1)
         if(percentageImprovement<0):
             percentageImprovement = 0
         datapoint = []
@@ -83,8 +84,8 @@ def main():
     newColor = ListedColormap(vals)
 
 
-    plt.contour(xi,yi,zi,levels=32,colors='k',linewidths=0.2)
-    plt.contourf(xi,yi,zi,levels=128,cmap=newColor)
+    plt.contour(xi,yi,zi,levels=8,colors='k',linewidths=0.2)
+    plt.contourf(xi,yi,zi,levels=20,cmap=newColor)
     plt.xticks(x)
     plt.yticks(y)
     plt.xlabel("Lower Threshold")

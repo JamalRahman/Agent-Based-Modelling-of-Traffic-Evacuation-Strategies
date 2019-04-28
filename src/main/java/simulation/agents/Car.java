@@ -132,7 +132,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private HashSet<Junction> goalJunctions;
 
     private double speed = 0;
-    private double overbreaking = 1;
+    private double overbreaking = 0;
     private Double2D location;
     private boolean neighbourPresentInPerception = false;
     private boolean evacuated = false;
@@ -324,7 +324,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
                     // Choose first edge - the least congested (unthrottled) edge from the next junction
 
                     Edge firstEdgeToChoose = null;
-                    double minimumCongestion = 1;
+                    double minimumCongestion = 2;
 
                     // Find the edge with minimum congestion from adjacent open roads
                     for(Object o : openEdgesFromUpcomingJunction){
@@ -371,20 +371,30 @@ public class Car extends SimplePortrayal2D implements Steppable {
                 }
             }
         }
-
-        ArrayList<Edge> tempPath = calculatePath((Junction)targetJunction,goalJunctions,ignoredEdges);
-        if(!tempPath.isEmpty()){
-            ArrayList<Edge> newRoute = new ArrayList<>();
-            if(currentEdge!=null){
-                newRoute.add(currentEdge);
+        Road nextRoad = null;
+        if(!route.isEmpty()){
+            if(spawned){
+                nextRoad =(Road) route.get(pathIndex+1).getInfo();
             }
-            newRoute.addAll(tempPath);
-            route = newRoute;
-            pathIndex = 0;
+            else {
+                nextRoad = (Road) route.get(0).getInfo();
+            }
         }
-        else{
-            route = tempPath;
-            pathIndex = 0;
+        if(route.isEmpty() || nextRoad.isThrottled() || !spawned){
+            ArrayList<Edge> tempPath = calculatePath((Junction)targetJunction,goalJunctions,ignoredEdges);
+            if(!tempPath.isEmpty()){
+                ArrayList<Edge> newRoute = new ArrayList<>();
+                if(currentEdge!=null){
+                    newRoute.add(currentEdge);
+                }
+                newRoute.addAll(tempPath);
+                route = newRoute;
+                pathIndex = 0;
+            }
+            else{
+                route = tempPath;
+                pathIndex = 0;
+            }
         }
     }
 

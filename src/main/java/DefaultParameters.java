@@ -10,8 +10,8 @@ public class DefaultParameters {
     public static final double TIMEFACTOR = 1;
     public static final double GREEDPROPORTION = 1;
 
-    public static final double UPPERTHRESHOLD = 0.4;
-    public static final double LOWERTHRESHOLD = 0.1;
+    public static final double UPPERTHRESHOLD = 0.5;
+    public static final double LOWERTHRESHOLD = 0.5;
 
     public static final double AGENTACCELERATION =1;
     public static final double AGENTSPEEDLIMIT = 20;

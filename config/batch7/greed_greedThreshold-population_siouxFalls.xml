@@ -1,0 +1,16 @@
+<?xml version = "1.0"?>
+<experiment>
+    <network type="file">
+        <filepath>config/networks/SiouxFalls_allSources.net</filepath>
+    </network>
+    <repeats>10</repeats>
+
+    <variable var="populationSize">2000</variable>
+    <variable var="agentGreedThreshold" type="double" varType="independent">
+        <min>0</min>
+        <max>1</max>
+        <interval>0.1</interval>
+    </variable>
+    <variable var="agentMaxGreedChanges">15</variable>
+    <variable var="greedEnabled" type="boolean">true</variable>
+</experiment>
