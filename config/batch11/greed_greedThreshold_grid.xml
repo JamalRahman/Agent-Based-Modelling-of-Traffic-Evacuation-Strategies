@@ -4,7 +4,7 @@
         <size>10</size>
         <roadLength>100</roadLength>
     </network>
-    <repeats>20</repeats>
+    <repeats>10</repeats>
 
     <variable var="populationSize">1000</variable>
     <variable var="agentGreedThreshold" type="double" varType="independent">

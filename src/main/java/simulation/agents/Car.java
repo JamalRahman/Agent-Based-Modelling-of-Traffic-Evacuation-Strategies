@@ -331,7 +331,6 @@ public class Car extends SimplePortrayal2D implements Steppable {
                         Edge edgeFromUpcomingJunction = (Edge) o;
                         Road roadFromUpcomingJunction = (Road) edgeFromUpcomingJunction.getInfo();
                         double eCongestion = roadFromUpcomingJunction.getCongestion(vehicleBuffer);
-
                         if(eCongestion <= minimumCongestion){
                             if((eCongestion==minimumCongestion) && simulation.random.nextBoolean(0.5)){
                                 continue;
@@ -359,7 +358,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
                         if(!spawned){
                             index = 0;
                         }
-                        if(getPathLength(tempRoute,0)<=getPathLength(route,index)*greedMaxLengthFactor){
+                        if(getPathLength(tempRoute,index)<=getPathLength(route,index)*greedMaxLengthFactor){
                             route = tempRoute;
                             pathIndex = 0;
                             if(spawned){

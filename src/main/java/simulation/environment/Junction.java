@@ -30,7 +30,7 @@ public class Junction extends SimplePortrayal2D{
         if(isExit){
             graphics.setColor(Color.green);
         }
-        graphics.fillOval((int)(info.draw.x-16/2),(int)(info.draw.y-16/2),(int)(16),(int)(16));
+        graphics.fillOval((int)(info.draw.x-6/2),(int)(info.draw.y-6/2),(int)(6),(int)(6));
     }
 
     public boolean isExit() {
