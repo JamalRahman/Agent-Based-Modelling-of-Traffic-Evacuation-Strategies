@@ -52,6 +52,9 @@ def main():
     std_dev_ys = [np.std(i) for i in raw_ys]
     percentageImprovement_ys = [(100*(1-(value/baseAverage))) for value in average_ys]
 
+
+# Plotting two scaled axes onto one set of data. Code sourced from:
+#https://stackoverflow.com/questions/31288753/plotting-a-second-scaled-y-axis-in-matplotlib-from-one-set-of-data
     fig, ax1 = plt.subplots()
     ax1.errorbar(xs,average_ys,std_dev_ys,fmt='-o',linewidth=0.8,capsize=5,ms=3)
     ax1.axhline(y=baseAverage, ls='dashed',color='r',label='Clearance Time without greed')

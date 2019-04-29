@@ -95,27 +95,6 @@ def main():
     colorbar.set_label("Percentage Improvement over no throttling")
     plt.show()
 
-    # plt.tricontour(x,y,z,levels=10,colors='k',linewidths=0.1)
-    # plt.tricontourf(x,y,z,levels=10,cmap='jet')
-    # plt.colorbar()
-    # plt.show()
-
-    
-        # IF BASE
-            # form array of values
-            # calculate average base value
-        # If [UT,LT]
-            # Form list dataset = []
-            # dataset append LT and UT: [LT,UT]
-            
-        # if number
-            # add number to current list of values
-            # find average for this list
-            # dataset append list [LT,UT,[VALUES]]
-            # datapoint = [LT,UT,avgClearanceTime]
-
-
-
 
 
 if __name__ == "__main__":
