@@ -1,0 +1,121 @@
+{agentGreedThreshold=0.0, populationSize=1000}
+2771
+2788
+2827
+2600
+2675
+2698
+2698
+2813
+2778
+2710
+{agentGreedThreshold=0.1, populationSize=1000}
+2780
+2758
+2753
+2812
+2790
+2782
+2717
+2699
+2722
+2732
+{agentGreedThreshold=0.2, populationSize=1000}
+2793
+2760
+2788
+2629
+2788
+2786
+2826
+2622
+2819
+2792
+{agentGreedThreshold=0.3, populationSize=1000}
+2835
+2766
+2831
+2746
+2882
+2764
+2700
+2847
+2797
+2913
+{agentGreedThreshold=0.4, populationSize=1000}
+2652
+2676
+2670
+2816
+2763
+2738
+2759
+2648
+2680
+2747
+{agentGreedThreshold=0.5, populationSize=1000}
+2797
+2723
+2730
+2722
+2818
+2775
+2928
+2751
+2698
+2746
+{agentGreedThreshold=0.6, populationSize=1000}
+2614
+2935
+2721
+2785
+2628
+2751
+2811
+2788
+2893
+2874
+{agentGreedThreshold=0.7, populationSize=1000}
+2812
+2768
+2768
+2729
+2842
+2785
+2931
+2813
+2712
+2729
+{agentGreedThreshold=0.8, populationSize=1000}
+2794
+2855
+2861
+2715
+2775
+2764
+2662
+2719
+2642
+2819
+{agentGreedThreshold=0.9, populationSize=1000}
+2825
+2811
+2738
+2713
+2755
+2802
+2689
+2755
+2779
+2591
+{agentGreedThreshold=1.0, populationSize=1000}
+2752
+2889
+2660
+2726
+2654
+2578
+2660
+2760
+2725
+2706

@@ -76,7 +76,6 @@ public class NetworkFactory {
         }while (goalJunc.isSource());
         goalJunc.setExit(true);
         return network;
-
     }
 
 

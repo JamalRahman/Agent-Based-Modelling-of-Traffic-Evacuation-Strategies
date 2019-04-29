@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 public class EvacExperiment {
@@ -93,16 +95,22 @@ public class EvacExperiment {
 
 
     private void runSimulation(){
-
+        Instant start = Instant.now();
         simulation.setJob(jobCounter);
         simulation.start();
         do
             if (!simulation.schedule.step(simulation)) break;
         while(simulation.schedule.getSteps() < configuration.timeout);
+//        while(true);
 
+        Instant finish = Instant.now();
+        long timeElapsed = Duration.between(start, finish).toMillis();
+        long millisecondsPerStep = timeElapsed / simulation.schedule.getSteps();
         // Here we perform any logging
         System.out.println(simulation.schedule.getSteps());
         printWriter.println(simulation.schedule.getSteps());
+//        printWriter.println(millisecondsPerStep);
+//        System.out.println(millisecondsPerStep);
         simulation.finish();
         jobCounter++;
     }

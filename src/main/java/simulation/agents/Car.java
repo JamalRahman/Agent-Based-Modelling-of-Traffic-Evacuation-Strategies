@@ -132,7 +132,7 @@ public class Car extends SimplePortrayal2D implements Steppable {
     private HashSet<Junction> goalJunctions;
 
     private double speed = 0;
-    private double overbreaking = 0;
+    private double overbreaking = 1;
     private Double2D location;
     private boolean neighbourPresentInPerception = false;
     private boolean evacuated = false;

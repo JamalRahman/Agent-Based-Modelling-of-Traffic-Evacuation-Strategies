@@ -66,6 +66,7 @@ public class EvacVisual extends GUIState {
             }
         };
         p.setShape(SimpleEdgePortrayal2D.SHAPE_THIN_LINE);
+//        p.setBaseWidth(20);
         roadPortrayal.setPortrayalForAll(p);
 
         carPortrayal.setField(((CoreSimulation)state).cars);

@@ -3,10 +3,10 @@
     <network type="file">
         <filepath>config/networks/SiouxFalls_allSources.net</filepath>
     </network>
-    <repeats>10</repeats>
+    <repeats>20</repeats>
 
     <variable var="populationSize">2000</variable>
-    <variable var="greedProportion" type="double" varType="independent">
+    <variable var="agentGreedThreshold" type="double" varType="independent">
         <min>0</min>
         <max>1</max>
         <interval>0.1</interval>
