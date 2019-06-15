@@ -1,4 +1,4 @@
-#Agent-Based Modelling of Traffic Evacuation Scenarios
+# Agent-Based Modelling of Traffic Evacuation Scenarios
 ### Simulation software for evaluating and optimising evacuation strategy algorithms
 ##### A Masters of Computer Science dissertation project 
 
@@ -9,27 +9,30 @@ README Contents:
 
 ----------------------------------------------------------------------------------
 
-STRUCTURE OF PROJECT DIRECTORY:
+#### Structure of the project directory:
 
 EvacVisual.jar				-	The way to run the visualisation of a simulation
+
 ExperimentSequence.jar 		-	The way to run simulations in the background with data recording
 
-config/						-	All simulation configuration (.xml) files, and network (.net) files
-								The author has created a range of example simulation configuration files for
-								readers to try out, and use as references when making your own .xml config files
+config/						-	All simulation configuration (.xml) files, and network (.net) files. The author has created a range of example simulation configuration files for readers to try out, and use as references when making your own .xml config files
 
 config/experiments_by_author/	- The (mostly failed) experiments previously ran
+
 config/networks/				- A series of .net files which can be loaded by the software	
 
 
 lib/						-	All project dependencies, used to compile the project
+
 results/					-	All results taken from experiments found under config/experiments_by_author
+
 src/						-	All source code
+
 README.txt					-	This file
 
 -----------------------------------------------------------------------------------
 
-RUNNING THE PROGRAMS:
+#### Running the programs:
 
 This project is ran from the command line.
 
@@ -52,17 +55,21 @@ are at their minimums)
 	
 	java -jar ExperimentSequence.jar -o <Output Location> -i <Input config xml file(s)>
 
-	Here, the results .txt files will be placed in the folder specified by <Output Location>
-	<Input config xml file(s)> can take the following forms:
-		A regular path to a configuration file:
-			config/example1.xml
-		A list of paths to config files, simply space-separated
-			config/example1.xml config/example2.xml
-		A directory which contains config files
-			config/exampleBatch/
+Here, the results .txt files will be placed in the folder specified by <Output Location>
+<Input config xml file(s)> can take the following forms:
+	
+A regular path to a configuration file:
+	
+	config/example1.xml
+
+A list of paths to config files, simply space-separated:
+		
+	config/example1.xml config/example2.xml
+		
+A directory which contains config files:
+	
+	config/exampleBatch/
 
 The following is a valid command:
 	
 	java -jar ExperimentSequence.jar -o output/ -i config/exampleBatch/
-
---------------------------------------------------------------------------------------
