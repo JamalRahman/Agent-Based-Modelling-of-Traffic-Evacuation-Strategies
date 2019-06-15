@@ -1,11 +1,6 @@
 # Agent-Based Modelling of Traffic Evacuation Scenarios
 ### Simulation software for evaluating and optimising evacuation strategy algorithms
-##### A Masters of Computer Science dissertation project 
-
-README Contents:
-	- Structure of project Directory
-	- Running the programs
-	- Compiling the programs
+#### A Masters of Computer Science dissertation project 
 
 ----------------------------------------------------------------------------------
 
@@ -21,6 +16,7 @@ config/experiments_by_author/	- The (mostly failed) experiments previously ran
 
 config/networks/				- A series of .net files which can be loaded by the software	
 
+misc/						- Relevant assorted project files
 
 lib/						-	All project dependencies, used to compile the project
 
