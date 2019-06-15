@@ -1,0 +1,19 @@
+<?xml version = "1.0"?>
+
+<!-- EXAMPLE 1 -->
+<!-- This file can be run from either EvacVisual or ExperimentSequence -->
+
+<!-- This file is INTENDED for visualisation, as it does not have repeats or independent variables-->
+
+<!-- No bells and whistles, this simulation is a base case on a 6*6 grid -->
+<!-- Agents find the shortest path and stick to it nomatter what -->
+
+<!-- This simulation is great to watch vehicle and traffic behaviour in action -->
+<experiment>
+    <network type="grid">
+        <size>6</size>
+        <roadLength>50</roadLength>
+    </network>
+    
+    <repeats>1</repeats>
+</experiment>

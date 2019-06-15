@@ -1,0 +1,19 @@
+<?xml version = "1.0"?>
+<experiment>
+    <network type="file">
+        <filepath>config/batch2/SiouxFalls_randomSource.net</filepath>
+    </network>
+    <repeats>10</repeats>
+
+    <variable var="populationSize" type="int" varType="independent">
+        <min>1000</min>
+        <max>4000</max>
+        <interval>1000</interval>
+    </variable>
+    <variable var="greedProportion" type="double" varType="independent">
+        <min>0</min>
+        <max>1</max>
+        <interval>0.1</interval>
+    </variable>
+    <variable var="greedEnabled" type="boolean">true</variable>
+</experiment>

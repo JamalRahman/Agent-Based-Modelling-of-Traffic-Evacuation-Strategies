@@ -1,0 +1,23 @@
+<?xml version = "1.0"?>
+
+<!-- EXAMPLE 4 -->
+<!-- This file can be run from either EvacVisual or ExperimentSequence -->
+
+<!-- This file is INTENDED for experimentation, as it has independent variables and repeat measurements -->
+<!-- If this file is run in EvacVisual, it will only visualise the first configuration of variables -->
+
+<experiment>
+    <network type="file">
+        <filepath>config/networks/SiouxFalls_allSources.net</filepath>
+    </network>
+    <repeats>10</repeats>
+
+    <variable var="populationSize">2000</variable>
+    <variable var="agentGreedThreshold" type="double" varType="independent">
+        <min>0</min>
+        <max>1</max>
+        <interval>0.1</interval>
+    </variable>
+    <variable var="agentMaxGreedChanges">15</variable>
+    <variable var="greedEnabled" type="boolean">true</variable>
+</experiment>

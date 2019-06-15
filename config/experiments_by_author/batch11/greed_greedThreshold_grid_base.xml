@@ -1,0 +1,13 @@
+<?xml version = "1.0"?>
+<experiment>
+    <network type="grid">
+        <size>10</size>
+        <roadLength>100</roadLength>
+    </network>
+    <repeats>10</repeats>
+
+    <variable var="populationSize">1000</variable>
+
+    <variable var="agentGreedMaxChanges">15</variable>
+    <variable var="greedEnabled" type="boolean">false</variable>
+</experiment>
